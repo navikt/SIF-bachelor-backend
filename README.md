@@ -2,8 +2,7 @@ Implementasjon av Service Layer med WireMock-integrasjon
 
 I denne oppdateringen har vi introdusert en ny arkitektonisk struktur som integrerer WireMock for å forbedre testing og utvikling av vår Spring Boot-applikasjon. Målet er å simulere eksterne API-forespørsler og respons på en effektiv og kontrollerbar måte, som støtter både utvikling og testing uten avhengighet av ekte eksterne tjenester.
 
-Endringer og Struktur:
-WireMock Konfigurasjon: Vi har introdusert en dedikert konfigurasjonsklasse WireMockConfig som initialiserer WireMockServer med forhåndsdefinerte stubs for å simulere HTTP-forespørsler og responser. Dette gjør at vi kan etterligne eksterne API-tjenester lokalt med forventede responsdata, noe som er kritisk for nøyaktig testing og utvikling.
+Vi har introdusert en dedikert konfigurasjonsklasse WireMockConfig som initialiserer WireMockServer med forhåndsdefinerte stubs for å simulere HTTP-forespørsler og responser. Dette gjør at vi kan etterligne eksterne API-tjenester lokalt med forventede responsdata, noe som er kritisk for nøyaktig testing og utvikling.
 
 Service Layer: Vår SimpleService-klasse er nå ansvarlig for å håndtere forretningslogikk og kommunikasjon med eksterne API-er gjennom WireMock. Ved å bruke WireMock, kan SimpleService utføre HTTP-forespørsler mot forhåndsdefinerte stubs og motta kontrollerte responser. Dette tillater presis testing av service-laget under ulike scenarier uten eksterne avhengigheter.
 
