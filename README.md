@@ -11,7 +11,9 @@ Repository Layer (Hypotetisk): Selv om endringene hovedsakelig fokuserer på ser
 
 Fordeler:
 Utviklingsfleksibilitet: Ved å bruke WireMock kan utviklere teste applikasjonen under ulike forutsetninger og datarespons uten å være avhengig av tilgjengelighet eller stabilitet i eksterne tjenester.
+
 Forbedret Testing: Integrasjonstester kan kjøres med høy tillit til at applikasjonen vil oppføre seg som forventet i produksjon, siden WireMock tillater nøyaktig simulering av eksterne API-responser.
+
 Isolasjon og Dekobling: Ved å simulere eksterne tjenester, er vår applikasjon mindre sårbar for endringer i tredjepartstjenester, noe som fører til mer robust og vedlikeholdbar kode.
 
 Implementasjonsdetaljer:
