@@ -30,6 +30,7 @@ public class WireMockConfig {
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withStatus(200)
                         .withBody("Velkommen til VJU WireMock fjert")));
+                        //.withBodyFile("648126654.pdf")));
 
         //Journalpost POST//
         wireMockServer.stubFor(post(urlEqualTo("/journalpost"))
@@ -79,6 +80,16 @@ public class WireMockConfig {
                         .withHeader("Content-Type", "application/json;charset=UTF-8") // Sett riktig Content-Type for respons
                         .withStatus(200) // Returner HTTP 200 OK
                         .withBody("Vi har fått svar fra Service Mock kall fra WireMock")));
+
+        //GET PDF
+
+        wireMockServer.stubFor(WireMock.get(urlEqualTo("/getpdf"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/pdf")
+                        .withStatus(200)
+                        .withBodyFile("648126654.pdf")));
+                        //.withBody("Velkommen til VJU WireMock fjert")));
 
 
     }

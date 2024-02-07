@@ -3,18 +3,21 @@ package com.bachelor.vju_vm_apla2.Controller;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 public class JournalpostController {
@@ -73,24 +76,56 @@ public class JournalpostController {
      */
 
     //PDF TEST
+    /*
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/getpdf")
-    public ResponseEntity<Resource> getPDF() {
-        try {
-            // Oppretter en ressurs som peker på PDF-filen i resources-mappen
-            Resource pdfResource = new ClassPathResource("dokumenter/648126654.pdf");
+    public ResponseEntity<Flux<DataBuffer>> getPDF() {
+        System.out.println("Kontroller - getPDF: vi er inne i metoden");
+        Flux<DataBuffer> pdfContent = simpleService.fetchPdfContent();
+        System.out.println("Kontroller - getPDF: mottatt pdf fra service");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("filename", "document.pdf");
 
-            if (pdfResource.exists() || pdfResource.isReadable()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_PDF)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + pdfResource.getFilename() + "\"")
-                        .body(pdfResource);
-            } else {
-                throw new RuntimeException("Kunne ikke lese filen!");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Feil under behandling av filen", e);
-        }
+        System.out.println("Kontroller - getPDF: Sender pdf til klienten");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfContent);
+
     }
+
+     */
+
+    /*/PDF TEST MED STØRRELSE
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/getpdf")
+    public ResponseEntity<Flux<DataBuffer>> getPDF() {
+        System.out.println("Kontroller - getPDF: vi er inne i metoden");
+        final AtomicInteger totalSize = new AtomicInteger(0); // Oppretter en AtomicInteger for å holde på den totale størrelsen
+
+        Flux<DataBuffer> pdfContent = simpleService.fetchPdfContent()
+                .doOnNext(dataBuffer -> {
+                    int size = dataBuffer.readableByteCount();
+                    System.out.println("Kontroller - getPDF: Mottatt buffer med størrelse: " + size + " bytes");
+                    totalSize.addAndGet(size); // Akkumulerer størrelsen på hver buffer
+                })
+                .doOnComplete(() -> {
+                    System.out.println("Kontroller - getPDF: Fullført sending av PDF til klienten. Total størrelse: " + totalSize.get() + " bytes");
+                });
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("filename", "document.pdf");
+
+        System.out.println("Kontroller - getPDF: Sender pdf til klienten");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfContent);
+    }
+
+     */
+
+
 
 }

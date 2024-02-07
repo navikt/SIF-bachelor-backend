@@ -14,7 +14,9 @@ public class AppConfig {
     //setter opp wiremock server og enabler logging
     @Bean(initMethod = "start", destroyMethod = "stop")
     public WireMockServer wireMockServer() {
-        return new WireMockServer(options().port(8081)
+        return new WireMockServer(options()
+                .port(8081)
+                .usingFilesUnderClasspath(".")
                 .notifier(new ConsoleNotifier(true)));
     }
 
