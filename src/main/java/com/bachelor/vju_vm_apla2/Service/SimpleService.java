@@ -16,7 +16,7 @@ public class SimpleService {
 
     //setter opp HTTP syntax slik at vi kan gjøre kall på GraphQL server (erstattet med Wiremock)
 
-    /*
+
     public SimpleService() {
         this.webClient = WebClient.builder()
                 .baseUrl("http://localhost:8081")
@@ -25,12 +25,14 @@ public class SimpleService {
                 .build();
     }
 
-     */
 
+    /*
     public SimpleService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("http://localhost:8081").build(); // Anta at WireMock kjører på port 8081
     }
 
+
+     */
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
     public String handleJournalPostData(String journalpostData, HttpHeaders originalHeader){
