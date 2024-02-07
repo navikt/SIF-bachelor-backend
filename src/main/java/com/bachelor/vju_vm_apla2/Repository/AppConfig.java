@@ -17,4 +17,5 @@ public class AppConfig {
         return new WireMockServer(options().port(8081)
                 .notifier(new ConsoleNotifier(true)));
     }
+
 }

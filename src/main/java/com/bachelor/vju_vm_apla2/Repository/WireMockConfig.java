@@ -47,7 +47,7 @@ public class WireMockConfig {
                                 "            \"tittel\": \"Søknad om utbetaling av omsorgspenger for arbeidstaker\",\n" +
                                 "            \"dokumenter\": [\n" +
                                 "                {\n" +
-                                "                    \"dokumentInfoId\": \"648126654\",\n" +
+                                "                    \"dokumentInfoId\": \"648126654.pdf\",\n" +
                                 "                    \"tittel\": \"Innvilgelse.pdf\"\n" +
                                 "                }\n" +
                                 "            ],\n" +
