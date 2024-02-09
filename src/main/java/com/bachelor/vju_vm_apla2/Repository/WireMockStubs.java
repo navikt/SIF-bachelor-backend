@@ -34,6 +34,9 @@ public class WireMockStubs {
                         .withBody("Velkommen til VJU WireMock fjert")));
                         //.withBodyFile("648126654.pdf")));
 
+
+
+
         //Journalpost POST//
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
                 .withRequestBody(containing("453857319")) // Sjekk om forespørselskroppen inneholder denne strengen
@@ -92,7 +95,6 @@ public class WireMockStubs {
                         .withStatus(200)
                         .withBodyFile("648126654.pdf")));
                         //.withBody("Velkommen til VJU WireMock fjert")));
-
 
     }
 
