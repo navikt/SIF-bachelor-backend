@@ -15,12 +15,9 @@ public class SimpleService {
     private final WebClient webClient;
 
     //setter opp HTTP syntax slik at vi kan gjøre kall på GraphQL server (erstattet med Wiremock)
-
-
     public SimpleService() {
         this.webClient = WebClient.builder()
                 .baseUrl("http://localhost:8081")
-
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
@@ -30,15 +27,16 @@ public class SimpleService {
     public SimpleService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("http://localhost:8081").build(); // Anta at WireMock kjører på port 8081
     }
-
-
      */
+
+
+
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
     public String handleJournalPostData(String journalpostData, HttpHeaders originalHeader){
 
         String response = this.webClient.post()
-                .uri("/journalpost")
+                .uri("/mock-journalpost")
                 .headers(headers -> headers.addAll(originalHeader))
                 .bodyValue(journalpostData)
                 .retrieve()
@@ -48,7 +46,6 @@ public class SimpleService {
         System.out.println("Respons fra wiremock: " + response);
 
         return response; //returnrer data tilbake til kontroller.
-
     }
 
     //PDF TEST
@@ -59,7 +56,6 @@ public class SimpleService {
                 .retrieve()
                 .bodyToFlux(DataBuffer.class); // Hent PDF som en flux av DataBuffer
     }
-
      */
 
     //pdf Test med størrelse

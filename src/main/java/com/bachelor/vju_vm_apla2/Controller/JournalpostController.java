@@ -37,16 +37,13 @@ public class JournalpostController {
         return "Vi kan hente fra kontroller";
     }
 
-
-    // UTEN PDF
+    //UTEN PDF
     //Klienten gjør POST-Kall hos denne kontrolleren først.
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/journalpost")
-
     //Metoden tar i mot data som ligger i body fra klient og legger det inn i @RequestBody String journalpostdata
     //RequestHeader parser header info som blir mottatt fra klient.  'Content-Type': 'application/json', 'Accept': 'application/json',
     // **Denne metoden skal håndtere TOKEN**
-
     public ResponseEntity<String> handleJournalPostRequest(@RequestBody String journalPostData, @RequestHeader HttpHeaders headers) {
 
         System.out.println("Kontroller - Mottatt journalpost data: " + journalPostData +
@@ -55,10 +52,6 @@ public class JournalpostController {
         String response = simpleService.handleJournalPostData(journalPostData, headers); //Sender data til Service layer (SimpleService) for å manipulering
         return ResponseEntity.ok(response); //returnerer data fra Service layer
     }
-
-
-
-
 
 
     //////////////////////////////////////////////////////////////// TESTER ////////////////////////////////////////////////////////////////
