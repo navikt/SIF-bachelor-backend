@@ -39,6 +39,24 @@ public class JournalpostController {
 
     //////////////////////////////////////////////////// HOVED METODER ///////////////////////////////////////////////////////////////////////
 
+    //Søker på BrukerID og skal returnere en liste med journalposter
+    @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
+    @GetMapping("/simple_hentJournalPoster")
+    public String simple_hentJournalPosterk(){
+        return "Vi kan hente fra journalposter";
+    }
+
+
+    @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
+    @GetMapping("/hentJournalPoster")
+    public String hentJournalPosterk(){
+        return "Vi kan hente fra journalposter";
+    }
+
+
+
+
+
 
     //UTEN PDF
     //Klienten gjør POST-Kall hos denne kontrolleren først.
