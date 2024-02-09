@@ -43,6 +43,7 @@ public class JournalpostController {
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
     @GetMapping("/simple_hentJournalPoster")
     public String simple_hentJournalPosterk(){
+        System.out.println("Den blir ikke truffet");
         return "Vi kan hente fra journalposter";
     }
 
