@@ -40,6 +40,8 @@ public class JournalpostController {
     //////////////////////////////////////////////////// HOVED METODER ///////////////////////////////////////////////////////////////////////
 
     //Søker på BrukerID og skal returnere en liste med journalposter
+
+    //Simple Get kall for å teste opp mot typescript klient
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
     @GetMapping("/simple_hentJournalPoster")
     public String simple_hentJournalPosterk(){
@@ -47,12 +49,85 @@ public class JournalpostController {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
+    //Enkelt Get metode som returnerer verdien som blir skrevet inn fra klienten
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/hentJournalPoster/{brukerID}")
     public String hentJournalPoster(@PathVariable String brukerID) {
         // Bruk brukerID her, for eksempel for å hente informasjon fra en database
         return "Vi kan hente fra journalposter for brukerID: " + brukerID;
     }
+
+
+    //Returnerer liste med Journalposter basert på brukerID som blir sendt fra klient
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/hentJournalPosterListe/{brukerID}")
+    public ResponseEntity<String> hentJournalPosterListe(@PathVariable String brukerID) {
+        String jsonData;
+        if ("69".equals(brukerID)) {
+            jsonData = "{\n" +
+                    "   \"data\":{\n" +
+                    "      \"dokumentoversiktBruker\":{\n" +
+                    "         \"journalposter\":[\n" +
+                    "            {\n" +
+                    "               \"journalpostId\":\"429111291\",\n" +
+                    "               \"tittel\":\"MASKERT_FELT\",\n" +
+                    "               \"journalposttype\":\"U\",\n" +
+                    "               \"journalstatus\":\"FERDIGSTILT\",\n" +
+                    "               \"tema\":\"OPP\",\n" +
+                    "               \"dokumenter\":[\n" +
+                    "                  {\n" +
+                    "                     \"dokumentId\":\"441010176\",\n" +
+                    "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                    "                  }\n" +
+                    "               ]\n" +
+                    "            },\n" +
+                    "            {\n" +
+                    "               \"journalpostId\":\"429108246\",\n" +
+                    "               \"tittel\":\"MASKERT_FELT\",\n" +
+                    "               \"journalposttype\":\"U\",\n" +
+                    "               \"journalstatus\":\"FERDIGSTILT\",\n" +
+                    "               \"tema\":\"OPP\",\n" +
+                    "               \"dokumenter\":[\n" +
+                    "                  {\n" +
+                    "                     \"dokumentInfoId\":\"441007131\",\n" +
+                    "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                    "                  }\n" +
+                    "               ]\n" +
+                    "            },\n" +
+                    "            {\n" +
+                    "               \"journalpostId\":\"428965411\",\n" +
+                    "               \"tittel\":\"MASKERT_FELT\",\n" +
+                    "               \"journalposttype\":\"I\",\n" +
+                    "               \"journalstatus\":\"JOURNALFOERT\",\n" +
+                    "               \"tema\":\"SYM\",\n" +
+                    "               \"dokumenter\":[\n" +
+                    "                  {\n" +
+                    "                     \"dokumentInfoId\":\"440831549\",\n" +
+                    "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                    "                  },\n" +
+                    "                  {\n" +
+                    "                     \"dokumentInfoId\":\"440831548\",\n" +
+                    "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                    "                  }\n" +
+                    "               ]\n" +
+                    "            }\n" +
+                    "         ]\n" +
+                    "      }\n" +
+                    "   }\n" +
+                    "}";
+        } else if ("666".equals(brukerID)) {
+            jsonData = "\"Did you seek me??\"";
+        } else {
+            // Du kan legge til en standard respons her
+            jsonData = "\"No data available\"";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .body(jsonData);
+    }
+
 
 
 
