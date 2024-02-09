@@ -3,22 +3,13 @@ package com.bachelor.vju_vm_apla2.Controller;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import no.nav.security.token.support.core.api.Protected;
+import no.nav.security.token.support.core.api.Unprotected;
 
-import java.io.ByteArrayInputStream;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.concurrent.atomic.AtomicInteger;
-
+@Protected
 @RestController
 public class JournalpostController {
 
@@ -77,6 +68,21 @@ public class JournalpostController {
             throw new RuntimeException("Feil under behandling av filen", e);
         }
     }
+
+    //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
+
+
+    @GetMapping("/test/protected")
+    public String protectedPath(){
+        return "I am protected";
+    }
+
+    @Unprotected
+    @GetMapping("/test/unprotected")
+    public String unProtectedPath(){
+        return "I am unprotected";
+    }
+
 
 
     //////////////////////////////////////////////////////////////// TESTER ////////////////////////////////////////////////////////////////
