@@ -37,6 +37,9 @@ public class JournalpostController {
         return "Vi kan hente fra kontroller";
     }
 
+    //////////////////////////////////////////////////// HOVED METODER ///////////////////////////////////////////////////////////////////////
+
+
     //UTEN PDF
     //Klienten gjør POST-Kall hos denne kontrolleren først.
     @CrossOrigin(origins = "http://localhost:3000")
@@ -51,6 +54,28 @@ public class JournalpostController {
 
         String response = simpleService.handleJournalPostData(journalPostData, headers); //Sender data til Service layer (SimpleService) for å manipulering
         return ResponseEntity.ok(response); //returnerer data fra Service layer
+    }
+
+
+    //Metode for å hente et enkel PDF FIL
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/get-simple-pdf")
+    public ResponseEntity<Resource> getPDF() {
+        try {
+            // Oppretter en ressurs som peker på PDF-filen i resources-mappen
+            Resource pdfResource = new ClassPathResource("__files/648126654.pdf");
+
+            if (pdfResource.exists() || pdfResource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + pdfResource.getFilename() + "\"")
+                        .body(pdfResource);
+            } else {
+                throw new RuntimeException("Kunne ikke lese filen!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Feil under behandling av filen", e);
+        }
     }
 
 
@@ -94,6 +119,8 @@ public class JournalpostController {
     }
 
      */
+
+
 
     /*/PDF TEST MED STØRRELSE
 

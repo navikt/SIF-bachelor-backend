@@ -12,7 +12,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.autoconfigure.AutoConfigurationPackages.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
-
 @SpringBootApplication
 public class VjuVmApla2Application {
 
