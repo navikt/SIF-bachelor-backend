@@ -56,7 +56,6 @@ public class JournalpostController {
 
 
 
-
     //UTEN PDF
     //Klienten gjør POST-Kall hos denne kontrolleren først.
     @CrossOrigin(origins = "http://localhost:3000")
