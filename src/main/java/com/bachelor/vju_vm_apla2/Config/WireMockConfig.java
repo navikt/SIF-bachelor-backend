@@ -1,4 +1,4 @@
-package com.bachelor.vju_vm_apla2.config;
+package com.bachelor.vju_vm_apla2.Config;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;

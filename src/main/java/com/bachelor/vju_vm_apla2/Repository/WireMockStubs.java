@@ -23,8 +23,135 @@ public class WireMockStubs {
         wireMockServer.start();
 
 
-        //WIREMOCK STUBS
+        //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 
+        //Mock for søkeresultat "69". Gir response basert på brukerID input fra clienten.
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+                .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"69\"}", true, true))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody("{\n" +
+                                "   \"data\":{\n" +
+                                "      \"dokumentoversiktBruker\":{\n" +
+                                "         \"journalposter\":[\n" +
+                                "            {\n" +
+                                "               \"journalpostId\":\"429111291\",\n" +
+                                "               \"tittel\":\"Svak Postkasse\",\n" +
+                                "               \"journalposttype\":\"U\",\n" +
+                                "               \"journalstatus\":\"FERDIGSTILT\",\n" +
+                                "               \"tema\":\"OPP\",\n" +
+                                "               \"dokumenter\":[\n" +
+                                "                  {\n" +
+                                "                     \"dokumentId\":\"441010176\",\n" +
+                                "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                                "                  }\n" +
+                                "               ]\n" +
+                                "            },\n" +
+                                "            {\n" +
+                                "               \"journalpostId\":\"429108246\",\n" +
+                                "               \"tittel\":\"Rusten Veikryss\",\n" +
+                                "               \"journalposttype\":\"U\",\n" +
+                                "               \"journalstatus\":\"FERDIGSTILT\",\n" +
+                                "               \"tema\":\"OPP\",\n" +
+                                "               \"dokumenter\":[\n" +
+                                "                  {\n" +
+                                "                     \"dokumentInfoId\":\"441007131\",\n" +
+                                "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                                "                  }\n" +
+                                "               ]\n" +
+                                "            },\n" +
+                                "            {\n" +
+                                "               \"journalpostId\":\"428965411\",\n" +
+                                "               \"tittel\":\"Svett Sko\",\n" +
+                                "               \"journalposttype\":\"I\",\n" +
+                                "               \"journalstatus\":\"JOURNALFOERT\",\n" +
+                                "               \"tema\":\"SYM\",\n" +
+                                "               \"dokumenter\":[\n" +
+                                "                  {\n" +
+                                "                     \"dokumentInfoId\":\"440831549\",\n" +
+                                "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                                "                  },\n" +
+                                "                  {\n" +
+                                "                     \"dokumentInfoId\":\"440831548\",\n" +
+                                "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                                "                  }\n" +
+                                "               ]\n" +
+                                "            }\n" +
+                                "         ]\n" +
+                                "      }\n" +
+                                "   }\n" +
+                                "}")));
+
+
+        //Mock for søkeresultat "666". Gir response basert på brukerID input fra clienten.
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+                .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"666\"}", true, true))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody("{" +
+                                "\"data\":{\n" +
+                                        "      \"dokumentoversiktBruker\":{\n" +
+                                        "         \"journalposter\":[\n" +
+                                        "            {\n" +
+                                        "               \"journalpostId\":\"666111111\",\n" +
+                                        "               \"tittel\":\"Hemmelig dokument\",\n" +
+                                        "               \"journalposttype\":\"U\",\n" +
+                                        "               \"journalstatus\":\"FERDIGSTILT\",\n" +
+                                        "               \"tema\":\"XYZ\",\n" +
+                                        "               \"dokumenter\":[\n" +
+                                        "                  {\n" +
+                                        "                     \"dokumentId\":\"666666666\",\n" +
+                                        "                     \"tittel\":\"Topphemmelig.pdf\"\n" +
+                                        "                  }\n" +
+                                        "               ]\n" +
+                                        "            },\n" +
+                                        "            {\n" +
+                                        "               \"journalpostId\":\"666222222\",\n" +
+                                        "               \"tittel\":\"Enda et hemmelig dokument\",\n" +
+                                        "               \"journalposttype\":\"I\",\n" +
+                                        "               \"journalstatus\":\"JOURNALFOERT\",\n" +
+                                        "               \"tema\":\"ABC\",\n" +
+                                        "               \"dokumenter\":[\n" +
+                                        "                  {\n" +
+                                        "                     \"dokumentInfoId\":\"666777777\",\n" +
+                                        "                     \"tittel\":\"VeldigHemmelig.pdf\"\n" +
+                                        "                  }\n" +
+                                        "               ]\n" +
+                                        "            }\n" +
+                                        "         ]\n" +
+                                        "      }\n" +
+                                        "   }" +
+                                "}")));
+
+
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+                .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"123\"}", true, true))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody("{\n" +
+                                "  \"journalposter\": [\n" +
+                                "    {\n" +
+                                "      \"journalpostId\": \"666111111\",\n" +
+                                "      \"tittel\": \"Hemmelig dokument\",\n" +
+                                "      \"journalposttype\": \"U\",\n" +
+                                "      \"journalstatus\": \"FERDIGSTILT\",\n" +
+                                "      \"tema\": \"XYZ\"\n" +
+                                "    }\n" +
+                                "  ]\n" +
+                                "}")));
+
+
+
+
+
+
+        ////////////////////////////////////////////////////////////TESTE METODER /////////////////////////////////////////////////////////////
 
         //GET KALL FOR TEST
         wireMockServer.stubFor(WireMock.get(urlEqualTo("/greeting"))
@@ -32,37 +159,8 @@ public class WireMockStubs {
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withStatus(200)
                         .withBody("Velkommen til VJU WireMock fjert")));
-                        //.withBodyFile("648126654.pdf")));
+        //.withBodyFile("648126654.pdf")));
 
-
-
-
-        //Journalpost POST//
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
-                .withRequestBody(containing("453857319")) // Sjekk om forespørselskroppen inneholder denne strengen
-                .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
-                        .withBody("{\n" +
-                                "    \"data\": {\n" +
-                                "        \"journalpost\": {\n" +
-                                "            \"journalposttype\": \"I\",\n" +
-                                "            \"journalstatus\": \"MOTTATT\",\n" +
-                                "            \"tema\": \"OMS\",\n" +
-                                "            \"tittel\": \"Søknad om utbetaling av omsorgspenger for arbeidstaker\",\n" +
-                                "            \"dokumenter\": [\n" +
-                                "                {\n" +
-                                "                    \"dokumentInfoId\": \"648126654.pdf\",\n" +
-                                "                    \"tittel\": \"Innvilgelse.pdf\"\n" +
-                                "                }\n" +
-                                "            ],\n" +
-                                "            \"avsenderMottaker\": {\n" +
-                                "                \"navn\": \"UTYDELIG, SKÅL\"\n" +
-                                "            }\n" +
-                                "        }\n" +
-                                "    }\n" +
-                                "}")));
 
         /*/OPTION CALL
         server.stubFor(options(urlEqualTo("/journalpost"))
@@ -76,7 +174,6 @@ public class WireMockStubs {
          */
 
 
-
         //Journalpost SERIVCE - POST//
         wireMockServer.stubFor(post(urlEqualTo("/journalpost-mock"))
                 .withRequestBody(containing("453857319")) // Sjekk om forespørselskroppen inneholder denne strengen
@@ -87,7 +184,6 @@ public class WireMockStubs {
                         .withBody("Vi har fått svar fra Service Mock kall fra WireMock")));
 
         //GET PDF
-
         wireMockServer.stubFor(WireMock.get(urlEqualTo("/getpdf"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")

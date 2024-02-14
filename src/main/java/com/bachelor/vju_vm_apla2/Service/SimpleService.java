@@ -30,11 +30,11 @@ public class SimpleService {
      */
 
 
+////////////////////////////////////////////HOVED METODER///////////////////////////////////////////////////////////////////////////////
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
     public String handleJournalPostData(String journalpostData, HttpHeaders originalHeader){
-
         String response = this.webClient.post()
                 .uri("/mock-journalpost")
                 .headers(headers -> headers.addAll(originalHeader))
@@ -47,6 +47,26 @@ public class SimpleService {
 
         return response; //returnrer data tilbake til kontroller.
     }
+
+    public String hentJournalpostListe(String query,HttpHeaders orignalHeader ){
+
+        String response = this.webClient.post()
+                .uri("/mock-journalpost")
+                .headers(headers -> headers.addAll(orignalHeader))
+                .bodyValue(query)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block(); // Bruk block() for å utføre kallet synkront, fjern for asynkron bruk
+
+        System.out.println("Respons fra wiremock: " + response);
+
+        return response; //returnrer data tilbake til kontroller.
+
+    }
+
+
+////////////////////////////////////////////////////// TEST METODER /////////////////////////////////////////////////////////////////////
+
 
     //PDF TEST
     /*

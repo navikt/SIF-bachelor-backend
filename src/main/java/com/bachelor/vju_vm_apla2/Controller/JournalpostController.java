@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.Unprotected;
 
-@Protected
+//@Protected
 @RestController
 public class JournalpostController {
 
@@ -32,13 +32,65 @@ public class JournalpostController {
 
     //Søker på BrukerID og skal returnere en liste med journalposter
 
-    //Simple Get kall for å teste opp mot typescript klient
+    //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
-    @GetMapping("/simple_hentJournalPoster")
-    public String simple_hentJournalPosterk(){
-        System.out.println("Den blir ikke truffet");
-        return "Vi kan hente fra journalposter";
+    @PostMapping("/hentJournalpostListe")
+    public ResponseEntity<String>hentJournalpostListe(@RequestBody String query,@RequestHeader HttpHeaders headers){
+
+        System.out.println("Kontroller - Mottatt query: " + query +
+                "\n" + "Kontroller - Mottatt headers: " + headers);
+
+        String response = simpleService.hentJournalpostListe(query,headers);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .body(response);
+
     }
+
+
+
+    //Metode for å hente et enkel PDF FIL
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/get-simple-pdf")
+    public ResponseEntity<Resource> getPDF() {
+        try {
+            // Oppretter en ressurs som peker på PDF-filen i resources-mappen
+            Resource pdfResource = new ClassPathResource("__files/648126654.pdf");
+
+            if (pdfResource.exists() || pdfResource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + pdfResource.getFilename() + "\"")
+                        .body(pdfResource);
+            } else {
+                throw new RuntimeException("Kunne ikke lese filen!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Feil under behandling av filen", e);
+        }
+    }
+
+    //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
+
+
+    @GetMapping("/test/protected")
+    public String protectedPath(){
+        return "I am protected";
+    }
+
+    @Unprotected
+    @GetMapping("/test/unprotected")
+    public String unProtectedPath(){
+        return "I am unprotected";
+    }
+
+
+
+
+    ////////////////////////////////// TESTE METODER ///////////////////////////////////////////////
+
 
 
     //Enkelt Get metode som returnerer verdien som blir skrevet inn fra klienten
@@ -50,6 +102,46 @@ public class JournalpostController {
     }
 
 
+    //Simple Get kall for å teste opp mot typescript klient
+    @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
+    @GetMapping("/simple_hentJournalPoster")
+    public String simple_hentJournalPosterk(){
+        System.out.println("Den blir ikke truffet");
+        return "Vi kan hente fra journalposter";
+    }
+
+
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////// ARKIVERTE METODER ////////////////////////////////////////////////////////////////
+
+
+
+    /*
+    //UTEN PDF
+    //Klienten gjør POST-Kall hos denne kontrolleren først.
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/journalpost")
+    //Metoden tar i mot data som ligger i body fra klient og legger det inn i @RequestBody String journalpostdata
+    //RequestHeader parser header info som blir mottatt fra klient.  'Content-Type': 'application/json', 'Accept': 'application/json',
+    // **Denne metoden skal håndtere TOKEN**
+    public ResponseEntity<String> handleJournalPostRequest(@RequestBody String journalPostData, @RequestHeader HttpHeaders headers) {
+
+        System.out.println("Kontroller - Mottatt journalpost data: " + journalPostData +
+                "\n" + "Kontroller - Mottatt headers: " + headers);
+
+        String response = simpleService.handleJournalPostData(journalPostData, headers); //Sender data til Service layer (SimpleService) for å manipulering
+        return ResponseEntity.ok(response); //returnerer data fra Service layer
+    }
+
+     */
+
+
+    /*
     //Returnerer liste med Journalposter basert på brukerID som blir sendt fra klient
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/hentJournalPosterListe/{brukerID}")
@@ -120,64 +212,7 @@ public class JournalpostController {
                 .body(jsonData);
     }
 
-
-
-
-    //UTEN PDF
-    //Klienten gjør POST-Kall hos denne kontrolleren først.
-    @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/journalpost")
-    //Metoden tar i mot data som ligger i body fra klient og legger det inn i @RequestBody String journalpostdata
-    //RequestHeader parser header info som blir mottatt fra klient.  'Content-Type': 'application/json', 'Accept': 'application/json',
-    // **Denne metoden skal håndtere TOKEN**
-    public ResponseEntity<String> handleJournalPostRequest(@RequestBody String journalPostData, @RequestHeader HttpHeaders headers) {
-
-        System.out.println("Kontroller - Mottatt journalpost data: " + journalPostData +
-                "\n" + "Kontroller - Mottatt headers: " + headers);
-
-        String response = simpleService.handleJournalPostData(journalPostData, headers); //Sender data til Service layer (SimpleService) for å manipulering
-        return ResponseEntity.ok(response); //returnerer data fra Service layer
-    }
-
-
-    //Metode for å hente et enkel PDF FIL
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/get-simple-pdf")
-    public ResponseEntity<Resource> getPDF() {
-        try {
-            // Oppretter en ressurs som peker på PDF-filen i resources-mappen
-            Resource pdfResource = new ClassPathResource("__files/648126654.pdf");
-
-            if (pdfResource.exists() || pdfResource.isReadable()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_PDF)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + pdfResource.getFilename() + "\"")
-                        .body(pdfResource);
-            } else {
-                throw new RuntimeException("Kunne ikke lese filen!");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Feil under behandling av filen", e);
-        }
-    }
-
-    //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
-
-
-    @GetMapping("/test/protected")
-    public String protectedPath(){
-        return "I am protected";
-    }
-
-    @Unprotected
-    @GetMapping("/test/unprotected")
-    public String unProtectedPath(){
-        return "I am unprotected";
-    }
-
-
-
-    //////////////////////////////////////////////////////////////// TESTER ////////////////////////////////////////////////////////////////
+     */
 
     /*
     //MED PDF
