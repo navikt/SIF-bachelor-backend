@@ -1,13 +1,29 @@
 package com.bachelor.vju_vm_apla2.Controller;
 
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
+import com.nimbusds.jwt.SignedJWT;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import no.nav.security.mock.oauth2.MockOAuth2Server;
+import no.nav.security.mock.oauth2.http.OAuth2HttpServer;
+import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
+import no.nav.security.mock.oauth2.token.OAuth2TokenCallback;
+import no.nav.security.token.support.core.jwt.JwtToken;
+import okhttp3.HttpUrl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.Unprotected;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.boot.context.properties.bind.Bindable.mapOf;
 
 //@Protected
 @RestController
@@ -16,7 +32,7 @@ public class JournalpostController {
     private final SimpleService simpleService;
 
     @Autowired
-    public JournalpostController(SimpleService simpleService){
+    public JournalpostController(SimpleService simpleService) {
 
         this.simpleService = simpleService;
     }
@@ -24,7 +40,7 @@ public class JournalpostController {
     //Dette er en test API for å sjekke om man får tilgang til GET kallet gjennom localhost:8080/getjp - Dette skal funke
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
     @GetMapping("/getjp")
-    public String test(){
+    public String test() {
         return "Vi kan hente fra kontroller";
     }
 
@@ -35,12 +51,12 @@ public class JournalpostController {
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
     @PostMapping("/hentJournalpostListe")
-    public ResponseEntity<String>hentJournalpostListe(@RequestBody String query,@RequestHeader HttpHeaders headers){
+    public ResponseEntity<String> hentJournalpostListe(@RequestBody String query, @RequestHeader HttpHeaders headers) {
 
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
 
-        String response = simpleService.hentJournalpostListe(query,headers);
+        String response = simpleService.hentJournalpostListe(query, headers);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -48,7 +64,6 @@ public class JournalpostController {
                 .body(response);
 
     }
-
 
 
     //Metode for å hente et enkel PDF FIL
@@ -74,23 +89,20 @@ public class JournalpostController {
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
 
-
+    @Protected
     @GetMapping("/test/protected")
-    public String protectedPath(){
+    public String protectedPath() {
         return "I am protected";
     }
 
     @Unprotected
     @GetMapping("/test/unprotected")
-    public String unProtectedPath(){
+    public String unProtectedPath() {
         return "I am unprotected";
     }
 
 
-
-
     ////////////////////////////////// TESTE METODER ///////////////////////////////////////////////
-
 
 
     //Enkelt Get metode som returnerer verdien som blir skrevet inn fra klienten
@@ -105,16 +117,10 @@ public class JournalpostController {
     //Simple Get kall for å teste opp mot typescript klient
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
     @GetMapping("/simple_hentJournalPoster")
-    public String simple_hentJournalPosterk(){
+    public String simple_hentJournalPosterk() {
         System.out.println("Den blir ikke truffet");
         return "Vi kan hente fra journalposter";
     }
-
-
-
-
-
-
 
 
     //////////////////////////////////////////////////////////////// ARKIVERTE METODER ////////////////////////////////////////////////////////////////
@@ -284,7 +290,6 @@ public class JournalpostController {
     }
 
      */
-
 
 
 }
