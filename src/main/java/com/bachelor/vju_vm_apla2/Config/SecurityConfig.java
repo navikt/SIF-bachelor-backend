@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableJwtTokenValidation
-@EnableMockOAuth2Server
+@EnableMockOAuth2Server(port = 8082)
 public class SecurityConfig {
 
 }
