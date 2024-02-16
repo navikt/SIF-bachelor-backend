@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.Unprotected;
 
-//@Protected
+@Protected
 @RestController
 public class JournalpostController {
 
@@ -74,7 +74,7 @@ public class JournalpostController {
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
 
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/test/protected")
     public String protectedPath(){
         return "I am protected";
