@@ -6,11 +6,13 @@ import jakarta.annotation.PreDestroy;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.core.api.Unprotected;
+import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import okhttp3.HttpUrl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+
 
 @RestController
 public class SecurityController {

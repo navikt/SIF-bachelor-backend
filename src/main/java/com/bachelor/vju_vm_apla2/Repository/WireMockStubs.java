@@ -87,7 +87,6 @@ public class WireMockStubs {
 
         //Mock for søkeresultat "666". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
-                .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"666\"}", true, true))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
                         .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
@@ -128,11 +127,11 @@ public class WireMockStubs {
                                 "}")));
 
 
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).withHeader("Authorization", containing("Bearer"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"123\"}", true, true))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withHeader("Content-Type", "application/json")// Sett riktig Content-Type for respons
                         .withStatus(200) // Returner HTTP 200 OK
                         .withBody("{\n" +
                                 "  \"journalposter\": [\n" +
