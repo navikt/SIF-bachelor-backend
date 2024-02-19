@@ -21,13 +21,14 @@ public class WireMockStubs {
     @PostConstruct
     public void configureStubs() {
         wireMockServer.start();
-
+// todo :  adding edge cases for calls that needs to be authenticated
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 
         //Mock for søkeresultat "69". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"69\"}", true, true))
+                .withHeader("Authorizaton", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
                         .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
@@ -83,10 +84,15 @@ public class WireMockStubs {
                                 "      }\n" +
                                 "   }\n" +
                                 "}")));
-
+  wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+                .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"69\"}", true, true)).willReturn(aResponse().withStatus(401).withBody("nei skam deg, her går du inn i steder du ikke har lov"))
+);
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+                .willReturn(aResponse().withStatus(401).withBody("nei skam deg, her går du inn i steder du ikke har lov"))
+        ); //different end point scenarios,
 
         //Mock for søkeresultat "666". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).withHeader("Authorizaton", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
                         .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
@@ -146,8 +152,9 @@ public class WireMockStubs {
                                 "}")));
 
 
-
-
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+                .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"123\"}", true, true)).willReturn(aResponse().withStatus(401).withBody("nei skam deg, her går du inn i steder du ikke har lov"))
+        );
 
 
         ////////////////////////////////////////////////////////////TESTE METODER /////////////////////////////////////////////////////////////
@@ -183,13 +190,16 @@ public class WireMockStubs {
                         .withBody("Vi har fått svar fra Service Mock kall fra WireMock")));
 
         //GET PDF
-        wireMockServer.stubFor(WireMock.get(urlEqualTo("/getpdf"))
+        wireMockServer.stubFor(WireMock.get(urlEqualTo("/getpdf")).withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/pdf")
                         .withStatus(200)
                         .withBodyFile("648126654.pdf")));
                         //.withBody("Velkommen til VJU WireMock fjert")));
+        wireMockServer.stubFor(WireMock.get(urlEqualTo("/getpdf"))
+                .willReturn(aResponse()
+                        .withStatus(401).withBody("nei nei nei nei, du får ikke lov til å være her")));
 
     }
 

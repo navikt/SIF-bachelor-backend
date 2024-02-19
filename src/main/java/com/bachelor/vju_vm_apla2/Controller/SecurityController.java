@@ -20,7 +20,7 @@ public class SecurityController {
     private final MockOAuth2Server oAuth2Server = new MockOAuth2Server();
     @PostConstruct
     public void startOuath(){
-        oAuth2Server.start(8082); //starts the oauth server at a random port
+        oAuth2Server.start(8083); //starts the oauth server at a random port
     }
 
     @PreDestroy
@@ -36,7 +36,7 @@ public class SecurityController {
         DefaultOAuth2TokenCallback callback = new DefaultOAuth2TokenCallback(issuerId, claims);
         oAuth2Server.enqueueCallback(callback); //Decides the standard callback for the OAUTH2.0 server
         HashMap<String, Integer> hm = new HashMap<>();
-        SignedJWT t = oAuth2Server.anyToken(HttpUrl.get("http://localhost:8082/issuer1"),  hm); //creates a token, this is to test the tokenprovider, from mock ouath server
+        SignedJWT t = oAuth2Server.anyToken(HttpUrl.get("http://localhost:8083/issuer1"),  hm); //creates a token, this is to test the tokenprovider, from mock ouath server
         System.out.println(t.serialize());
         return t;
     }
