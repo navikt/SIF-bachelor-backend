@@ -1,12 +1,10 @@
 package com.bachelor.vju_vm_apla2.Config;
 
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
-import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableJwtTokenValidation
-@EnableMockOAuth2Server(port = 8082)
 public class SecurityConfig {
 
 }

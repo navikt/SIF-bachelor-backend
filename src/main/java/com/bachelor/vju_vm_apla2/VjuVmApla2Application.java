@@ -4,10 +4,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
+
+//Dette er runtime! Bruk VjuLocalApplication for å kjøre appen i development enviroment.
 @SpringBootApplication
 public class VjuVmApla2Application {
 
-    //static WireMockServer server = new WireMockServer(8081);
     public static void main(String[] args) {
 
         SpringApplication.run(VjuVmApla2Application.class, args);

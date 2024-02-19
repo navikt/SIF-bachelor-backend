@@ -21,7 +21,8 @@ public class WireMockStubs {
     @PostConstruct
     public void configureStubs() {
         wireMockServer.start();
-// todo :  adding edge cases for calls that needs to be authenticated
+        // todo :  adding edge cases for calls that needs to be authenticated
+        // todo : Add errorcode handling
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 
