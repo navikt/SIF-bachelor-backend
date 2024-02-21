@@ -23,18 +23,11 @@ public class SimpleService {
     }
 
 
-    /*
-    public SimpleService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8081").build(); // Anta at WireMock kjører på port 8081
-    }
-     */
-
-
 ////////////////////////////////////////////HOVED METODER///////////////////////////////////////////////////////////////////////////////
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
-    public String handleJournalPostData(String journalpostData, HttpHeaders originalHeader){
+    public String handleJournalPostData(String journalpostData, HttpHeaders originalHeader) {
         String response = this.webClient.post()
                 .uri("/mock-journalpost")
                 .headers(headers -> headers.addAll(originalHeader))
@@ -48,11 +41,11 @@ public class SimpleService {
         return response; //returnrer data tilbake til kontroller.
     }
 
-    public String hentJournalpostListe(String query,HttpHeaders orignalHeader ){
+    public String hentJournalpostListe(String query, HttpHeaders originalHeader) {
 
         String response = this.webClient.post()
                 .uri("/mock-journalpost")
-                .headers(headers -> headers.addAll(orignalHeader))
+                .headers(headers -> headers.addAll(originalHeader))
                 .bodyValue(query)
                 .retrieve()
                 .bodyToMono(String.class)
@@ -69,14 +62,15 @@ public class SimpleService {
 
 
     //PDF TEST
-    /*
-    public Flux<DataBuffer> fetchPdfContent() {
+
+    public Flux<DataBuffer> fetchPdfContent(String journalId) {
         return this.webClient.get()
-                .uri("/getpdf") // Endre URI etter behov
+                .uri("/getpdf?id="+journalId) // Endre URI etter behov
                 .retrieve()
                 .bodyToFlux(DataBuffer.class); // Hent PDF som en flux av DataBuffer
+        }
     }
-     */
+    /*
 
     //pdf Test med størrelse
     public Flux<DataBuffer> fetchPdfContent() {
@@ -98,3 +92,4 @@ public class SimpleService {
                 });
     }
 }
+*/
