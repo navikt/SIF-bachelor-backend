@@ -50,12 +50,12 @@ public class JournalpostController {
 
     //Metode for å hente et enkel PDF FIL
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/get-simple-pdf")
-    public ResponseEntity<Resource> getPDF(@RequestParam("id") String journalId) {
+    @GetMapping("/get-document")
+    public ResponseEntity<Resource> getPDF(@RequestParam("documentId") String documentId) {
         try {
             // Oppretter en ressurs som peker på PDF-filen i resources-mappen
             // ! Her kan du bytte ut example.pdf med den faktiske journalId'en for å finne frem.
-            Resource pdfResource = new ClassPathResource("__files/"+journalId+".pdf");
+            Resource pdfResource = new ClassPathResource("__files/"+ documentId +".pdf");
 
             if (pdfResource.exists() || pdfResource.isReadable()) {
                 return ResponseEntity.ok()

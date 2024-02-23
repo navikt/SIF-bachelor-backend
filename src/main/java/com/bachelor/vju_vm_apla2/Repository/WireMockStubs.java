@@ -48,7 +48,7 @@ public class WireMockStubs {
                                 "               \"tema\":\"OPP\",\n" +
                                 "               \"dokumenter\":[\n" +
                                 "                  {\n" +
-                                "                     \"dokumentId\":\"441010176\",\n" +
+                                "                     \"dokumentInfoId\":\"00001111\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  }\n" +
                                 "               ]\n" +
@@ -61,7 +61,7 @@ public class WireMockStubs {
                                 "               \"tema\":\"OPP\",\n" +
                                 "               \"dokumenter\":[\n" +
                                 "                  {\n" +
-                                "                     \"dokumentInfoId\":\"441007131\",\n" +
+                                "                     \"dokumentInfoId\":\"00002222\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  }\n" +
                                 "               ]\n" +
@@ -74,7 +74,7 @@ public class WireMockStubs {
                                 "               \"tema\":\"OPP\",\n" +
                                 "               \"dokumenter\":[\n" +
                                 "                  {\n" +
-                                "                     \"dokumentInfoId\":\"441007131\",\n" +
+                                "                     \"dokumentInfoId\":\"00003333\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  }\n" +
                                 "               ]\n" +
@@ -87,11 +87,11 @@ public class WireMockStubs {
                                 "               \"tema\":\"SYM\",\n" +
                                 "               \"dokumenter\":[\n" +
                                 "                  {\n" +
-                                "                     \"dokumentInfoId\":\"440831549\",\n" +
+                                "                     \"dokumentInfoId\":\"00004444\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  },\n" +
                                 "                  {\n" +
-                                "                     \"dokumentInfoId\":\"440831548\",\n" +
+                                "                     \"dokumentInfoId\":\"00005555\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  }\n" +
                                 "               ]\n" +
@@ -139,7 +139,7 @@ public class WireMockStubs {
                                         "               \"tema\":\"XYZ\",\n" +
                                         "               \"dokumenter\":[\n" +
                                         "                  {\n" +
-                                        "                     \"dokumentId\":\"666666666\",\n" +
+                                        "                     \"dokumentInfoId\":\"00006666\",\n" +
                                         "                     \"tittel\":\"Topphemmelig.pdf\"\n" +
                                         "                  }\n" +
                                         "               ]\n" +
@@ -152,7 +152,7 @@ public class WireMockStubs {
                                         "               \"tema\":\"ABC\",\n" +
                                         "               \"dokumenter\":[\n" +
                                         "                  {\n" +
-                                        "                     \"dokumentInfoId\":\"666777777\",\n" +
+                                        "                     \"dokumentInfoId\":\"00007777\",\n" +
                                         "                     \"tittel\":\"VeldigHemmelig.pdf\"\n" +
                                         "                  }\n" +
                                         "               ]\n" +
