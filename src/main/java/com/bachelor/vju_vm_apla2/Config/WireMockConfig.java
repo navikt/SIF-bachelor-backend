@@ -15,6 +15,7 @@ public class WireMockConfig {
     public WireMockServer wireMockServer() {
         return new WireMockServer(options()
                 .port(8081)
+                .extensions(new DynamiskPdfStubRespons())
                 .usingFilesUnderClasspath(".")
                 .notifier(new ConsoleNotifier(true)));
     }
