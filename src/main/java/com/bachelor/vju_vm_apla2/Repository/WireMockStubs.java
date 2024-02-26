@@ -50,6 +50,14 @@ public class WireMockStubs {
                                 "                  {\n" +
                                 "                     \"dokumentInfoId\":\"00001111\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                                "                  },\n" +
+                                "                  {\n" +
+                                "                     \"dokumentInfoId\":\"00002222\",\n" +
+                                "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                                "                  },\n" +
+                                "                  {\n" +
+                                "                     \"dokumentInfoId\":\"00003333\",\n" +
+                                "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  }\n" +
                                 "               ]\n" +
                                 "            },\n" +
@@ -61,7 +69,11 @@ public class WireMockStubs {
                                 "               \"tema\":\"OPP\",\n" +
                                 "               \"dokumenter\":[\n" +
                                 "                  {\n" +
-                                "                     \"dokumentInfoId\":\"00002222\",\n" +
+                                "                     \"dokumentInfoId\":\"00004444\",\n" +
+                                "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                                "                  },\n" +
+                                "                  {\n" +
+                                "                     \"dokumentInfoId\":\"00005555\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  }\n" +
                                 "               ]\n" +
@@ -74,7 +86,7 @@ public class WireMockStubs {
                                 "               \"tema\":\"OPP\",\n" +
                                 "               \"dokumenter\":[\n" +
                                 "                  {\n" +
-                                "                     \"dokumentInfoId\":\"00003333\",\n" +
+                                "                     \"dokumentInfoId\":\"00006666\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  }\n" +
                                 "               ]\n" +
@@ -87,11 +99,19 @@ public class WireMockStubs {
                                 "               \"tema\":\"SYM\",\n" +
                                 "               \"dokumenter\":[\n" +
                                 "                  {\n" +
-                                "                     \"dokumentInfoId\":\"00004444\",\n" +
+                                "                     \"dokumentInfoId\":\"00007777\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  },\n" +
                                 "                  {\n" +
-                                "                     \"dokumentInfoId\":\"00005555\",\n" +
+                                "                     \"dokumentInfoId\":\"00008888\",\n" +
+                                "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                                "                  },\n" +
+                                "                  {\n" +
+                                "                     \"dokumentInfoId\":\"00009999\",\n" +
+                                "                     \"tittel\":\"MASKERT_FELT\"\n" +
+                                "                  },\n" +
+                                "                  {\n" +
+                                "                     \"dokumentInfoId\":\"00010000\",\n" +
                                 "                     \"tittel\":\"MASKERT_FELT\"\n" +
                                 "                  }\n" +
                                 "               ]\n" +
