@@ -12,7 +12,9 @@ import no.nav.security.token.support.core.api.Unprotected;
 import reactor.core.publisher.Flux;
 
 
-
+/* By using the @Protected annotation, we are securing access to this class, which was already configured in our
+   SecurityConfig class with the @EnableJwtTokenValidation annotation. If the class doesn't need to be protected
+   by checking requests for valid JWT token, we can use @Unprotected  */
 @Protected
 @RestController
 public class JournalpostController {
@@ -32,7 +34,7 @@ public class JournalpostController {
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
     @PostMapping("/hentJournalpostListe")
-    public ResponseEntity<String>hentJournalpostListe(@RequestBody String query,@RequestHeader HttpHeaders headers){
+    public ResponseEntity<String>hentJournalMetaData(@RequestBody String query,@RequestHeader HttpHeaders headers){
 
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
