@@ -3,7 +3,7 @@
 http.proxy.parametername: notused
 
 no.nav.security.jwt:
-  expirythreshold: 1 #threshold in minutes until token expires
+  expirythreshold: 10 #threshold in minutes until token expires
   issuer:
     issuer1:
       discovery-url: http://localhost:${mock-oauth2-server.port}/default/.well-known/openid-configuration
