@@ -17,4 +17,4 @@ logging.level:
 #VIKTIG
 #Variabel for å sette statisk port for mock serveren utenfor testing enviroment.
 mock-oauth2-server:
-      port: 8282
+  port: 8282
