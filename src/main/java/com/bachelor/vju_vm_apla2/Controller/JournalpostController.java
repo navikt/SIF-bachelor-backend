@@ -14,7 +14,7 @@ import reactor.core.publisher.Flux;
 
 /* By using the @Protected annotation, we are securing access to this class, which was already configured in our
    SecurityConfig class with the @EnableJwtTokenValidation annotation. If the class doesn't need to be protected
-   by checking requests for valid JWT token, we can use @Unprotected  */
+   by checking requests for valid JWT token, we can use @Unprotected s */
 @Protected
 @RestController
 public class JournalpostController {
