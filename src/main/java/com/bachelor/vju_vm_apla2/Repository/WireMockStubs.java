@@ -31,7 +31,7 @@ public class WireMockStubs {
         //Mock for søkeresultat "69". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
-                .withHeader("Authorizaton", containing("Bearer"))
+  //              .withHeader("Authorizaton", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
                         .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
@@ -123,7 +123,7 @@ public class WireMockStubs {
                         )
                 )
         );
-
+/*
         //Denne gir feil 401 not authorized dersom du prøver å kalle!!
 
 
@@ -135,7 +135,7 @@ public class WireMockStubs {
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
                 .willReturn(aResponse().withStatus(401).withBody("unauthorized")));
         //different end point scenarios, covering all end edge cases
-
+*/
         //Mock for søkeresultat "666". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer"))
