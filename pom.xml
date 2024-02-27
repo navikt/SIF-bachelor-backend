@@ -144,10 +144,10 @@
                                 <DateTime>java.util.Date</DateTime>
                                 <Price.amount>java.math.BigDecimal</Price.amount>
                             </customTypesMapping>
-                            <generateClient>true</generateClient>
-                            <generateApis>false</generateApis>
+                            <generateClient>false</generateClient>
+                            <generateApis>true</generateApis>
                             <generateBuilder>false</generateBuilder>
-                            <generateToString>true</generateToString>
+                            <generateToString>false</generateToString>
                             <generateParameterizedFieldsResolvers>false</generateParameterizedFieldsResolvers>
                             <addGeneratedAnnotation>true</addGeneratedAnnotation>
                             <generatedAnnotation>jakarta.annotation.Generated</generatedAnnotation>
