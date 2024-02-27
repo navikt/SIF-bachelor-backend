@@ -181,7 +181,6 @@ public class WireMockStubs {
 
     }
 
-
     @PreDestroy
     public void stopWireMockServer() {
         wireMockServer.stop();
