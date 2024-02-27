@@ -33,7 +33,7 @@ public class JournalpostController {
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
     @PostMapping("/hentJournalpostListe")
-    public ResponseEntity<String> hentJournalpostListe(@RequestBody FraKlient_DTO_test query, @RequestHeader HttpHeaders headers) {
+    public ResponseEntity<String> hentJournalpostListe(@RequestBody String query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
         String response = simpleService.hentJournalpostListe(query, headers);
