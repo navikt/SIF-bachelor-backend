@@ -30,7 +30,7 @@ public class WireMockStubs {
 
         //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
-                .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
+                .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"001\"}}", true, true))
                 //.withHeader("Authorizaton", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
