@@ -28,10 +28,10 @@ public class WireMockStubs {
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 
-        //Mock for søkeresultat "69". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+        //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
-  //              .withHeader("Authorizaton", containing("Bearer"))
+                //.withHeader("Authorizaton", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
                         .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
@@ -123,21 +123,23 @@ public class WireMockStubs {
                         )
                 )
         );
-/*
-        //Denne gir feil 401 not authorized dersom du prøver å kalle!!
 
 
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
-                .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"69\"}", true, true)).willReturn(aResponse().withStatus(401).withBody("nei skam deg, her går du inn i steder du ikke har lov"))
-        );
+
+        //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
+        //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
+        // Eksempel på en spesifikk stub for dokumentID "00001111"
+        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/001/(.*)"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/pdf")
+                        .withStatus(200)
+                        .withHeader("Content-Disposition", "inline; filename=\"example.pdf\"")
+                        .withTransformers("dynamic-pdf-response-transformer")));
 
 
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
-                .willReturn(aResponse().withStatus(401).withBody("unauthorized")));
-        //different end point scenarios, covering all end edge cases
-*/
-        //Mock for søkeresultat "666". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+        //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
@@ -178,24 +180,6 @@ public class WireMockStubs {
                                 "   }" +
                                 "}")));
 
-        //Journalpost SERIVCE - POST//
-        wireMockServer.stubFor(post(urlEqualTo("/journalpost-mock"))
-                .withRequestBody(containing("453857319")).withHeader("Authorizaton", containing("Bearer")) // Sjekk om forespørselskroppen inneholder denne strengen
-                .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json;charset=UTF-8") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
-                        .withBody("Vi har fått svar fra Service Mock kall fra WireMock")));
-
-        wireMockServer.stubFor(post((urlEqualTo("/journalpost-mock"))).withRequestBody(containing("543853719")).willReturn(aResponse().withBody("Unauthorized").withStatus(401)));
-        //GET PDF
-        wireMockServer.stubFor(WireMock.get(urlEqualTo("/rest/hentdokument/620233453/648126654/ARKIV")).withHeader("Authorization", containing("Bearer"))
-                .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*")
-                        .withHeader("Content-Type", "application/pdf")
-                        .withStatus(200)
-                        .withBodyFile("example.pdf")));
-        wireMockServer.stubFor(WireMock.get(urlEqualTo("/rest/hentdokument/620233453/648126654/ARKIV")).willReturn(aResponse().withStatus(401).withBody("Unauthorized"))); //vi kan vel ikke ha saf-url-er i lokalt testmiljø eller er det noe jeg har misforstått?
     }
 
     @PreDestroy

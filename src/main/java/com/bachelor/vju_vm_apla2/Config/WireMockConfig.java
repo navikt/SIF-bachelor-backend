@@ -20,6 +20,7 @@ public class WireMockConfig {
     public WireMockServer wireMockServer() {
         return new WireMockServer(options()
                 .port(8081)
+                .extensions(new DynamiskPdfStubRespons())
                 /* Below is the classpath which is "." meaning current classpath root, where WireMock will look
                    for files such as stubs. */
                 .usingFilesUnderClasspath(".")
