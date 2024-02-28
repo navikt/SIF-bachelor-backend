@@ -147,7 +147,7 @@
                             <generateClient>false</generateClient>
                             <generateApis>true</generateApis>
                             <generateBuilder>false</generateBuilder>
-                            <generateToString>false</generateToString>
+                            <generateToString>true</generateToString>
                             <generateParameterizedFieldsResolvers>false</generateParameterizedFieldsResolvers>
                             <addGeneratedAnnotation>true</addGeneratedAnnotation>
                             <generatedAnnotation>jakarta.annotation.Generated</generatedAnnotation>

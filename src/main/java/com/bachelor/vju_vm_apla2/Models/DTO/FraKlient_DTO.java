@@ -14,7 +14,7 @@ public class FraKlient_DTO {
     private List<Journalposttype> journalposttyper;
     private List<Journalstatus> journalstatuser;
     private List<Tema> tema;
-    private Integer foerste;
+    //private Integer foerste;
 
-    private String etter;
+    //private String etter;
 }

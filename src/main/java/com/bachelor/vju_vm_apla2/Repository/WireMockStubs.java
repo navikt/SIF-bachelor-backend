@@ -28,10 +28,11 @@ public class WireMockStubs {
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 
+
         //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
                 .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"001\"}}", true, true))
-                //.withHeader("Authorizaton", containing("Bearer"))
+                .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
                         .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
@@ -138,9 +139,11 @@ public class WireMockStubs {
                         .withTransformers("dynamic-pdf-response-transformer")));
 
 
+
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
-                .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer"))
+                .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"002\"}}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
                         .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
@@ -181,6 +184,8 @@ public class WireMockStubs {
                                 "}")));
 
     }
+
+
 
     @PreDestroy
     public void stopWireMockServer() {
