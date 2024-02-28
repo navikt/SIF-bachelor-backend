@@ -124,23 +124,24 @@ public class WireMockStubs {
                 )
         );
 
-        //Denne gir feil 401 not authorized dersom du prøver å kalle!!
-
+        //
 
         //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
         //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
         // Eksempel på en spesifikk stub for dokumentID "00001111"
-        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/001/(.*)"))
+        wireMockServer.stubFor(get("/mock/rest/hentdokument/001/").willReturn(aResponse().withStatus(403).withBody("Konsument har ikke tilgang til å kalle tjenesten.")));
+        wireMockServer.stubFor(post("/mock/rest/hentdokument/001/").willReturn(aResponse().withStatus(405).withBody("Method not allowed")));
+        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/001")).willReturn(aResponse().withStatus(500).withBody("Not found")));
+        wireMockServer.stubFor(get("/mock/rest/hentdokument/001/").withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/pdf")
-                        .withStatus(200)
-                        .withHeader("Content-Disposition", "inline; filename=\"example.pdf\"")
-                        .withTransformers("dynamic-pdf-response-transformer")));
+                        .withStatus(200).withBodyFile("example.pdf")));
+
 
 
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
@@ -180,6 +181,8 @@ public class WireMockStubs {
                                 "      }\n" +
                                 "   }" +
                                 "}")));
+
+
 
     }
 

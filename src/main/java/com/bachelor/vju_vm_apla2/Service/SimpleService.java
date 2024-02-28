@@ -32,7 +32,7 @@ public class SimpleService {
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
     public String hentJournalpostListe(String query, HttpHeaders originalHeader) {
         String response = this.webClient.post()
-                .uri("/mock/saf.dev.intern.nav.no/graphql")
+                .uri("/mock/graphql")
                 .headers(headers -> headers.addAll(originalHeader))
                 .bodyValue(query)
                 .retrieve()
