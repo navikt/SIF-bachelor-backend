@@ -1,9 +1,6 @@
 package com.bachelor.vju_vm_apla2.Models.DTO;
 
-import com.bachelor.vju_vm_apla2.graphql.BrukerIdInput;
-import com.bachelor.vju_vm_apla2.graphql.Journalposttype;
-import com.bachelor.vju_vm_apla2.graphql.Journalstatus;
-import com.bachelor.vju_vm_apla2.graphql.Tema;
+import com.bachelor.vju_vm_apla2.Models.POJO.graphql.*;
 import lombok.Data;
 
 import java.util.List;

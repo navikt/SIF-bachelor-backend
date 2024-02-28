@@ -1,6 +1,6 @@
 package com.bachelor.vju_vm_apla2.Models.DTO;
 
-import com.bachelor.vju_vm_apla2.graphql.*;
+import com.bachelor.vju_vm_apla2.Models.POJO.graphql.*;
 import lombok.Data;
 
 import java.util.List;
