@@ -14,12 +14,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 @Configuration
 public class WireMockStubs {
 
-   static private WireMockServer wireMockServer;
+    static private WireMockServer wireMockServer;
 
     @Autowired
     public WireMockStubs(WireMockServer wireMockServer) {
         this.wireMockServer = wireMockServer;
     }
+
     @PostConstruct
     public void configureStubs() {
         wireMockServer.start();
@@ -27,7 +28,9 @@ public class WireMockStubs {
         // todo : Add errorcode handling
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
-
+//todo: 401 and 500 here
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody("Unauthorized")));
+        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody("internal server error")));
         //Mock for søkeresultat "69". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
@@ -129,9 +132,15 @@ public class WireMockStubs {
         //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
         //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
         // Eksempel på en spesifikk stub for dokumentID "00001111"
-        wireMockServer.stubFor(get("/mock/rest/hentdokument/001/").willReturn(aResponse().withStatus(403).withBody("Konsument har ikke tilgang til å kalle tjenesten.")));
-        wireMockServer.stubFor(post("/mock/rest/hentdokument/001/").willReturn(aResponse().withStatus(405).withBody("Method not allowed")));
-        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/001")).willReturn(aResponse().withStatus(500).withBody("Not found")));
+        wireMockServer.stubFor(get("/mock/rest/hentdokument/001/").willReturn(aResponse().
+                withStatus(403).withBody("Konsument har ikke tilgang til å kalle tjenesten.")));
+        wireMockServer.stubFor(post("/mock/rest/hentdokument/001/").
+                willReturn(aResponse().
+                        withStatus(405).
+                        withBody("Method not allowed")));
+        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/001"))
+                .willReturn(aResponse().withStatus(500).
+                        withBody("Internal Server Error")));
         wireMockServer.stubFor(get("/mock/rest/hentdokument/001/").withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
@@ -139,8 +148,20 @@ public class WireMockStubs {
                         .withStatus(200).withBodyFile("example.pdf")));
 
 
-
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
+        wireMockServer.
+                stubFor(post(urlEqualTo("/mock/graphql")).
+                        withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).
+                        willReturn(aResponse().
+                                withStatus(401).withBody("Unauthorzied")));
+        wireMockServer.stubFor(post("/mock/graphql").willReturn(aResponse().
+                withStatus(404).
+                withBody("not found")));
+        wireMockServer.stubFor(get("/mock/graphql").
+                willReturn(aResponse().
+                        withStatus(500).
+                        withBody("Internal Server error")));
+        //todo: maybe more stubs here?
         wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
@@ -181,7 +202,6 @@ public class WireMockStubs {
                                 "      }\n" +
                                 "   }" +
                                 "}")));
-
 
 
     }
