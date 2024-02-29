@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
 
 @Configuration
 public class WireMockStubs {
@@ -29,8 +30,8 @@ public class WireMockStubs {
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 //todo: 401 and 500 here
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody("Unauthorized")));
-        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody("internal server error")));
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.reasonPhrase())));
+        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.reasonPhrase())));
         //Mock for søkeresultat "69". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
@@ -133,14 +134,14 @@ public class WireMockStubs {
         //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
         // Eksempel på en spesifikk stub for dokumentID "00001111"
         wireMockServer.stubFor(get("/mock/rest/hentdokument/001/").willReturn(aResponse().
-                withStatus(403).withBody("Konsument har ikke tilgang til å kalle tjenesten.")));
+                withStatus(403).withBody(UNAUTHORIZED.reasonPhrase()))); //According to OPENAPI spec by nav, this is what a 403 should return?
         wireMockServer.stubFor(post("/mock/rest/hentdokument/001/").
                 willReturn(aResponse().
                         withStatus(405).
-                        withBody("Method not allowed")));
+                        withBody(METHOD_NOT_ALLOWED.reasonPhrase())));
         wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/001"))
                 .willReturn(aResponse().withStatus(500).
-                        withBody("Internal Server Error")));
+                        withBody(INTERNAL_SERVER_ERROR.reasonPhrase())));
         wireMockServer.stubFor(get("/mock/rest/hentdokument/001/").withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
@@ -153,14 +154,14 @@ public class WireMockStubs {
                 stubFor(post(urlEqualTo("/mock/graphql")).
                         withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).
                         willReturn(aResponse().
-                                withStatus(401).withBody("Unauthorzied")));
+                                withStatus(401).withBody(UNAUTHORIZED.reasonPhrase())));
         wireMockServer.stubFor(post("/mock/graphql").willReturn(aResponse().
                 withStatus(404).
-                withBody("not found")));
+                withBody(NOT_FOUND.toString())));
         wireMockServer.stubFor(get("/mock/graphql").
                 willReturn(aResponse().
-                        withStatus(500).
-                        withBody("Internal Server error")));
+                        withStatus(500). //500 when you tries to use wrong method -> maybe a more detailed response where you can see WHAT you are doing wrong?
+                        withBody(INTERNAL_SERVER_ERROR.reasonPhrase()))); //standard internal server errors for now, maybe consider INTERNAL_SERVER_ERROR?
         //todo: maybe more stubs here?
         wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer"))
