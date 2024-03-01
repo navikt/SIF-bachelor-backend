@@ -43,7 +43,7 @@ public class JournalpostController {
     public Mono<ResponseEntity<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
-
+        System.out.println();
         return simpleService.hentJournalpostListe(query, headers)
                 .map(response -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
