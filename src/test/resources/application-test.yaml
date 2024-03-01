@@ -1,5 +1,4 @@
 
-
 http.proxy.parametername: notused
 
 no.nav.security.jwt:
@@ -8,7 +7,12 @@ no.nav.security.jwt:
     issuer1:
       discovery-url: http://localhost:${mock-oauth2-server.port}/default/.well-known/openid-configuration
       accepted_audience: default
+    issuer2:
+      discovery-url: http://localhost:${mock-oauth2-server.port}/default/.well-known/openid-configuration
+      accepted_audience: default
 
 logging.level:
   org.springframework: INFO
   no.nav: DEBUG
+
+

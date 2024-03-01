@@ -4,11 +4,19 @@ import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.Unprotected;
+import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+
+/* By using the @Protected annotation, we are securing access to this class, which was already configured in our
+   SecurityConfig class with the @EnableJwtTokenValidation annotation. If the class doesn't need to be protected
+   by checking requests for valid JWT token, we can use @Unprotected s */
 @Protected
 @RestController
 public class JournalpostController {
@@ -16,16 +24,9 @@ public class JournalpostController {
     private final SimpleService simpleService;
 
     @Autowired
-    public JournalpostController(SimpleService simpleService){
+    public JournalpostController(SimpleService simpleService) {
 
         this.simpleService = simpleService;
-    }
-
-    //Dette er en test API for å sjekke om man får tilgang til GET kallet gjennom localhost:8080/getjp - Dette skal funke
-    @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
-    @GetMapping("/getjp")
-    public String test(){
-        return "Vi kan hente fra kontroller";
     }
 
     //////////////////////////////////////////////////// HOVED METODER ///////////////////////////////////////////////////////////////////////
@@ -35,13 +36,10 @@ public class JournalpostController {
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
     @PostMapping("/hentJournalpostListe")
-    public ResponseEntity<String>hentJournalpostListe(@RequestBody String query,@RequestHeader HttpHeaders headers){
-
+    public ResponseEntity<String> hentJournalpostListe(@RequestBody String query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
-
-        String response = simpleService.hentJournalpostListe(query,headers);
-
+        String response = simpleService.hentJournalpostListe(query, headers);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
@@ -49,172 +47,42 @@ public class JournalpostController {
 
     }
 
-
-
-    //Metode for å hente et enkel PDF FIL
+    //Metode for å hente dokumentID basert på response fra SAF - graphql
+    //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/get-simple-pdf")
-    public ResponseEntity<Resource> getPDF() {
-        try {
-            // Oppretter en ressurs som peker på PDF-filen i resources-mappen
-            Resource pdfResource = new ClassPathResource("__files/648126654.pdf");
-
-            if (pdfResource.exists() || pdfResource.isReadable()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_PDF)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + pdfResource.getFilename() + "\"")
-                        .body(pdfResource);
-            } else {
-                throw new RuntimeException("Kunne ikke lese filen!");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Feil under behandling av filen", e);
-        }
+    @GetMapping("/hentDokumenter")
+    public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestHeader HttpHeaders headers) {
+        System.out.println("Kontroller - Mottatt query: " + dokumentInfoId +
+                "\n" + "Nå går vi inn i service klassen");
+        return simpleService.hentDokument(dokumentInfoId, headers)
+                .map(pdfResource ->
+                        ResponseEntity.ok()
+                                .contentType(MediaType.APPLICATION_PDF)
+                                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"")
+                                .body(pdfResource)
+                );
     }
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/test/protected")
-    public String protectedPath(){
+    public String protectedPath() {
         return "I am protected";
     }
 
     @Unprotected
     @GetMapping("/test/unprotected")
-    public String unProtectedPath(){
+    public String unProtectedPath() {
         return "I am unprotected";
     }
-
-
-
-
-    ////////////////////////////////// TESTE METODER ///////////////////////////////////////////////
-
-
-
-    //Enkelt Get metode som returnerer verdien som blir skrevet inn fra klienten
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/hentJournalPoster/{brukerID}")
-    public String hentJournalPoster(@PathVariable String brukerID) {
-        // Bruk brukerID her, for eksempel for å hente informasjon fra en database
-        return "Vi kan hente fra journalposter for brukerID: " + brukerID;
-    }
-
-
-    //Simple Get kall for å teste opp mot typescript klient
-    @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
-    @GetMapping("/simple_hentJournalPoster")
-    public String simple_hentJournalPosterk(){
-        System.out.println("Den blir ikke truffet");
-        return "Vi kan hente fra journalposter";
-    }
-
-
-
-
-
-
 
 
     //////////////////////////////////////////////////////////////// ARKIVERTE METODER ////////////////////////////////////////////////////////////////
 
 
+   /*
 
-    /*
-    //UTEN PDF
-    //Klienten gjør POST-Kall hos denne kontrolleren først.
-    @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/journalpost")
-    //Metoden tar i mot data som ligger i body fra klient og legger det inn i @RequestBody String journalpostdata
-    //RequestHeader parser header info som blir mottatt fra klient.  'Content-Type': 'application/json', 'Accept': 'application/json',
-    // **Denne metoden skal håndtere TOKEN**
-    public ResponseEntity<String> handleJournalPostRequest(@RequestBody String journalPostData, @RequestHeader HttpHeaders headers) {
-
-        System.out.println("Kontroller - Mottatt journalpost data: " + journalPostData +
-                "\n" + "Kontroller - Mottatt headers: " + headers);
-
-        String response = simpleService.handleJournalPostData(journalPostData, headers); //Sender data til Service layer (SimpleService) for å manipulering
-        return ResponseEntity.ok(response); //returnerer data fra Service layer
-    }
-
-     */
-
-
-    /*
-    //Returnerer liste med Journalposter basert på brukerID som blir sendt fra klient
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/hentJournalPosterListe/{brukerID}")
-    public ResponseEntity<String> hentJournalPosterListe(@PathVariable String brukerID) {
-        String jsonData;
-        if ("69".equals(brukerID)) {
-            jsonData = "{\n" +
-                    "   \"data\":{\n" +
-                    "      \"dokumentoversiktBruker\":{\n" +
-                    "         \"journalposter\":[\n" +
-                    "            {\n" +
-                    "               \"journalpostId\":\"429111291\",\n" +
-                    "               \"tittel\":\"MASKERT_FELT\",\n" +
-                    "               \"journalposttype\":\"U\",\n" +
-                    "               \"journalstatus\":\"FERDIGSTILT\",\n" +
-                    "               \"tema\":\"OPP\",\n" +
-                    "               \"dokumenter\":[\n" +
-                    "                  {\n" +
-                    "                     \"dokumentId\":\"441010176\",\n" +
-                    "                     \"tittel\":\"MASKERT_FELT\"\n" +
-                    "                  }\n" +
-                    "               ]\n" +
-                    "            },\n" +
-                    "            {\n" +
-                    "               \"journalpostId\":\"429108246\",\n" +
-                    "               \"tittel\":\"MASKERT_FELT\",\n" +
-                    "               \"journalposttype\":\"U\",\n" +
-                    "               \"journalstatus\":\"FERDIGSTILT\",\n" +
-                    "               \"tema\":\"OPP\",\n" +
-                    "               \"dokumenter\":[\n" +
-                    "                  {\n" +
-                    "                     \"dokumentInfoId\":\"441007131\",\n" +
-                    "                     \"tittel\":\"MASKERT_FELT\"\n" +
-                    "                  }\n" +
-                    "               ]\n" +
-                    "            },\n" +
-                    "            {\n" +
-                    "               \"journalpostId\":\"428965411\",\n" +
-                    "               \"tittel\":\"MASKERT_FELT\",\n" +
-                    "               \"journalposttype\":\"I\",\n" +
-                    "               \"journalstatus\":\"JOURNALFOERT\",\n" +
-                    "               \"tema\":\"SYM\",\n" +
-                    "               \"dokumenter\":[\n" +
-                    "                  {\n" +
-                    "                     \"dokumentInfoId\":\"440831549\",\n" +
-                    "                     \"tittel\":\"MASKERT_FELT\"\n" +
-                    "                  },\n" +
-                    "                  {\n" +
-                    "                     \"dokumentInfoId\":\"440831548\",\n" +
-                    "                     \"tittel\":\"MASKERT_FELT\"\n" +
-                    "                  }\n" +
-                    "               ]\n" +
-                    "            }\n" +
-                    "         ]\n" +
-                    "      }\n" +
-                    "   }\n" +
-                    "}";
-        } else if ("666".equals(brukerID)) {
-            jsonData = "\"Did you seek me??\"";
-        } else {
-            // Du kan legge til en standard respons her
-            jsonData = "\"No data available\"";
-        }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
-                .body(jsonData);
-    }
-
-     */
-
-    /*
     //MED PDF
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/journalpost")
@@ -232,13 +100,12 @@ public class JournalpostController {
 
      */
 
-    //PDF TEST
-    /*
+ /*   //PDF TEST
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/getpdf")
-    public ResponseEntity<Flux<DataBuffer>> getPDF() {
+    public ResponseEntity<Flux<DataBuffer>> getPDF2(@RequestParam("id") String journalId) {
         System.out.println("Kontroller - getPDF: vi er inne i metoden");
-        Flux<DataBuffer> pdfContent = simpleService.fetchPdfContent();
+        Flux<DataBuffer> pdfContent = simpleService.fetchPdfContent(journalId);
         System.out.println("Kontroller - getPDF: mottatt pdf fra service");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -246,12 +113,13 @@ public class JournalpostController {
 
         System.out.println("Kontroller - getPDF: Sender pdf til klienten");
         return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
                 .headers(headers)
                 .body(pdfContent);
 
-    }
+    }*/
+}
 
-     */
 
 
 
@@ -287,4 +155,3 @@ public class JournalpostController {
 
 
 
-}
