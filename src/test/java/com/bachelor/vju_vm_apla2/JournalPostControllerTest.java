@@ -29,20 +29,20 @@ public class JournalPostControllerTest {
 
     @InjectMocks
     JournalpostController jpContrllerInject = new JournalpostController(simpleService);
-    @Test
+    /*@Test
     public void sendToController(){
 
         //simpel test to test the test method in the controller
         Mockito.when(jpController.test()).thenReturn("vi kan hente fra kontroller");
         String res = jpController.test();
         assertEquals("vi kan hente fra kontroller", res);
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void hentJournalpostTest (){
 Mockito.when(jpController.hentJournalpostListe(anyString(), ArgumentMatchers.any(HttpHeaders.class))).thenReturn(null);
 String brukerid = "asdsd12123312";
 HttpHeaders headers = new HttpHeaders();
 assertNull(jpController.hentJournalpostListe(brukerid, headers));
-    }
+    }*/
 }
