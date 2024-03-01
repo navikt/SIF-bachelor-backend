@@ -40,7 +40,7 @@ public class SimpleService {
                 .bodyValue(query)
                 .retrieve()
                 .bodyToMono(FraGrapQl_DTO.class);
-        System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response );
+        System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response.toString());
         return response;
 
 

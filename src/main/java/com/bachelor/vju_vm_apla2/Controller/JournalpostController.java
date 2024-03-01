@@ -16,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.sql.SQLOutput;
+
 
 /* By using the @Protected annotation, we are securing access to this class, which was already configured in our
    SecurityConfig class with the @EnableJwtTokenValidation annotation. If the class doesn't need to be protected
@@ -38,15 +40,16 @@ public class JournalpostController {
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
     @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
     @PostMapping("/hentJournalpostListe")
-    public ResponseEntity<Mono<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
+    public Mono<ResponseEntity<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
-        Mono<FraGrapQl_DTO> response = simpleService.hentJournalpostListe(query, headers);
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
-                .body(response);
 
+        return simpleService.hentJournalpostListe(query, headers)
+                .map(response -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                        .body(response))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     //Metode for å hente dokumentID basert på response fra SAF - graphql
