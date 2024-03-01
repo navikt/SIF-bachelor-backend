@@ -34,14 +34,14 @@ public class SimpleService {
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
     public Mono<FraGrapQl_DTO> hentJournalpostListe(FraKlient_DTO query, HttpHeaders originalHeader) {
-        Mono<FraGrapQl_DTO> response = this.webClient.post()
+        System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock");
+        return this.webClient.post()
                 .uri("/mock/saf.dev.intern.nav.no/graphql")
                 .headers(headers -> headers.addAll(originalHeader))
                 .bodyValue(query)
                 .retrieve()
-                .bodyToMono(FraGrapQl_DTO.class);
-        System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response.toString());
-        return response;
+                .bodyToMono(FraGrapQl_DTO.class)
+                .doOnNext(response -> System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response));
 
 
     }
