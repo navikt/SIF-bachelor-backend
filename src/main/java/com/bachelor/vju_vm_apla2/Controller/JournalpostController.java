@@ -5,6 +5,7 @@ import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO_test;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -15,8 +16,11 @@ import no.nav.security.token.support.core.api.Unprotected;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import org.apache.logging.log4j.Logger;
+import java.nio.charset.StandardCharsets;
 
 import java.sql.SQLOutput;
+import org.apache.logging.log4j.LogManager;
 
 
 /* By using the @Protected annotation, we are securing access to this class, which was already configured in our
@@ -27,6 +31,8 @@ import java.sql.SQLOutput;
 public class JournalpostController {
 
     private final SimpleService simpleService;
+
+    private static final Logger logger = LogManager.getLogger(JournalpostController.class);
 
     @Autowired
     public JournalpostController(SimpleService simpleService) {
@@ -49,7 +55,20 @@ public class JournalpostController {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
                         .body(response))
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .defaultIfEmpty(ResponseEntity.notFound().build())
+                /* Added error handling below, which triggers if something wrong happens during processing of the stream, which
+                   represents fetching the journalpost metadata. If that happens, then we will call the errorResume. This will
+                   then return an INTERNAL SERVER ERROR. Why use this? Try catch is blocking, whilst this method doesn't block the
+                   main thread. */
+                .onErrorResume(e -> {
+                    String errorMessage = "Error trying to fetch journalpost metadata in the controller ";
+                    logger.error(errorMessage, e);
+
+                    return Mono.just(
+                            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new FraGrapQl_DTO(errorMessage, e.getMessage()))
+                    );
+                });
     }
 
     //Metode for å hente dokumentID basert på response fra SAF - graphql
@@ -64,8 +83,21 @@ public class JournalpostController {
                         ResponseEntity.ok()
                                 .contentType(MediaType.APPLICATION_PDF)
                                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"")
-                                .body(pdfResource)
-                );
+                                .body(pdfResource))
+                // Error handling below
+                .onErrorResume(e -> {
+                    // Log the exception for debugging purposes
+                    String errorMessage = "Error in retrieving the document with document info id: " + dokumentInfoId;
+                    logger.error(errorMessage, e);
+
+                    ByteArrayResource errorResource = new ByteArrayResource(errorMessage.getBytes(StandardCharsets.UTF_8));
+                    return Mono.just(
+                            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                    .contentType(MediaType.TEXT_PLAIN)
+                                    .body(errorResource)
+                    );
+                });
+
     }
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////

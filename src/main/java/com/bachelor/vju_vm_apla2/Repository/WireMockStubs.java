@@ -295,7 +295,7 @@ public class WireMockStubs {
                                 "            \"journalposttype\":\"U\",\n" +
                                 "            \"journalstatus\":\"FERDIGSTILT\",\n" +
                                 "            \"tema\":\"OPP\",\n" +
-                                "            \"datoOpprettet\":\"2024-11-01T12:00:00Z\",\n" +
+                                "            \"datoOpprettet\":\"2021-11-01T12:00:00Z\",\n" +
                                 "            \"dokumenter\":[\n" +
                                 "               {\n" +
                                 "                  \"dokumentInfoId\":\"00004444\",\n" +
@@ -313,6 +313,7 @@ public class WireMockStubs {
                                 "            \"journalposttype\":\"U\",\n" +
                                 "            \"journalstatus\":\"EKSPEDERT\",\n" +
                                 "            \"tema\":\"OPP\",\n" +
+                                "            \"datoOpprettet\":\"2023-11-01T12:00:00Z\",\n" +
                                 "            \"dokumenter\":[\n" +
                                 "               {\n" +
                                 "                  \"dokumentInfoId\":\"00006666\",\n" +
@@ -326,7 +327,7 @@ public class WireMockStubs {
                                 "            \"journalposttype\":\"I\",\n" +
                                 "            \"journalstatus\":\"JOURNALFOERT\",\n" +
                                 "            \"tema\":\"SYM\",\n" +
-                                "            \"datoOpprettet\":\"2024-01-01T12:00:00Z\",\n" +
+                                "            \"datoOpprettet\":\"2020-01-01T12:00:00Z\",\n" +
                                 "            \"dokumenter\":[\n" +
                                 "               {\n" +
                                 "                  \"dokumentInfoId\":\"00007777\",\n" +
