@@ -228,6 +228,129 @@ public class WireMockStubs {
                                 "}")));
 
 
+        //Mock for søkeresultat "004". Gir response basert på brukerID input fra clienten.
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+                .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"004\"}}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody("{\n" +
+                                "   \"dokumentoversikt\":{\n" +
+                                "      \"journalposter\":[\n" +
+                                "         {\n" +
+                                "            \"journalpostId\":\"666111111\",\n" +
+                                "            \"tittel\":\"Hemmelig dokument\",\n" +
+                                "            \"journalposttype\":\"U\",\n" +
+                                "            \"journalstatus\":\"FERDIGSTILT\",\n" +
+                                "            \"tema\":\"OPP\",\n" +
+                                "            \"datoOpprettet\":\"2024-03-01T12:00:00Z\",\n" +
+                                "            \"dokumenter\":[\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00006666\",\n" +
+                                "                  \"tittel\":\"Topphemmelig.pdf\"\n" +
+                                "               }\n" +
+                                "            ]\n" +
+                                "         },\n" +
+                                "         {\n" +
+                                "            \"journalpostId\":\"666222222\",\n" +
+                                "            \"tittel\":\"Enda et hemmelig dokument\",\n" +
+                                "            \"journalposttype\":\"I\",\n" +
+                                "            \"journalstatus\":\"JOURNALFOERT\",\n" +
+                                "            \"tema\":\"OPP\",\n" +
+                                "            \"datoOpprettet\":\"2024-03-02T12:00:00Z\",\n" +
+                                "            \"dokumenter\":[\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00007777\",\n" +
+                                "                  \"tittel\":\"VeldigHemmelig.pdf\"\n" +
+                                "               }\n" +
+                                "            ]\n" +
+                                "         },\n" +
+                                "         {\n" +
+                                "            \"journalpostId\":\"429111291\",\n" +
+                                "            \"tittel\":\"Svak Postkasse\",\n" +
+                                "            \"journalposttype\":\"U\",\n" +
+                                "            \"journalstatus\":\"FERDIGSTILT\",\n" +
+                                "            \"tema\":\"OPP\",\n" +
+                                "            \"datoOpprettet\":\"2024-07-01T12:00:00Z\",\n" +
+                                "            \"dokumenter\":[\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00001111\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               },\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00002222\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               },\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00003333\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               }\n" +
+                                "            ]\n" +
+                                "         },\n" +
+                                "         {\n" +
+                                "            \"journalpostId\":\"429108246\",\n" +
+                                "            \"tittel\":\"Rusten Veikryss\",\n" +
+                                "            \"journalposttype\":\"U\",\n" +
+                                "            \"journalstatus\":\"FERDIGSTILT\",\n" +
+                                "            \"tema\":\"OPP\",\n" +
+                                "            \"datoOpprettet\":\"2024-11-01T12:00:00Z\",\n" +
+                                "            \"dokumenter\":[\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00004444\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               },\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00005555\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               }\n" +
+                                "            ]\n" +
+                                "         },\n" +
+                                "         {\n" +
+                                "            \"journalpostId\":\"428965411\",\n" +
+                                "            \"tittel\":\"Rusten Veikryss\",\n" +
+                                "            \"journalposttype\":\"U\",\n" +
+                                "            \"journalstatus\":\"EKSPEDERT\",\n" +
+                                "            \"tema\":\"OPP\",\n" +
+                                "            \"dokumenter\":[\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00006666\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               }\n" +
+                                "            ]\n" +
+                                "         },\n" +
+                                "         {\n" +
+                                "            \"journalpostId\":\"429101111\",\n" +
+                                "            \"tittel\":\"Heisann sveisann\",\n" +
+                                "            \"journalposttype\":\"I\",\n" +
+                                "            \"journalstatus\":\"JOURNALFOERT\",\n" +
+                                "            \"tema\":\"SYM\",\n" +
+                                "            \"datoOpprettet\":\"2024-01-01T12:00:00Z\",\n" +
+                                "            \"dokumenter\":[\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00007777\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               },\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00008888\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               },\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00009999\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               },\n" +
+                                "               {\n" +
+                                "                  \"dokumentInfoId\":\"00010000\",\n" +
+                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
+                                "               }\n" +
+                                "            ]\n" +
+                                "         }\n" +
+                                "      ]\n" +
+                                "   }\n" +
+                                "}\n" +
+                                "}")));
+
 
 
 
