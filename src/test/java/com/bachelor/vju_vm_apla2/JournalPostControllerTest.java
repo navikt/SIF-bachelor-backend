@@ -91,8 +91,12 @@ public class JournalPostControllerTest {
       assertEquals(cmp, res);
     }
 
- /*   @Test
-    public void hentDokumenterTest(){
-
-    }*/
+@Test
+    public void protectedTest (){
+    assertEquals("I am protected", jpController.protectedPath());
+    }
+    @Test
+    public void unprotectedTest (){
+        assertEquals("I am unprotected", jpController.unProtectedPath());
+    }
 }
