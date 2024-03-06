@@ -325,6 +325,40 @@ public class WireMockStubs {
                                 )));
 
         //FILTER
+        //Mock for søkeresultat "002", TIL
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\n" +
+                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"tema\": [\"TIL\"]\n" +
+                                "}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody(
+                                brukerID_002_TIL
+                        )));
+
+        //FILTER
+        //Mock for søkeresultat "002", TIL, SYM
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\n" +
+                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"tema\": [\"TIL\", \"SYM\"]\n" +
+                                "}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody(
+                                brukerID_002_TIL_SYM
+                        )));
+
+        //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT
         wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
                 .withRequestBody(equalToJson(
@@ -343,6 +377,25 @@ public class WireMockStubs {
                         )));
 
         //FILTER
+        //Mock for søkeresultat "002", FERDIGSTILT, N
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\n" +
+                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"journalstatuser\": [\"FERDIGSTILT\"],\n" +
+                                "  \"journalposttyper\": [\"N\"]\n" +
+                                "}", true, true))
+
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody(
+                                brukerID_002_FERDIGSTILT_N
+                        )));
+
+        //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT
         wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
                 .withRequestBody(equalToJson(
@@ -358,6 +411,25 @@ public class WireMockStubs {
                         .withStatus(200) // Returner HTTP 200 OK
                         .withBody(
                                 brukerID_002_JOURNALFOERT
+                        )));
+
+        //FILTER
+        //Mock for søkeresultat "002", JOURNALFOERT_N
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\n" +
+                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"journalstatuser\": [\"JOURNALFOERT\"],\n" +
+                                "  \"journalposttyper\": [\"N\"]\n" +
+                                "}", true, true))
+
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody(
+                                brukerID_002_JOURNALFOERT_N
                         )));
 
 
@@ -398,6 +470,46 @@ public class WireMockStubs {
                         )));
 
         //FILTER
+        //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT_I
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\n" +
+                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"journalstatuser\": [\"FERDIGSTILT\", \"JOURNALFOERT\"],\n" +
+                                "  \"journalposttyper\": [\"I\"]\n" +
+
+                                "}", true, true))
+
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody(
+                                brukerID_002_FERDIGSTILT_JOURNALFOERT_I
+                        )));
+
+        //FILTER
+        //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT_I_N
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\n" +
+                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"journalstatuser\": [\"FERDIGSTILT\", \"JOURNALFOERT\"],\n" +
+                                "  \"journalposttyper\": [\"I\",\"N\"]\n" +
+
+                                "}", true, true))
+
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody(
+                                brukerID_002_FERDIGSTILT_JOURNALFOERT_I_N
+                        )));
+
+        //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, EKSPEDERT
         wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
                 .withRequestBody(equalToJson(
@@ -433,8 +545,44 @@ public class WireMockStubs {
                                 brukerID_002_JOURNALFOERT_EKSPEDERT
                         )));
 
+        //FILTER
+        //Mock for søkeresultat "002", FRA 01.01.22 TIL 31.12.22
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\n" +
+                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"fraDato\": \"2021-12-31T23:00:00.000Z\",\n" +
+                                "  \"tilDato\": \"2022-12-30T23:00:00.000Z\"\n" +
+                                "}", true, true))
+
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody(
+                                brukerID_002_2022
+                        )));
 
 
+        //FILTER
+        //Mock for søkeresultat "002", FRA 01.01.23 TIL 31.12.23
+        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\n" +
+                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"fraDato\": \"2022-12-31T23:00:00.000Z\",\n" +
+                                "  \"tilDato\": \"2023-12-30T23:00:00.000Z\"\n" +
+                                "}", true, true))
+
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200) // Returner HTTP 200 OK
+                        .withBody(
+                                brukerID_002_2023
+                        )));
 
 
     }
