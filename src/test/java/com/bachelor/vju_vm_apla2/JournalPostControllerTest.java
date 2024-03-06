@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -63,10 +64,13 @@ public class JournalPostControllerTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer");
 //        Todo: fix test resource to grab :O
-//        Resource r = ;
-        Mockito.when(serviceMock.hentDokument(dokumentId, headers)).thenReturn();
+//
+
+// byte [] bytes = ;
+        Resource r = Mockito.mock(Resource.class);
+        Mockito.when(serviceMock.hentDokument(dokumentId, headers)).thenReturn(r.getFile(new byte[] a ));
        // Mono<ResponseEntity<Resource>> cmp = ResponseEntity.status(HttpStatus.OK).header("Content-Type", "application/pdf").header("Content-Disposition", "inline").body();
-     //   Mono <ResponseEntity<Resource>> res = jpController.hentDokument(dokumentId, headers);
+      Mono <ResponseEntity<Resource>> res = jpController.hentDokument(dokumentId, headers);
         assertNull(jpController.hentDokument(dokumentId, headers));
     }
 }
