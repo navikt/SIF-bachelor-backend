@@ -62,8 +62,9 @@ public class JournalPostControllerTest {
         String dokumentId = "000001";
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer");
-        Resource r = null;
-        Mockito.when(serviceMock.hentDokument(dokumentId, headers)).thenReturn(null);
+//        Todo: fix test resource to grab :O
+//        Resource r = ;
+        Mockito.when(serviceMock.hentDokument(dokumentId, headers)).thenReturn();
        // Mono<ResponseEntity<Resource>> cmp = ResponseEntity.status(HttpStatus.OK).header("Content-Type", "application/pdf").header("Content-Disposition", "inline").body();
      //   Mono <ResponseEntity<Resource>> res = jpController.hentDokument(dokumentId, headers);
         assertNull(jpController.hentDokument(dokumentId, headers));
