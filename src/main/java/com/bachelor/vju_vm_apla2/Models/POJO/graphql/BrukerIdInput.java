@@ -1,6 +1,8 @@
 package com.bachelor.vju_vm_apla2.Models.POJO.graphql;
 
 
+import lombok.AllArgsConstructor;
+
 /**
  * BrukerIdInput er et argument som identifiserer en aktør eller organisasjon.
  */

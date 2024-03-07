@@ -14,7 +14,7 @@ public class Dokumentoversikt implements java.io.Serializable {
 
     @jakarta.validation.constraints.NotNull
     private java.util.List<Journalpost> journalposter;
-    @jakarta.validation.constraints.NotNull
+
     private SideInfo sideInfo;
 
     public Dokumentoversikt() {

@@ -1,6 +1,9 @@
 package com.bachelor.vju_vm_apla2.Service;
 
 //import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO_test;
+import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO_test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -30,16 +33,17 @@ public class SimpleService {
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
-    public String hentJournalpostListe(String query, HttpHeaders originalHeader) {
-        String response = this.webClient.post()
+    public Mono<FraGrapQl_DTO> hentJournalpostListe(FraKlient_DTO query, HttpHeaders originalHeader) {
+        System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock");
+        return this.webClient.post()
                 .uri("/mock/graphql")
                 .headers(headers -> headers.addAll(originalHeader))
                 .bodyValue(query)
                 .retrieve()
-                .bodyToMono(String.class)
-                .block(); // Bruk block() for å utføre kallet synkront, fjern for asynkron bruk
-        System.out.println("Respons fra wiremock: " + response);
-        return response; //returnrer data tilbake til kontroller.
+                .bodyToMono(FraGrapQl_DTO.class)
+                .doOnNext(response -> System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response));
+
+
     }
 
 

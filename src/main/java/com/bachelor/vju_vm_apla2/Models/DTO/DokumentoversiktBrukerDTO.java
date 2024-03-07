@@ -15,6 +15,5 @@ public class DokumentoversiktBrukerDTO {
     private List<Tema> tema;
     private Integer foerste;
     private String etter;
-
     private List<Journalpost> journalposter;
 }
