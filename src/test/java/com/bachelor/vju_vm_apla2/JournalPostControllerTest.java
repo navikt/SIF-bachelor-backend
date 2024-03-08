@@ -59,7 +59,8 @@ public class JournalPostControllerTest {
         tt.add(Tema.AAP);
         BrukerIdInput bIdInput= new BrukerIdInput("001",BrukerIdType.FNR);
         FraKlient_DTO brukerId = new FraKlient_DTO(new BrukerIdInput(bIdInput.getId(), bIdInput.getType()), "2024-12-12", "2025-12-12", jpts, jptts, tt);
-        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO("200", "hello world");
+        Dokumentoversikt  dO = new Dokumentoversikt();
+        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");
         Mono <FraGrapQl_DTO> MfgglTest = Mono.just(fgqlTest);
         Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
         Mono<ResponseEntity<FraGrapQl_DTO>> resultMono = jpController.hentJournalpostListe(brukerId, headers);
@@ -90,7 +91,8 @@ public class JournalPostControllerTest {
         tt.add(Tema.AAP);
         BrukerIdInput bIdInput= new BrukerIdInput("001",BrukerIdType.FNR);
         FraKlient_DTO brukerId = new FraKlient_DTO(bIdInput, "2024-12-12", "2025-12-12", jpts, jptts, tt);
-        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO("200", "hello world");
+        Dokumentoversikt  dO = new Dokumentoversikt();
+        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");
         Mono <FraGrapQl_DTO> MfgglTest = Mono.just(Objects.requireNonNull(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).contentType(MediaType.APPLICATION_JSON).body(fgqlTest).getBody()));
         Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
 

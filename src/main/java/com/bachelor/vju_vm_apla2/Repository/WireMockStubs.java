@@ -32,8 +32,8 @@ public class WireMockStubs {
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 //todo: 401 and 500 here
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
-        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
+//        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
+//        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
         //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
@@ -134,7 +134,7 @@ public class WireMockStubs {
         //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
         //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
         // Eksempel på en spesifikk stub for dokumentID "00001111"
-        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/001/(.*)"))
+        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/001/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/pdf")
@@ -162,7 +162,7 @@ public class WireMockStubs {
 
 
                         //Mock for søkeresultat "003". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"003\"}}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
@@ -206,7 +206,7 @@ public class WireMockStubs {
 
 
         //Mock for søkeresultat "004". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"004\"}}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
@@ -337,7 +337,7 @@ public class WireMockStubs {
 
         //INGEN FILTER
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"002\"}}"
                         , true, true))
@@ -352,7 +352,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", TIL
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -369,7 +369,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", TIL, SYM
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -386,7 +386,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -404,7 +404,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, N
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -423,7 +423,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -441,7 +441,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT_N
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -461,7 +461,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", EKSPEDERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -479,7 +479,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -497,7 +497,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT_I
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -517,7 +517,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT_I_N
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -537,7 +537,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, EKSPEDERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -555,7 +555,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT, EKSPEDERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -573,7 +573,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FRA 01.01.22 TIL 31.12.22
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -593,7 +593,7 @@ public class WireMockStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FRA 01.01.23 TIL 31.12.23
-        wireMockServer.stubFor(post(urlEqualTo("/mock/saf.dev.intern.nav.no/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
