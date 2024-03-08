@@ -8,9 +8,11 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.HttpClientErrorException;
+
 import static com.bachelor.vju_vm_apla2.Repository.WireMockResponseList.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
+import static org.springframework.http.HttpStatus.*;
 
 @Configuration
 public class WireMockStubs {
@@ -30,8 +32,8 @@ public class WireMockStubs {
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 //todo: 401 and 500 here
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.reasonPhrase())));
-        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.reasonPhrase())));
+        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
+        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
         //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
@@ -146,14 +148,14 @@ public class WireMockStubs {
                 stubFor(post(urlEqualTo("/mock/graphql")).
                         withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).
                         willReturn(aResponse().
-                                withStatus(401).withBody(UNAUTHORIZED.reasonPhrase())));
+                                withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
         wireMockServer.stubFor(post("/mock/graphql").willReturn(aResponse().
                 withStatus(404).
                 withBody(NOT_FOUND.toString())));
         wireMockServer.stubFor(get("/mock/graphql").
                 willReturn(aResponse().
                         withStatus(500). //500 when you tries to use wrong method -> maybe a more detailed response where you can see WHAT you are doing wrong?
-                        withBody(INTERNAL_SERVER_ERROR.reasonPhrase()))); //standard internal server errors for now, maybe consider INTERNAL_SERVER_ERROR?
+                        withBody(INTERNAL_SERVER_ERROR.getReasonPhrase()))); //standard internal server errors for now, maybe consider INTERNAL_SERVER_ERROR?
         //todo: maybe more stubs here?
         wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer")));

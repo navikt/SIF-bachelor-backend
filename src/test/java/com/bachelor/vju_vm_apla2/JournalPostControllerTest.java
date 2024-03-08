@@ -19,16 +19,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JournalPostControllerTest {
@@ -39,15 +38,13 @@ public class JournalPostControllerTest {
     JournalpostController jpController;
 
 
-    @InjectMocks
-    JournalpostController jpContrllerInject = new JournalpostController(serviceMock);
-
     @Mock
     WebClient wc;
     @Test
     public void hentJournalpostTest() {
 
         HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer ");
         Journalpost jp1 = new Journalpost();
         List<Journalpost> JPtester = new ArrayList<>();
         JPtester.add(jp1);
@@ -61,16 +58,20 @@ public class JournalPostControllerTest {
 
         tt.add(Tema.AAP);
         BrukerIdInput bIdInput= new BrukerIdInput("001",BrukerIdType.FNR);
-        FraKlient_DTO brukerId = new FraKlient_DTO(bIdInput, "2024-12-12", "2025-12-12", jpts, jptts, tt);
+        FraKlient_DTO brukerId = new FraKlient_DTO(new BrukerIdInput(bIdInput.getId(), bIdInput.getType()), "2024-12-12", "2025-12-12", jpts, jptts, tt);
         FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO("200", "hello world");
         Mono <FraGrapQl_DTO> MfgglTest = Mono.just(fgqlTest);
         Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
-
-
-        headers.add("Authorization", "Bearer ");
-       String res = String.valueOf(jpController.hentJournalpostListe(brukerId, headers));
+        Mono<ResponseEntity<FraGrapQl_DTO>> resultMono = jpController.hentJournalpostListe(brukerId, headers);
+      /* String res = String.valueOf(jpController.hentJournalpostListe(brukerId, headers));
         String cmp = String.valueOf(Mono.just(ResponseEntity.status(HttpStatus.OK).header("Content-Type", "application/json").header("Content-Disposition", "inline").body(fgqlTest)));
-        assertEquals(cmp,res );
+        assertEquals(cmp,res );*/
+        StepVerifier.create(resultMono).assertNext(fraGrapQlDtoResponseEntity -> {
+            assertEquals(HttpStatus.OK, fraGrapQlDtoResponseEntity.getStatusCode());
+            assertEquals("application/json", fraGrapQlDtoResponseEntity.getHeaders().getContentType().toString());
+            assertEquals("inline", fraGrapQlDtoResponseEntity.getHeaders().getFirst("Content-Disposition"));
+            assertEquals(fgqlTest, fraGrapQlDtoResponseEntity.getBody());
+        });
     }
 
     @Test
