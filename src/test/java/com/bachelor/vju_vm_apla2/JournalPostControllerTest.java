@@ -63,9 +63,7 @@ public class JournalPostControllerTest {
         Mono <FraGrapQl_DTO> MfgglTest = Mono.just(fgqlTest);
         Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
         Mono<ResponseEntity<FraGrapQl_DTO>> resultMono = jpController.hentJournalpostListe(brukerId, headers);
-      /* String res = String.valueOf(jpController.hentJournalpostListe(brukerId, headers));
-        String cmp = String.valueOf(Mono.just(ResponseEntity.status(HttpStatus.OK).header("Content-Type", "application/json").header("Content-Disposition", "inline").body(fgqlTest)));
-        assertEquals(cmp,res );*/
+    //Not sure how this works, but rolls with it for now
         StepVerifier.create(resultMono).assertNext(fraGrapQlDtoResponseEntity -> {
             assertEquals(HttpStatus.OK, fraGrapQlDtoResponseEntity.getStatusCode());
             assertEquals("application/json", fraGrapQlDtoResponseEntity.getHeaders().getContentType().toString());
