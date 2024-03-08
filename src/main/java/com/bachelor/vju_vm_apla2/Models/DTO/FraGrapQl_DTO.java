@@ -13,12 +13,10 @@ public class FraGrapQl_DTO {
 
     private Dokumentoversikt dokumentoversikt;
     private String errorMessage;
-    private String detailedMessage;
 
     // New constructor with two String arguments
-    public FraGrapQl_DTO(String errorMessage, String detailedMessage) {
+    public FraGrapQl_DTO(String errorMessage) {
         this.errorMessage = errorMessage;
-        this.detailedMessage = detailedMessage;
     }
 
     // Lombok will automatically generate getters and setters, so you don't need to manually define them

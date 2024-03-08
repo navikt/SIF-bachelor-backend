@@ -2,24 +2,17 @@ package com.bachelor.vju_vm_apla2.Controller;
 
 import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
-import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO_test;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.Unprotected;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import org.apache.logging.log4j.Logger;
 import java.nio.charset.StandardCharsets;
-
-import java.sql.SQLOutput;
 import org.apache.logging.log4j.LogManager;
 
 
@@ -60,17 +53,18 @@ public class JournalpostController {
                    then return an INTERNAL SERVER ERROR. Why use this? Try catch is blocking, whilst this method doesn't block the
                    main thread. */
                 .onErrorResume(e -> {
-                    String errorMessage = "Error trying to fetch journalpost metadata in the controller ";
-                    logger.error(errorMessage, e);
+                    String errorMessage = "hentJournalpostListe JournalpostController : Error trying to fetch journalpost metadata in the controller ";
+                    String errorMessageForClient = "A server error has occured in retrieving the metadata, please try again later.";
+                    logger.error(errorMessage, e.getMessage());
 
                     return Mono.just(
                             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new FraGrapQl_DTO(errorMessage, e.getMessage()))
+                            .body(new FraGrapQl_DTO(errorMessageForClient))
                     );
                 });
     }
 
-    //Metode for å hente dokumentID basert på response fra SAF - graphql
+    //Metode for å hente dokumentID basert på response fra SAF - graphql s
     //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/hentDokumenter")
@@ -86,17 +80,19 @@ public class JournalpostController {
                 // Error handling below
                 .onErrorResume(e -> {
                     // Log the exception for debugging purposes
-                    String errorMessage = "Error in retrieving the document with document info id: " + dokumentInfoId;
+                    String errorMessage = "hentDokument JournalPostController : Error in retrieving the document with document info id: " + dokumentInfoId;
+                    String errorMessageForClient = "A server error has occured in retrieving the expected documents, please try again later.";
                     logger.error(errorMessage, e);
 
-                    ByteArrayResource errorResource = new ByteArrayResource(errorMessage.getBytes(StandardCharsets.UTF_8));
+                    // The errorMessageForClient is sanitized to escape any double quotes to prevent breaking the JSON format.
+                    String jsonErrorMessage = "{\"errorMessage\": \"" + errorMessageForClient.replace("\"", "\\\"") + "\"}";
+                    ByteArrayResource errorResource = new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
                     return Mono.just(
                             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                    .contentType(MediaType.TEXT_PLAIN)
+                                    .contentType(MediaType.APPLICATION_JSON)
                                     .body(errorResource)
                     );
                 });
-
     }
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
