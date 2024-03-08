@@ -65,7 +65,7 @@ public class JournalpostController {
                 });
     }
 
-    //Metode for å hente dokumentID basert på response fra SAF - graphql
+    //Metode for å hente dokumentID basert på response fra SAF - graphql s
     //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/hentDokumenter")
