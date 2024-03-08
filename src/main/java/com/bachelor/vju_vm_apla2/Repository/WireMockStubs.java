@@ -35,7 +35,7 @@ public class WireMockStubs {
 //        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
 //        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
         //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost"))
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
                 .withHeader("Authorizaton", containing("Bearer"))
                 .willReturn(aResponse()
@@ -134,7 +134,7 @@ public class WireMockStubs {
         //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
         //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
         // Eksempel på en spesifikk stub for dokumentID "00001111"
-        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/001/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
+        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/journalpostid/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/pdf")

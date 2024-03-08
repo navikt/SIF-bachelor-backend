@@ -56,7 +56,7 @@ public class SimpleService {
     //Metoden tar i mot bare dokumentID. Det skal endres til at den også tar i mot journalpostID
     public Mono<Resource> hentDokument(String dokumentInfoId, HttpHeaders originalHeader) {
         System.out.println("Vi er inne i service og har hentent dokumentID " + dokumentInfoId);
-        String url = "/mock/rest/hentdokument/001/" + dokumentInfoId;
+        String url = "/mock/rest/hentdokument/journalpostid/" + dokumentInfoId;
 
         return webClient.get()
                 .uri(url)
