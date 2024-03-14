@@ -3,5 +3,5 @@ LABEL authors="JAGO industries"
 #CMD ["mvn spring-boot:build-image"]
 #COPY /.mvn/maven-wrapper.jar maven-wrapper.jar
 #COPY mvnw.cmd mvnw.cmd
-COPY  target/*.jar app.jar
-ENTRYPOINT ["java", "jar", "/sif-vju"]
+COPY  target/*.jar sif-vju-backend.jar
+ENTRYPOINT ["java", "-jar", "/sif-vju-backend.jar"]
