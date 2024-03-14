@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-alpine
+FROM bellsoft/liberica-openjdk-alpine:21
 LABEL authors="JAGO industries"
 #CMD ["mvn spring-boot:build-image"]
 #COPY /.mvn/maven-wrapper.jar maven-wrapper.jar
