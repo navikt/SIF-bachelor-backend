@@ -73,6 +73,28 @@ public class JournalPostControllerTest {
         });
     }
 
+    /*@Test
+    public void hentJornalpostThrowE(){
+       *//* Dokumentoversikt  dO = new Dokumentoversikt();
+        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");*//*
+        Journalpost jp1 = new Journalpost();
+        List<Journalpost> JPtester = new ArrayList<>();
+        JPtester.add(jp1);
+
+        List <Journalposttype> jpts = new ArrayList<>();
+        Journalposttype JT1 = Journalposttype.N;
+        jpts.add(JT1);
+        List <Journalstatus> jptts = new ArrayList<>();
+        jptts.add(Journalstatus.MOTTATT);
+        List<Tema>tt = new ArrayList<>();
+        HttpHeaders headers = new HttpHeaders();
+        BrukerIdInput bk0 = new BrukerIdInput("hei", BrukerIdType.FNR);
+//        FraKlient_DTO DTO = new FraKlient_DTO(bk0, "2023-10-20", "2023-11-20");
+        headers.add("Authorization", "bearer");
+        //trying without mocking anything as we will throw an exception
+        Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
+        String res = String.valueOf(jpController.hentJournalpostListe(bk0, headers));
+    }*/
     @Test
     public void hentJournalpostTestFail() {
 
