@@ -73,10 +73,10 @@ public class JournalPostControllerTest {
         });
     }
 
-    /*@Test
+    @Test(expected=Exception.class)
     public void hentJornalpostThrowE(){
-       *//* Dokumentoversikt  dO = new Dokumentoversikt();
-        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");*//*
+        Dokumentoversikt  dO = new Dokumentoversikt();
+        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");
         Journalpost jp1 = new Journalpost();
         List<Journalpost> JPtester = new ArrayList<>();
         JPtester.add(jp1);
@@ -89,12 +89,14 @@ public class JournalPostControllerTest {
         List<Tema>tt = new ArrayList<>();
         HttpHeaders headers = new HttpHeaders();
         BrukerIdInput bk0 = new BrukerIdInput("hei", BrukerIdType.FNR);
-//        FraKlient_DTO DTO = new FraKlient_DTO(bk0, "2023-10-20", "2023-11-20");
+        FraKlient_DTO DTO = new FraKlient_DTO(bk0, "2023-10-20", "2023-11-20",jpts, jptts, tt);
         headers.add("Authorization", "bearer");
         //trying without mocking anything as we will throw an exception
         Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
-        String res = String.valueOf(jpController.hentJournalpostListe(bk0, headers));
-    }*/
+        String res = String.valueOf(jpController.hentJournalpostListe(DTO, headers));
+
+ assertEquals(any(Exception.class), res);
+    }
     @Test
     public void hentJournalpostTestFail() {
 

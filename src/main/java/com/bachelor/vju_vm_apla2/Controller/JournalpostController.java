@@ -4,6 +4,7 @@ import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -36,8 +37,10 @@ public class JournalpostController {
     //////////////////////////////////////////////////// HOVED METODER ///////////////////////////////////////////////////////////////////////
 
     //Søker på BrukerID og skal returnere en liste med journalposter
+
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
-    @CrossOrigin(origins = "http://localhost:3000") // Tillater CORS-forespørsler fra React-appen
+
+    @CrossOrigin(origins = "${FRONTEND.URL}:${FRONTEND.PORT}" ) // Tillater CORS-forespørsler fra React-appen
     @PostMapping("/hentJournalpostListe")
     public Mono<ResponseEntity<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
@@ -66,7 +69,7 @@ public class JournalpostController {
 
     //Metode for å hente dokumentID basert på response fra SAF - graphql s
     //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "${FRONTEND.URL}:${FRONTEND.PORT}")
     @GetMapping("/hentDokumenter")
     public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + dokumentInfoId +
@@ -97,7 +100,7 @@ public class JournalpostController {
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "${FRONTEND.URL}:${FRONTEND.PORT}")
     @GetMapping("/test/protected")
     public String protectedPath() {
         return "I am protected";
