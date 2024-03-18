@@ -29,65 +29,33 @@ public class SimpleService {
                 .build();
     }
 
-////////////////////////////////////////////HOVED METODER///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////REAL ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
 
 
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
     public Mono<FraGrapQl_DTO> hentJournalpostListe(FraKlient_DTO query, HttpHeaders originalHeader) {
-        System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + query);
+        String graphQLQuery = createGraphQLQuery(query); // Generer GraphQL-forespørselen
+        System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + graphQLQuery);
         return this.webClient.post()
                 .uri("/mock/graphql")
                 .headers(headers -> headers.addAll(originalHeader))
-                .bodyValue(query)
+                .bodyValue(graphQLQuery) // Bruk den genererte GraphQL-forespørselen
                 .retrieve()
                 .bodyToMono(FraGrapQl_DTO.class)
                 .doOnNext(response -> System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response))
-                // Exception for when
                 .onErrorResume(e -> {
                     String errorMessage = "An error occurred trying to retrieve the journalpost metadata at SAF in the service layer hentJournalpostListe method. ";
                     String errorMessageForClient = "SAF API error in retrieving the metadata, please try again later.";
                     logger.error(errorMessage, e);
-                    // Return error DTO
                     FraGrapQl_DTO errorDto = new FraGrapQl_DTO();
                     errorDto.setErrorMessage(errorMessageForClient);
-
                     return Mono.just(errorDto); // Return a Mono containing the error DTO
                 });
     }
 
-
-    //Metode for å gjøre kall mot Rest-SAF for å hente indivduelle dokuemnter for journalpostId "001"
-    //Metoden tar i mot bare dokumentID. Det skal endres til at den også tar i mot journalpostID
-    public Mono<Resource> hentDokument(String dokumentInfoId, HttpHeaders originalHeader) {
-        System.out.println("Vi er inne i service og har hentent dokumentID " + dokumentInfoId);
-        String url = "/mock/rest/hentdokument/journalpostid/" + dokumentInfoId;
-
-        return webClient.get()
-                .uri(url)
-                .retrieve()
-                .bodyToMono(byte[].class) // Konverter responsen til en byte array
-                .map(ByteArrayResource::new) // Konverter byte array til en ByteArrayResource
-                .cast(Resource.class) // Cast the ByteArrayResource to Resource
-                .onErrorResume(e -> {
-                    // Log the exception for debugging purposes
-                    String errorMessage = "Error in retrieving the document with document info id: " + dokumentInfoId;
-                    String errorMessageForClient = "SAF API error in retrieving the documents, please try again later.";
-                    logger.error(errorMessage, e);
-
-                    // The errorMessageForClient is sanitized to escape any double quotes to prevent breaking the JSON format.
-                    String jsonErrorMessage = "{\"errorMessage\": \"" + errorMessageForClient.replace("\"", "\\\"") + "\"}";
-                    // Create a ByteArrayResource containing the error message
-                    ByteArrayResource errorResource = new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
-
-                    // Return the ByteArrayResource wrapped in a Mono to match the expected return type
-                    return Mono.just(errorResource);
-                });
-    }
-
-
-
+    //Bygger en GraphQL-forespørsel som en streng basert på input-data fra klienten
     private String createGraphQLQuery(FraKlient_DTO query) {
         // Formatter for å konvertere datoer til ønsket format
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -127,6 +95,63 @@ public class SimpleService {
 
         return graphQLQuery;
     }
+
+
+
+    //Metode for å gjøre kall mot Rest-SAF for å hente indivduelle dokuemnter for journalpostId "001"
+    //Metoden tar i mot bare dokumentID. Det skal endres til at den også tar i mot journalpostID
+    public Mono<Resource> hentDokument(String dokumentInfoId, HttpHeaders originalHeader) {
+        System.out.println("Vi er inne i service og har hentent dokumentID " + dokumentInfoId);
+        String url = "/mock/rest/hentdokument/journalpostid/" + dokumentInfoId;
+
+        return webClient.get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(byte[].class) // Konverter responsen til en byte array
+                .map(ByteArrayResource::new) // Konverter byte array til en ByteArrayResource
+                .cast(Resource.class) // Cast the ByteArrayResource to Resource
+                .onErrorResume(e -> {
+                    // Log the exception for debugging purposes
+                    String errorMessage = "Error in retrieving the document with document info id: " + dokumentInfoId;
+                    String errorMessageForClient = "SAF API error in retrieving the documents, please try again later.";
+                    logger.error(errorMessage, e);
+
+                    // The errorMessageForClient is sanitized to escape any double quotes to prevent breaking the JSON format.
+                    String jsonErrorMessage = "{\"errorMessage\": \"" + errorMessageForClient.replace("\"", "\\\"") + "\"}";
+                    // Create a ByteArrayResource containing the error message
+                    ByteArrayResource errorResource = new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
+
+                    // Return the ByteArrayResource wrapped in a Mono to match the expected return type
+                    return Mono.just(errorResource);
+                });
+    }
+
+////////////////////////////////////////////TEST ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
+
+    //tar innkomende data fra JournalPostController og parser dette til webclient object
+    //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
+    public Mono<FraGrapQl_DTO> hentJournalpostListe_Test(FraKlient_DTO query, HttpHeaders originalHeader) {
+        System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + query);
+        return this.webClient.post()
+                .uri("/mock/graphql")
+                .headers(headers -> headers.addAll(originalHeader))
+                .bodyValue(query)
+                .retrieve()
+                .bodyToMono(FraGrapQl_DTO.class)
+                .doOnNext(response -> System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response))
+                // Exception for when
+                .onErrorResume(e -> {
+                    String errorMessage = "An error occurred trying to retrieve the journalpost metadata at SAF in the service layer hentJournalpostListe method. ";
+                    String errorMessageForClient = "SAF API error in retrieving the metadata, please try again later.";
+                    logger.error(errorMessage, e);
+                    // Return error DTO
+                    FraGrapQl_DTO errorDto = new FraGrapQl_DTO();
+                    errorDto.setErrorMessage(errorMessageForClient);
+
+                    return Mono.just(errorDto); // Return a Mono containing the error DTO
+                });
+    }
+
 
 
 
