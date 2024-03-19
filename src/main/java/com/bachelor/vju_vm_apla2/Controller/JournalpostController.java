@@ -14,7 +14,10 @@ import no.nav.security.token.support.core.api.Unprotected;
 import reactor.core.publisher.Mono;
 import org.apache.logging.log4j.Logger;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+
 import org.apache.logging.log4j.LogManager;
+import wiremock.org.checkerframework.common.returnsreceiver.qual.This;
 
 
 /* By using the @Protected annotation, we are securing access to this class, which was already configured in our
@@ -25,7 +28,11 @@ import org.apache.logging.log4j.LogManager;
 public class JournalpostController {
 
     private final SimpleService simpleService;
-
+    @Value("${FRONTEND.URL}") //<- env variable can be changed in application.yaml under rescourses
+    private String frontendURL;
+    @Value("${FRONTEND.PORT}")
+    private String frontendPort;
+    String frontendCombined = frontendURL + ":" + frontendPort;
     private static final Logger logger = LogManager.getLogger(JournalpostController.class);
 
     @Autowired
@@ -40,7 +47,7 @@ public class JournalpostController {
 
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
 
-    @CrossOrigin(origins = "${FRONTEND.URL}:${FRONTEND.PORT}" ) // Tillater CORS-forespørsler fra React-appen
+    @CrossOrigin(origins = "''"  ) // Tillater CORS-forespørsler fra React-appen
     @PostMapping("/hentJournalpostListe")
     public Mono<ResponseEntity<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
