@@ -28,11 +28,8 @@ import wiremock.org.checkerframework.common.returnsreceiver.qual.This;
 public class JournalpostController {
 
     private final SimpleService simpleService;
-    @Value("${FRONTEND.URL}") //<- env variable can be changed in application.yaml under rescourses
-    private String frontendURL;
-    @Value("${FRONTEND.PORT}")
-    private String frontendPort;
-    String frontendCombined = frontendURL + ":" + frontendPort;
+
+
     private static final Logger logger = LogManager.getLogger(JournalpostController.class);
 
     @Autowired
@@ -47,7 +44,7 @@ public class JournalpostController {
 
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
 
-    @CrossOrigin(origins = "''"  ) // Tillater CORS-forespørsler fra React-appen
+    @CrossOrigin// Tillater CORS-forespørsler fra React-appen
     @PostMapping("/hentJournalpostListe")
     public Mono<ResponseEntity<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
@@ -73,10 +70,11 @@ public class JournalpostController {
                     );
                 });
     }
+//   public String allowed = URL + ":" + PORT;
 
     //Metode for å hente dokumentID basert på response fra SAF - graphql s
     //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
-    @CrossOrigin(origins = "${FRONTEND.URL}:${FRONTEND.PORT}")
+    @CrossOrigin
     @GetMapping("/hentDokumenter")
     public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + dokumentInfoId +
@@ -107,7 +105,7 @@ public class JournalpostController {
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
 
-    @CrossOrigin(origins = "${FRONTEND.URL}:${FRONTEND.PORT}")
+    @CrossOrigin
     @GetMapping("/test/protected")
     public String protectedPath() {
         return "I am protected";
