@@ -22,7 +22,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry reg) {
                 reg.addMapping("/**").allowedOrigins(CROS).allowedMethods("*");
-                reg.addMapping("/**").allowedOrigins(OAUTH2Server).allowedMethods("*");
+             //   reg.addMapping("/**").allowedOrigins(OAUTH2Server).allowedMethods("*");
             }
 
     };
