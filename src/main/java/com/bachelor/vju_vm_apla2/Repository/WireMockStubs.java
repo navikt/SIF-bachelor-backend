@@ -611,8 +611,16 @@ public class WireMockStubs {
                         )));
 
 
-    }
+        /////// EXCEPTION HANDLING STUBS///////
 
+        wireMockServer.stubFor(get(urlEqualTo("/mock/error"))
+                .willReturn(aResponse()
+
+                        .withStatus(400) // Returner HTTP 200 OK
+                        ));
+
+
+    }
 
 
     @PreDestroy

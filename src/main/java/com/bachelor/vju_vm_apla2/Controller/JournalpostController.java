@@ -1,5 +1,6 @@
 package com.bachelor.vju_vm_apla2.Controller;
 
+import com.bachelor.vju_vm_apla2.Config.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
@@ -32,6 +33,27 @@ public class JournalpostController {
 
         this.simpleService = simpleService;
     }
+
+    //////////////////////////////////////////////////// EXCEPTION HANDLING METODER ///////////////////////////////////////////////////////////////////////
+
+    @Unprotected
+    @GetMapping("/error")
+    public Mono<ResponseEntity<String>> handleError() {
+        return simpleService.getError()
+                .map(body -> ResponseEntity.ok().body(body)) // Handle successful response
+                .doOnNext(response -> System.out.println("Controller - Received response: " + response)) // Log successful response
+                .onErrorResume(e -> {
+                    if (e instanceof CustomClientException) {
+                        CustomClientException cce = (CustomClientException) e;
+                        System.out.println("Controller - Custom Error occurred: " + cce.getMessage()); // Custom error log
+                        return Mono.just(ResponseEntity.status(cce.getStatusCode()).body(cce.getMessage()));
+                    } else {
+                        System.out.println("Controller - General Error occurred: " + e.getMessage()); // General error log
+                        return Mono.just(ResponseEntity.internalServerError().body("An unexpected error occurred: " + e.getMessage()));
+                    }
+                });
+    }
+
 
     //////////////////////////////////////////////////// HOVED METODER ///////////////////////////////////////////////////////////////////////
 

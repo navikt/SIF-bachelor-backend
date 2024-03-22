@@ -1,5 +1,6 @@
 package com.bachelor.vju_vm_apla2.Service;
 
+import com.bachelor.vju_vm_apla2.Config.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +28,21 @@ public class SimpleService {
         this.webClient = WebClient.builder()
                 .baseUrl("http://localhost:8081")
                 .build();
+    }
+
+
+    ///////////////// EXCEPTION HANDLING METODER ////////////////////////////////////////
+
+    public Mono<String> getError() {
+        return webClient.get()
+                .uri("/mock/error")
+                .retrieve()
+                .onStatus(status -> status.value() == 400, response -> Mono.error(new CustomClientException(400, "Bad Request")))
+                .onStatus(status -> status.value() == 401, response -> Mono.error(new CustomClientException(401, "Unauthorized")))
+                .onStatus(status -> status.value() == 403, response -> Mono.error(new CustomClientException(403, "Forbidden")))
+                .onStatus(status -> status.value() == 404, response -> Mono.error(new CustomClientException(404, "Not Found")))
+                .bodyToMono(String.class) // Håndter vellykkede kall. Tilpass etter behov.
+                .doOnError(e -> System.out.println("Error occurred: " + e.getMessage())); // Enkel logging av feil
     }
 
 ////////////////////////////////////////////REAL ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
