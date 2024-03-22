@@ -12,6 +12,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class SimpleService {
@@ -25,31 +29,73 @@ public class SimpleService {
                 .build();
     }
 
-////////////////////////////////////////////HOVED METODER///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////REAL ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
+
+
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
     public Mono<FraGrapQl_DTO> hentJournalpostListe(FraKlient_DTO query, HttpHeaders originalHeader) {
-        System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock");
+        String graphQLQuery = createGraphQLQuery(query); // Generer GraphQL-forespørselen
+        System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + graphQLQuery);
         return this.webClient.post()
                 .uri("/mock/graphql")
                 .headers(headers -> headers.addAll(originalHeader))
-                .bodyValue(query)
+                .bodyValue(graphQLQuery) // Bruk den genererte GraphQL-forespørselen
                 .retrieve()
                 .bodyToMono(FraGrapQl_DTO.class)
                 .doOnNext(response -> System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response))
-                // Exception for when
                 .onErrorResume(e -> {
                     String errorMessage = "An error occurred trying to retrieve the journalpost metadata at SAF in the service layer hentJournalpostListe method. ";
                     String errorMessageForClient = "SAF API error in retrieving the metadata, please try again later.";
                     logger.error(errorMessage, e);
-                    // Return error DTO
                     FraGrapQl_DTO errorDto = new FraGrapQl_DTO();
                     errorDto.setErrorMessage(errorMessageForClient);
-
                     return Mono.just(errorDto); // Return a Mono containing the error DTO
                 });
     }
+
+    //Bygger en GraphQL-forespørsel som en streng basert på input-data fra klienten
+    private String createGraphQLQuery(FraKlient_DTO query) {
+        // Formatter for å konvertere datoer til ønsket format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // Konverterer fraDato og tilDato fra ISO 8601 String til LocalDate via Instant, og deretter tilbake til formatert String
+        String formattedFraDato = query.getFraDato() != null ? LocalDate.ofInstant(Instant.parse(query.getFraDato()), ZoneId.systemDefault()).format(formatter) : "null";
+        String formattedTilDato = query.getTilDato() != null ? LocalDate.ofInstant(Instant.parse(query.getTilDato()), ZoneId.systemDefault()).format(formatter) : "null";
+
+        // Bygger GraphQL-forespørselen med de formaterte datoverdiene
+        String graphQLQuery = String.format("""
+            query {
+              dokumentoversiktBruker(
+                brukerId: { id: "%s", type: "%s" }
+                fraDato: "%s"
+                tilDato: "%s"
+                journalposttyper: %s
+                journalstatuser: %s
+                tema: %s
+              ) {
+                journalposter {
+                    journalpostId
+                    tittel
+                    journalposttype
+                    journalstatus
+                    tema
+                  dokumenter {
+                    tittel
+                    dokumentInfoId
+                  }
+                }
+              }
+            }""", query.getBrukerId().getId(), query.getBrukerId().getType(),
+                formattedFraDato, formattedTilDato,
+                query.getJournalposttyper().toString(),
+                query.getJournalstatuser().toString(),
+                query.getTema().toString());
+
+        return graphQLQuery;
+    }
+
 
 
     //Metode for å gjøre kall mot Rest-SAF for å hente indivduelle dokuemnter for journalpostId "001"
@@ -79,6 +125,34 @@ public class SimpleService {
                     return Mono.just(errorResource);
                 });
     }
+
+////////////////////////////////////////////TEST ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
+
+    //tar innkomende data fra JournalPostController og parser dette til webclient object
+    //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
+    public Mono<FraGrapQl_DTO> hentJournalpostListe_Test(FraKlient_DTO query, HttpHeaders originalHeader) {
+        System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + query);
+        return this.webClient.post()
+                .uri("/mock/graphql")
+                .headers(headers -> headers.addAll(originalHeader))
+                .bodyValue(query)
+                .retrieve()
+                .bodyToMono(FraGrapQl_DTO.class)
+                .doOnNext(response -> System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response))
+                // Exception for when
+                .onErrorResume(e -> {
+                    String errorMessage = "An error occurred trying to retrieve the journalpost metadata at SAF in the service layer hentJournalpostListe method. ";
+                    String errorMessageForClient = "SAF API error in retrieving the metadata, please try again later.";
+                    logger.error(errorMessage, e);
+                    // Return error DTO
+                    FraGrapQl_DTO errorDto = new FraGrapQl_DTO();
+                    errorDto.setErrorMessage(errorMessageForClient);
+
+                    return Mono.just(errorDto); // Return a Mono containing the error DTO
+                });
+    }
+
+
 
 
 
