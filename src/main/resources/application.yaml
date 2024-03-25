@@ -6,10 +6,10 @@ no.nav.security.jwt:
   expirythreshold: 10 #threshold in minutes until token expires
   issuer:
     issuer1:
-      discovery-url: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}/default/.well-known/openid-configuration
+      discovery-url: http://${OUATH2.URL}:${OUATH2.PORT}/default/.well-known/openid-configuration
       accepted_audience: default
     issuer2:
-      discovery-url: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}/default/.well-known/openid-configuration
+      discovery-url: http://${OUATH2.URL}:${OUATH2.PORT}/default/.well-known/openid-configuration
       accepted_audience: default
 logging.level:
   org.springframework: INFO
@@ -22,3 +22,4 @@ OUATH2:
   COMBINED: http://${OUATH2.URL}:${OUATH2.PORT}
   URL: localhost
   PORT: 8282
+  VERSION: 2.1.0

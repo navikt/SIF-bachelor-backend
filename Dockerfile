@@ -4,4 +4,5 @@ LABEL authors="JAGO industries"
 #COPY /.mvn/maven-wrapper.jar maven-wrapper.jar
 #COPY mvnw.cmd mvnw.cmd
 COPY  target/*.jar sif-vju-backend.jar
+COPY target/classes/application.yaml .
 ENTRYPOINT ["java", "-jar", "/sif-vju-backend.jar"]

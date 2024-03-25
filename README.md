@@ -13,7 +13,7 @@ You can create a jar file by running
 ```
 and then:  
 ```bash 
-./mvnw build -Dmaven.test.skip
+./mvnw package -Dmaven.test.skip
 ```
 due to one of the test failing we need to flag the maven compiler to skips tests for now, this will be a priority to fix!
 
