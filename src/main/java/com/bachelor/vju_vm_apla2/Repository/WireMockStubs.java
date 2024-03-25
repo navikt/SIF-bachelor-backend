@@ -32,8 +32,8 @@ public class WireMockStubs {
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 //todo: 401 and 500 here
-       wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
-        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
+//        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
+//        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
         //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))

@@ -1,4 +1,4 @@
-package com.bachelor.vju_vm_apla2.Config.Security;
+package com.bachelor.vju_vm_apla2.Config;
 
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.springframework.context.annotation.Configuration;
