@@ -31,22 +31,7 @@ public class SimpleService {
     }
 
 
-    ///////////////// EXCEPTION HANDLING METODER ////////////////////////////////////////
-
-    public Mono<String> getError() {
-        return webClient.get()
-                .uri("/mock/error")
-                .retrieve()
-                .onStatus(status -> status.value() == 400, response -> Mono.error(new CustomClientException(400, "Bad Request")))
-                .onStatus(status -> status.value() == 401, response -> Mono.error(new CustomClientException(401, "Unauthorized")))
-                .onStatus(status -> status.value() == 403, response -> Mono.error(new CustomClientException(403, "Forbidden")))
-                .onStatus(status -> status.value() == 404, response -> Mono.error(new CustomClientException(404, "Not Found")))
-                .bodyToMono(String.class) // Håndter vellykkede kall. Tilpass etter behov.
-                .doOnError(e -> System.out.println("Error occurred: " + e.getMessage())); // Enkel logging av feil
-    }
-
 ////////////////////////////////////////////REAL ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
-
 
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
@@ -113,7 +98,6 @@ public class SimpleService {
     }
 
 
-
     //Metode for å gjøre kall mot Rest-SAF for å hente indivduelle dokuemnter for journalpostId "001"
     //Metoden tar i mot bare dokumentID. Det skal endres til at den også tar i mot journalpostID
     public Mono<Resource> hentDokument(String dokumentInfoId, HttpHeaders originalHeader) {
@@ -146,29 +130,32 @@ public class SimpleService {
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
-    public Mono<FraGrapQl_DTO> hentJournalpostListe_Test(FraKlient_DTO query, HttpHeaders originalHeader) {
-        System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + query);
-        return this.webClient.post()
+    public Mono<FraGrapQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(FraKlient_DTO query, HttpHeaders headers) {
+        return webClient.post()
                 .uri("/mock/graphql")
-                .headers(headers -> headers.addAll(originalHeader))
+                .headers(h -> h.addAll(headers))
                 .bodyValue(query)
                 .retrieve()
+                .onStatus(status -> status.isError(), clientResponse ->
+                        clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
+                            System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
+                            int statusValue = clientResponse.statusCode().value();
+                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                        }))
                 .bodyToMono(FraGrapQl_DTO.class)
-                .doOnNext(response -> System.out.println("Service - hentJournalpostListe - gir response fra wiremock til kontroller: " + response))
-                // Exception for when
                 .onErrorResume(e -> {
-                    String errorMessage = "An error occurred trying to retrieve the journalpost metadata at SAF in the service layer hentJournalpostListe method. ";
-                    String errorMessageForClient = "SAF API error in retrieving the metadata, please try again later.";
-                    logger.error(errorMessage, e);
-                    // Return error DTO
-                    FraGrapQl_DTO errorDto = new FraGrapQl_DTO();
-                    errorDto.setErrorMessage(errorMessageForClient);
-
-                    return Mono.just(errorDto); // Return a Mono containing the error DTO
+                    // Håndter generelle feil som ikke er knyttet til HTTP-statuskoder
+                    if (!(e instanceof CustomClientException)) {
+                        System.out.println("Vi er inne i Servoce-klassen som skal gi GENERISK error kode:");
+                        // Logg feilen og returner en generisk feilrespons
+                        logger.error("En uventet feil oppstod: ", e);
+                        return Mono.just(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
+                    }
+                    // Viderefør CustomClientException slik at den kan håndteres oppstrøms
+                    return Mono.error(e);
                 });
     }
-
-
 
 
 

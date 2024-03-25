@@ -34,26 +34,6 @@ public class JournalpostController {
         this.simpleService = simpleService;
     }
 
-    //////////////////////////////////////////////////// EXCEPTION HANDLING METODER ///////////////////////////////////////////////////////////////////////
-
-    @Unprotected
-    @GetMapping("/error")
-    public Mono<ResponseEntity<String>> handleError() {
-        return simpleService.getError()
-                .map(body -> ResponseEntity.ok().body(body)) // Handle successful response
-                .doOnNext(response -> System.out.println("Controller - Received response: " + response)) // Log successful response
-                .onErrorResume(e -> {
-                    if (e instanceof CustomClientException) {
-                        CustomClientException cce = (CustomClientException) e;
-                        System.out.println("Controller - Custom Error occurred: " + cce.getMessage()); // Custom error log
-                        return Mono.just(ResponseEntity.status(cce.getStatusCode()).body(cce.getMessage()));
-                    } else {
-                        System.out.println("Controller - General Error occurred: " + e.getMessage()); // General error log
-                        return Mono.just(ResponseEntity.internalServerError().body("An unexpected error occurred: " + e.getMessage()));
-                    }
-                });
-    }
-
 
     //////////////////////////////////////////////////// HOVED METODER ///////////////////////////////////////////////////////////////////////
 
@@ -64,25 +44,26 @@ public class JournalpostController {
     public Mono<ResponseEntity<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
-        return simpleService.hentJournalpostListe_Test(query, headers)
+        return simpleService.hentJournalpostListe_Test_ENVIRONMENT(query, headers)
                 .map(response -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
                         .body(response))
-                .defaultIfEmpty(ResponseEntity.notFound().build())
-                /* Added error handling below, which triggers if something wrong happens during processing of the stream, which
-                   represents fetching the journalpost metadata. If that happens, then we will call the errorResume. This will
-                   then return an INTERNAL SERVER ERROR. Why use this? Try catch is blocking, whilst this method doesn't block the
-                   main thread. */
                 .onErrorResume(e -> {
-                    String errorMessage = "hentJournalpostListe JournalpostController : Error trying to fetch journalpost metadata in the controller ";
-                    String errorMessageForClient = "A server error has occured in retrieving the metadata, please try again later.";
-                    logger.error(errorMessage, e.getMessage());
-
-                    return Mono.just(
-                            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new FraGrapQl_DTO(errorMessageForClient))
-                    );
+                    if (e instanceof CustomClientException) {
+                        System.out.println("Vi er inne i kontroller-klassen som skal gi spesikk error kode:");
+                        // 2. Håndtere statusfeil fra service
+                        CustomClientException cce = (CustomClientException) e;
+                        return Mono.just(ResponseEntity
+                                .status(cce.getStatusCode())
+                                .body(new FraGrapQl_DTO(cce.getMessage()))); // Antar at du har en passende konstruktør eller metode for å sette feilmelding
+                    } else {
+                        // 3. Generell feilhåndtering
+                        System.out.println("Vi er inne i kontroller-klassen som skal gi Generisk feil:");
+                        return Mono.just(ResponseEntity
+                                .internalServerError()
+                                .body(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."))); // Antar en generisk håndtering for uventede feil
+                    }
                 });
     }
 

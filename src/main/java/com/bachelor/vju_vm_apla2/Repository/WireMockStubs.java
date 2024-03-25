@@ -616,8 +616,77 @@ public class WireMockStubs {
         wireMockServer.stubFor(get(urlEqualTo("/mock/error"))
                 .willReturn(aResponse()
 
-                        .withStatus(400) // Returner HTTP 200 OK
+                        .withStatus(403) 
                         ));
+
+
+        //Mock for søkeresultat "400".
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\"brukerId\": {\"id\": \"400\"}}"
+                        , true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(400)
+                        .withBody(
+                                "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL.\n" +
+                                        "Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost)."
+                        )// Returner HTTP 400 OK
+                       ));
+
+        //Mock for søkeresultat "401".
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\"brukerId\": {\"id\": \"401\"}}"
+                        , true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(401)
+                        .withBody(
+                                "Vi kan ikke autorisere bruker gjennom token eller system som har gitt token er ukjent for saf.\n" +
+                                        "F.eks ugyldig, utgått, manglende OIDC token eller ingen audience hos saf."
+                        )
+                ));
+
+        //Mock for søkeresultat "403".
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\"brukerId\": {\"id\": \"403\"}}"
+                        , true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(401)
+                        .withBody(
+                                "Vi kan ikke gi tilgang til dokumentet på grunn av sikkerhet eller personvern.\n" +
+                                        "F.eks dokumentet tilhører egen ansatt eller bruker som bor på hemmelig adresse. Eller bruker har ikke tilgang til tema.\n" +
+                                        "Referer til dokumentasjon om tilgangskontrollen til saf for mer informasjon.\n" +
+                                        "Tilgang for saksbehandler og system styres gjennom NORG og gruppemedlemskap i AD."
+                        )
+                ));
+
+        //Mock for søkeresultat "404".
+        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+                .withRequestBody(equalToJson(
+                        "{\"brukerId\": {\"id\": \"404\"}}"
+                        , true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(401)
+                        .withBody(
+                                "Dokumentet ble ikke funnet i fagarkivet.\n" +
+                                        "Dette kan være av midlertidig natur i tilfeller der konsument får en claim check på en journalpostId før den er ferdig arkivert.\n" +
+                                        "Det er opp til utvikleren å vurdere om det skal forsøkes retry på denne feilstatusen."
+                        )
+                ));
+
 
 
     }
