@@ -1,4 +1,5 @@
-version: '3.7'
+version: '3.8.19'
+# compose for the back end application
 services:
 
   backend:

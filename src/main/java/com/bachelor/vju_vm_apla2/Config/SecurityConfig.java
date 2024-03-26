@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Profile;
 
 /* Essentially, the main annotation here for our prod project, is the @EnableJwtTokenValidation, which enables
    JWT validation on incoming requests. So any request that doesn't have a valid JWT token will be rejected */
+//todo: might need to reconfigure this to work with a dockerfile, might need to change url only
 @Configuration
 @EnableJwtTokenValidation
 public class SecurityConfig {
