@@ -1,4 +1,4 @@
-version: '3.8.19'
+
 # compose for the back end application
 services:
 
@@ -8,10 +8,16 @@ services:
       dockerfile: Dockerfile
 
     ports:
-      - 8080:8080
-    links:
-      -  mock-oauth2-server
+      - "8080:8080"
+#    volumes: #this can be commended out when wiremock is not in use
+#      - ./src/main/resources/__files:/resources/__files
+
   mock-oauth2-server:
     image: ghcr.io/navikt/mock-oauth2-server:2.1.0
     ports:
-      - 8282:8282
+      - "8282:8282"
+    volumes:
+      - ./src/main/resources/application.yaml:/app/application.yaml
+    environment:
+      LOG_LEVEL: "debug"
+      SERVER_PORT: 8282 #todo configure global variable

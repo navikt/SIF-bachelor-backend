@@ -2,6 +2,7 @@ package com.bachelor.vju_vm_apla2.Config;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,10 +17,13 @@ public class WireMockConfig {
        immediately after the bean (an object that defines dependencies without explicitly creating them in the
        same project) is instantiated.  https://www.baeldung.com/spring-bean
        destroyMethod is what should be called right before Spring destroys the bean. */
+    //to make everything fun with just one config file <3
+    @Value("${WIREMOCK.port}")
+    public int portnr;
     @Bean(initMethod = "start", destroyMethod = "stop")
     public WireMockServer wireMockServer() {
         return new WireMockServer(options()
-                .port(8081)
+                .port(portnr)
                 .extensions(new DynamiskPdfStubRespons())
                 /* Below is the classpath which is "." meaning current classpath root, where WireMock will look
                    for files such as stubs. */

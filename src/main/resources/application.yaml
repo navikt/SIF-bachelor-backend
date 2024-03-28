@@ -17,9 +17,13 @@ logging.level:
 FRONTEND:
   COMBINED: http://${FRONTEND.URL}:${FRONTEND.PORT}
   URL: localhost
-  PORT: 3000
+  PORTS: 3000
 OUATH2:
-  COMBINED: http://${OUATH2.URL}:${OUATH2.PORT}
-  URL: localhost
+  COMBINED: http://${OUATH2.URL}:${OUATH2.PORT}  #todo: figure out what this should be changed to -> to a dockerrized ouath2server?
+  URL: mock-oauth2-server #what are the docker ip adress->does this work???
   PORT: 8282
   VERSION: 2.1.0
+WIREMOCK:
+  url: localhost
+  port: 8081
+  combined: http://${WIREMOCK.url}:${WIREMOCK.port}

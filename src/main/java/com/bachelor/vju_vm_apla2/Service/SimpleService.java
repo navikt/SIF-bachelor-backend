@@ -4,6 +4,7 @@ import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -21,11 +22,12 @@ import java.time.format.DateTimeFormatter;
 public class SimpleService {
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
     private final WebClient webClient;
-
+    @Value("${WIREMOCK.combined}")
+    private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     public SimpleService() {
         this.webClient = WebClient.builder()
-                .baseUrl("http://localhost:8081")
+                .baseUrl(url)
                 .build();
     }
 
