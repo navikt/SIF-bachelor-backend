@@ -13,16 +13,18 @@ public class CorsConfig {
     @Value("${FRONTEND.COMBINED}")
     private String CROS;
 
-    @Value("${OUATH2.COMBINED}")
-    private String OAUTH2Server;
+   @Value("${OUATH2.COMBINED}")
+   private String OAUTH2Server;
+   @Value("${WIREMOCK.combined}")
+   private String wiremock;
     @Bean
     public WebMvcConfigurer corsconf() {
 
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry reg) {
-                reg.addMapping("/**").allowedOrigins(CROS).allowedMethods("*");
-             //   reg.addMapping("/**").allowedOrigins(OAUTH2Server).allowedMethods("*");
+                reg.addMapping("/**").allowedOrigins(CROS, OAUTH2Server).allowedMethods("*").allowedHeaders("*");
+
             }
 
     };

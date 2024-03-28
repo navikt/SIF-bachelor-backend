@@ -27,7 +27,7 @@ public class WireMockConfig {
                 .extensions(new DynamiskPdfStubRespons())
                 /* Below is the classpath which is "." meaning current classpath root, where WireMock will look
                    for files such as stubs. */
-                .usingFilesUnderClasspath(".")
+                .usingFilesUnderClasspath("/vju/resources/__files") //change this one for not in use with docker
                 // Below configures a logger with WireMock, which logs info to the console for debugging
                 .notifier(new ConsoleNotifier(true)));
     }

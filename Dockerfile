@@ -5,8 +5,7 @@ LABEL authors="JAGO industries"
 #COPY mvnw.cmd mvnw.cmd
 WORKDIR vju
 #Can also be commended out for a real db
-COPY  src/main/resources/ /vju/resources/
+COPY  src/main/resources/__files /vju/resources/__files
 COPY  target/*.jar /vju/sif-vju-backend.jar
 
-#COPY target/classes/application.yaml . prob dont need this one
 ENTRYPOINT ["java", "-jar", "/vju/sif-vju-backend.jar"]
