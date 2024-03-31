@@ -9,21 +9,22 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig {
-
+    //Frontend URL
     @Value("${FRONTEND.COMBINED}")
     private String CROS;
-
+    //ouath2 url
    @Value("${OUATH2.COMBINED}")
    private String OAUTH2Server;
+   //wiremock url
    @Value("${WIREMOCK.combined}")
    private String wiremock;
     @Bean
     public WebMvcConfigurer corsconf() {
-
+    //all the different urls that are allowed to talk to the backend
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry reg) {
-                reg.addMapping("/**").allowedOrigins(CROS, OAUTH2Server).allowedMethods("*").allowedHeaders("*");
+                reg.addMapping("/**").allowedOrigins(CROS, OAUTH2Server, wiremock).allowedMethods("*").allowedHeaders("*");
 
             }
 

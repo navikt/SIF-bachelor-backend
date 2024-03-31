@@ -1,8 +1,8 @@
 
-# compose for the frontend && backend application
+# compose for the frontend && backend application, if you want complete independce from the frontend, you can comment out line 4 - 8
 services:
   frontend:
-    image: frontend #note: THIS MUST BE CREATED BY THE FRONTEND FIRST
+    image: frontend #note: THIS MUST BE CREATED BY THE FRONTEND FIRST see the dockerfile https://github.com/Bad-chelor-ITPE3200/NAV-IT-SIF-bachelor-frontend/blob/main/Dockerfile
     command: npm start
     ports:
       - "3000:3000"
@@ -15,7 +15,7 @@ services:
       - "8080:8080"
 
     environment:
-       FRONTEND.URL: frontend
+       FRONTEND.URL: localhost
        FRONTEND.PORT: 3000
        OUATH2.URL: mock-oauth2-server
        OUATH2.PORT: 8282

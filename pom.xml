@@ -24,6 +24,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- needs to be here for the wiremock config, this is the backup server that the wiremock server runs on -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver</artifactId>

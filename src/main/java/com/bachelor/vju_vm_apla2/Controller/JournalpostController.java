@@ -44,7 +44,7 @@ public class JournalpostController {
 
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
 
-    @CrossOrigin// Tillater CORS-forespørsler fra React-appen
+    @CrossOrigin// Allows CORS communication from the frontend, if you want to add extra, you can do that in CorsConfig
     @PostMapping("/hentJournalpostListe")
     public Mono<ResponseEntity<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
@@ -104,7 +104,6 @@ public class JournalpostController {
     }
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
-
     @CrossOrigin
     @GetMapping("/test/protected")
     public String protectedPath() {
