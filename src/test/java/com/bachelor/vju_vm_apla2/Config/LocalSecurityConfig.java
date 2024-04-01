@@ -7,6 +7,6 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Profile("local")
-//@EnableMockOAuth2Server
+@EnableMockOAuth2Server
 public class LocalSecurityConfig {
 }
