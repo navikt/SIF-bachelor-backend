@@ -1,5 +1,6 @@
 package com.bachelor.vju_vm_apla2.Controller;
 
+import com.bachelor.vju_vm_apla2.Config.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
@@ -38,6 +39,7 @@ public class JournalpostController {
         this.simpleService = simpleService;
     }
 
+
     //////////////////////////////////////////////////// HOVED METODER ///////////////////////////////////////////////////////////////////////
 
     //Søker på BrukerID og skal returnere en liste med journalposter
@@ -49,28 +51,71 @@ public class JournalpostController {
     public Mono<ResponseEntity<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
-        return simpleService.hentJournalpostListe_Test(query, headers)
+        return simpleService.hentJournalpostListe_Test_ENVIRONMENT(query, headers)
                 .map(response -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
                         .body(response))
-                .defaultIfEmpty(ResponseEntity.notFound().build())
-                /* Added error handling below, which triggers if something wrong happens during processing of the stream, which
-                   represents fetching the journalpost metadata. If that happens, then we will call the errorResume. This will
-                   then return an INTERNAL SERVER ERROR. Why use this? Try catch is blocking, whilst this method doesn't block the
-                   main thread. */
                 .onErrorResume(e -> {
-                    String errorMessage = "hentJournalpostListe JournalpostController : Error trying to fetch journalpost metadata in the controller ";
-                    String errorMessageForClient = "A server error has occured in retrieving the metadata, please try again later.";
-                    logger.error(errorMessage, e.getMessage());
-
-                    return Mono.just(
-                            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new FraGrapQl_DTO(errorMessageForClient))
-                    );
+                    if (e instanceof CustomClientException) {
+                        System.out.println("Vi er inne i kontroller-klassen som skal gi spesikk error kode:");
+                        // 2. Håndtere statusfeil fra service
+                        CustomClientException cce = (CustomClientException) e;
+                        return Mono.just(ResponseEntity
+                                .status(cce.getStatusCode())
+                                .body(new FraGrapQl_DTO(cce.getMessage())));
+                    } else {
+                        // 3. Generell feilhåndtering
+                        System.out.println("Vi er inne i kontroller-klassen som skal gi Generisk feil:");
+                        return Mono.just(ResponseEntity
+                                .internalServerError()
+                                .body(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere.")));
+                    }
                 });
     }
 //   public String allowed = URL + ":" + PORT;
+
+    /*
+    //Metode for å hente dokumentID basert på response fra SAF - graphql s
+    //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/hentDokumenter")
+    public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId,@RequestParam("journalpostId") String journalpostId, @RequestHeader HttpHeaders headers) {
+        System.out.println("Kontroller - Mottatt query: " + dokumentInfoId +
+                "\n" + "Nå går vi inn i service klassen");
+        return simpleService.hentDokument(dokumentInfoId, journalpostId,  headers)
+                .map(pdfResource ->
+                        ResponseEntity.ok()
+                                .contentType(MediaType.APPLICATION_PDF)
+                                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"")
+                                .body(pdfResource))
+                .onErrorResume(e -> {
+                    if (e instanceof CustomClientException) {
+                        CustomClientException cce = (CustomClientException) e;
+                        System.out.println("Kontroller - Spesifikk feil ved henting av dokument: " + cce.getMessage());
+                        // Oppretter en ResponseEntity med statuskode og feilmelding fra CustomClientException
+                        return Mono.just(ResponseEntity
+                                .status(cce.getStatusCode())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(new ByteArrayResource(cce.getMessage().getBytes())));
+                    } else {
+                        System.out.println("Kontroller - Generell feil ved henting av dokument");
+                        String errorMessageForClient = "A server error has occurred in retrieving the expected documents, please try again later.";
+                        // Sanitize the errorMessageForClient to escape any double quotes
+                        String jsonErrorMessage = "{\"errorMessage\": \"" + errorMessageForClient.replace("\"", "\\\"") + "\"}";
+                        ByteArrayResource errorResource = new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
+                        return Mono.just(
+                                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .body(errorResource)
+                        );
+                    }
+                });
+    }
+
+     */
+
+    ////////////////////////////////////////////TEST ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
 
     //Metode for å hente dokumentID basert på response fra SAF - graphql s
     //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
@@ -79,29 +124,36 @@ public class JournalpostController {
     public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + dokumentInfoId +
                 "\n" + "Nå går vi inn i service klassen");
-        return simpleService.hentDokument(dokumentInfoId, headers)
+        return simpleService.hentDokument_Test_ENVIRONMENT(dokumentInfoId, headers)
                 .map(pdfResource ->
                         ResponseEntity.ok()
                                 .contentType(MediaType.APPLICATION_PDF)
                                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"")
                                 .body(pdfResource))
-                // Error handling below
                 .onErrorResume(e -> {
-                    // Log the exception for debugging purposes
-                    String errorMessage = "hentDokument JournalPostController : Error in retrieving the document with document info id: " + dokumentInfoId;
-                    String errorMessageForClient = "A server error has occured in retrieving the expected documents, please try again later.";
-                    logger.error(errorMessage, e);
-
-                    // The errorMessageForClient is sanitized to escape any double quotes to prevent breaking the JSON format.
-                    String jsonErrorMessage = "{\"errorMessage\": \"" + errorMessageForClient.replace("\"", "\\\"") + "\"}";
-                    ByteArrayResource errorResource = new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
-                    return Mono.just(
-                            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .body(errorResource)
-                    );
+                    if (e instanceof CustomClientException) {
+                        CustomClientException cce = (CustomClientException) e;
+                        System.out.println("Kontroller - Spesifikk feil ved henting av dokument: " + cce.getMessage());
+                        // Oppretter en ResponseEntity med statuskode og feilmelding fra CustomClientException
+                        return Mono.just(ResponseEntity
+                                .status(cce.getStatusCode())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(new ByteArrayResource(cce.getMessage().getBytes())));
+                    } else {
+                        System.out.println("Kontroller - Generell feil ved henting av dokument");
+                        String errorMessageForClient = "A server error has occurred in retrieving the expected documents, please try again later.";
+                        // Sanitize the errorMessageForClient to escape any double quotes
+                        String jsonErrorMessage = "{\"errorMessage\": \"" + errorMessageForClient.replace("\"", "\\\"") + "\"}";
+                        ByteArrayResource errorResource = new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
+                        return Mono.just(
+                                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .body(errorResource)
+                        );
+                    }
                 });
     }
+
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
     @CrossOrigin
