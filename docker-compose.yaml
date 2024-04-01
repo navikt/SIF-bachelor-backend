@@ -1,11 +1,14 @@
 
 # compose for the frontend && backend application, if you want complete independce from the frontend, you can comment out line 4 - 8
 services:
+
   frontend:
     image: frontend #note: THIS MUST BE CREATED BY THE FRONTEND FIRST see the dockerfile https://github.com/Bad-chelor-ITPE3200/NAV-IT-SIF-bachelor-frontend/blob/main/Dockerfile
     command: npm start
     ports:
       - "3000:3000"
+#    networks:
+#      - oauth2server
   backend:
     build:
       context: .
@@ -26,6 +29,11 @@ services:
       - "8282:8282"
     volumes:
       - ./src/main/resources/application.yaml:/app/application.yaml
+#      to use the right ouath2server in the frontend:
+#    networks:
+#      oauth2server:
+#        aliases:
+#          - ouath2server
     environment:
       LOG_LEVEL: "debug"
       SERVER_PORT: 8282 #todo configure global variable
