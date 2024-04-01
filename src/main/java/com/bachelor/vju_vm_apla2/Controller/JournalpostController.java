@@ -47,7 +47,7 @@ public class JournalpostController {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
                         .body(response))
-                .defaultIfEmpty(ResponseEntity.notFound().build())
+                        .defaultIfEmpty(ResponseEntity.notFound().build())
                 /* Added error handling below, which triggers if something wrong happens during processing of the stream, which
                    represents fetching the journalpost metadata. If that happens, then we will call the errorResume. This will
                    then return an INTERNAL SERVER ERROR. Why use this? Try catch is blocking, whilst this method doesn't block the
@@ -68,10 +68,10 @@ public class JournalpostController {
     //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/hentDokumenter")
-    public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestHeader HttpHeaders headers) {
+    public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestParam("journalpostId") String journalpostId,  @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + dokumentInfoId +
                 "\n" + "Nå går vi inn i service klassen");
-        return simpleService.hentDokument(dokumentInfoId, headers)
+        return simpleService.hentDokument(dokumentInfoId, journalpostId, headers)
                 .map(pdfResource ->
                         ResponseEntity.ok()
                                 .contentType(MediaType.APPLICATION_PDF)
