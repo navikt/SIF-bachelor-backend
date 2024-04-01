@@ -40,4 +40,4 @@ services:
 #          - ouath2server
     environment:
       LOG_LEVEL: "debug"
-      SERVER_PORT: 8282 #todo configure global variable
+      SERVER_PORT: 8282
