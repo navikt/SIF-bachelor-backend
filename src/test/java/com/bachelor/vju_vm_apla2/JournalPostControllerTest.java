@@ -133,13 +133,14 @@ public class JournalPostControllerTest {
 
 //        String pathToRes = resources.toFile().getPath();
         String dokumentId = "000001";
+        String journalpostId = "0000002";
         HttpHeaders headers = new HttpHeaders();
         byte[] fakePDF = "Cool pdfs".getBytes(StandardCharsets.UTF_8);
         ByteArrayResource fakePDFresource = new ByteArrayResource(fakePDF);
 
-        //Mockito.when(serviceMock.hentDokument(dokumentId, headers)).thenReturn(Mono.just(fakePDFresource));
+        Mockito.when(serviceMock.hentDokument(dokumentId, journalpostId, headers)).thenReturn(Mono.just(fakePDFresource));
         String cmp = String.valueOf(Mono.just(ResponseEntity.status(HttpStatus.OK).headers(headers).contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"").body(fakePDFresource)).block());
-        String res = String.valueOf(jpController.hentDokument(dokumentId, headers).block());
+        String res = String.valueOf(jpController.hentDokument(dokumentId, journalpostId, headers).block());
 
         assertEquals(cmp, res);
     }

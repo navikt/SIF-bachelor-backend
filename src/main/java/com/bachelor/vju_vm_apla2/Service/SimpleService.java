@@ -93,6 +93,7 @@ public class SimpleService {
                     journalstatus
                     tema
                   dokumenter {
+                    originalJournalpostId
                     tittel
                     dokumentInfoId
                   }
@@ -110,8 +111,8 @@ public class SimpleService {
     //Metode for å gjøre kall mot Rest-SAF for å hente indivduelle dokuemnter for journalpostId "001"
     //Metoden tar i mot bare dokumentID. Det skal endres til at den også tar i mot journalpostID
     public Mono<Resource> hentDokument(String dokumentInfoId, String journalpostId, HttpHeaders originalHeader) {
-        System.out.println("Vi er inne i service og har hentet dokumentID " + dokumentInfoId);
-        String url = "/mock/rest/hentdokument/" + journalpostId + "/" + dokumentInfoId;
+        System.out.println("Vi er inne i service og har hentent dokumentID " + dokumentInfoId);
+        String url = "/mock/rest/hentdokument/"+journalpostId+"/" + dokumentInfoId;
 
         return webClient.get()
                 .uri(url)
