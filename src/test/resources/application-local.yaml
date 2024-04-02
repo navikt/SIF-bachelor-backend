@@ -21,6 +21,9 @@ FRONTEND:
 #VIKTIG
 #Variabel for å sette statisk port for mock serveren utenfor testing enviroment.
 mock-oauth2-server:
-  combined: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}
   url: localhost
   port: 8282
+  combined: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}
+  token-url: ${mock-oauth2-server.combined}/default/token
+  clientId: dittClientId
+  clientSecret: dinClientSecret

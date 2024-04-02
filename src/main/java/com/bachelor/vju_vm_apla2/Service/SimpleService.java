@@ -76,7 +76,8 @@ public class SimpleService {
         String formattedTilDato = query.getTilDato() != null ? LocalDate.ofInstant(Instant.parse(query.getTilDato()), ZoneId.systemDefault()).format(formatter) : "null";
 
         // Bygger GraphQL-forespørselen med de formaterte datoverdiene
-        String graphQLQuery = String.format("""
+
+        return String.format(""" 
             query {
               dokumentoversiktBruker(
                 brukerId: { id: "%s", type: "%s" }
@@ -104,8 +105,6 @@ public class SimpleService {
                 query.getJournalposttyper().toString(),
                 query.getJournalstatuser().toString(),
                 query.getTema().toString());
-
-        return graphQLQuery;
     }
 
     //Metode for å gjøre kall mot Rest-SAF for å hente indivduelle dokuemnter for journalpostId "001"
