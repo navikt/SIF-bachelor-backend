@@ -9,7 +9,7 @@ no.nav.security.jwt:
       discovery-url: ${OUATH2.COMBINED}/default/.well-known/openid-configuration
       accepted_audience: default
     issuer2:
-      discovery-url: ${OUATH2.COMBINED}/default/.well-known/openid-configuration
+      discovery-url: ${mock-oauth2-server.combined}/default/.well-known/openid-configuration
       accepted_audience: default
 
 logging.level:
@@ -19,12 +19,15 @@ FRONTEND:
   COMBINED: http://${FRONTEND.URL}:${FRONTEND.PORT}
   URL: localhost
   PORTS: 3000
-OUATH2:
-  COMBINED: http://${OUATH2.URL}:${OUATH2.PORT}  #todo: figure out what this should be changed to -> to a dockerrized ouath2server?
-  URL: mock-oauth2-server #what are the docker ip adress->does this work???
-  PORT: 8282
-  VERSION: 2.1.0
-WIREMOCK:
+mock-oauth2-server:
+  url: localhost
+  port: 8282
+  combined: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}
+  token-url: ${mock-oauth2-server.combined}/default/token
+  clientId: dittClientId
+  clientSecret: dinClientSecret
+
+wiremock:
   url: localhost
   port: 8081
   combined: http://${WIREMOCK.url}:${WIREMOCK.port}
