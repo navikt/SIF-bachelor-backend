@@ -13,10 +13,10 @@ public class CorsConfig {
     @Value("${FRONTEND.COMBINED}")
     private String CROS;
     //ouath2 url
-   @Value("${OUATH2.COMBINED}")
+   @Value("${mock-oauth2-server.combined}")
    private String OAUTH2Server;
    //wiremock url
-   @Value("${WIREMOCK.combined}")
+   @Value("${wiremock.combined}")
    private String wiremock;
     @Bean
     public WebMvcConfigurer corsconf() {

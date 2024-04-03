@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
 public class SimpleService {
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
     private final WebClient webClient;
-    @Value("${WIREMOCK.combined}")
+    @Value("${wiremock.combined}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     public SimpleService() {
@@ -41,7 +41,7 @@ public class SimpleService {
         String graphQLQuery = createGraphQLQuery(query); // Generer GraphQL-forespørselen
         System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + graphQLQuery);
         return this.webClient.post()
-                .uri("/mock/graphql")
+                .uri(url+"/mock/graphql")
                 .headers(headers -> headers.addAll(originalHeader))
                 .bodyValue(graphQLQuery) // Genererte GraphQL-forespørselen
                 .retrieve()
@@ -65,6 +65,36 @@ public class SimpleService {
                     return Mono.error(e);
                 });
     }
+
+    //tar innkomende data fra JournalPostController og parser dette til webclient object
+    //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
+    public Mono<FraGrapQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(FraKlient_DTO query, HttpHeaders headers) {
+        return webClient.post()
+                .uri(url+"/mock/graphql")
+                .headers(h -> h.addAll(headers))
+                .bodyValue(query)
+                .retrieve()
+                .onStatus(status -> status.isError(), clientResponse ->
+                        clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
+                            System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
+                            int statusValue = clientResponse.statusCode().value();
+                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                        }))
+                .bodyToMono(FraGrapQl_DTO.class)
+                .onErrorResume(e -> {
+                    // Håndter generelle feil som ikke er knyttet til HTTP-statuskoder
+                    if (!(e instanceof CustomClientException)) {
+                        System.out.println("Vi er inne i Servoce-klassen som skal gi GENERISK error kode:");
+                        // Logg feilen og returner en generisk feilrespons
+                        logger.error("En uventet feil oppstod: ", e);
+                        return Mono.just(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
+                    }
+                    // Viderefør CustomClientException slik at den kan håndteres oppstrøms
+                    return Mono.error(e);
+                });
+    }
+
 
     //Bygger en GraphQL-forespørsel som en streng basert på input-data fra klienten
     private String createGraphQLQuery(FraKlient_DTO query) {
@@ -111,17 +141,17 @@ public class SimpleService {
     //Metoden tar i mot bare dokumentID. Det skal endres til at den også tar i mot journalpostID
     public Mono<Resource> hentDokument(String dokumentInfoId, String journalpostId, HttpHeaders originalHeader) {
         System.out.println("Vi er inne i service og har hentent dokumentID " + dokumentInfoId);
-        String url = "/mock/rest/hentdokument/"+journalpostId+"/" + dokumentInfoId;
+        String endpoint = "/mock/rest/hentdokument/"+journalpostId+"/" + dokumentInfoId;
 
         return webClient.get()
-                .uri(url)
+                .uri(url+endpoint)
                 .headers(h -> h.addAll(originalHeader))
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Service-klassen som skal gi spesifikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + "endpoint" + statusValue+ " - " + errorBody;
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
                         }))
                 .bodyToMono(byte[].class) // Konverter responsen til en byte array
@@ -147,44 +177,16 @@ public class SimpleService {
 
 ////////////////////////////////////////////TEST ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
 
-    //tar innkomende data fra JournalPostController og parser dette til webclient object
-    //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
-    public Mono<FraGrapQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(FraKlient_DTO query, HttpHeaders headers) {
-        return webClient.post()
-                .uri("/mock/graphql")
-                .headers(h -> h.addAll(headers))
-                .bodyValue(query)
-                .retrieve()
-                .onStatus(status -> status.isError(), clientResponse ->
-                        clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
-                            System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
-                            int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
-                        }))
-                .bodyToMono(FraGrapQl_DTO.class)
-                .onErrorResume(e -> {
-                    // Håndter generelle feil som ikke er knyttet til HTTP-statuskoder
-                    if (!(e instanceof CustomClientException)) {
-                        System.out.println("Vi er inne i Servoce-klassen som skal gi GENERISK error kode:");
-                        // Logg feilen og returner en generisk feilrespons
-                        logger.error("En uventet feil oppstod: ", e);
-                        return Mono.just(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
-                    }
-                    // Viderefør CustomClientException slik at den kan håndteres oppstrøms
-                    return Mono.error(e);
-                });
-    }
 
 
     //Metode for å gjøre kall mot Rest-SAF for å hente indivduelle dokuemnter for journalpostId "001"
     //Metoden tar i mot bare dokumentID. Det skal endres til at den også tar i mot journalpostID
     public Mono<Resource> hentDokument_Test_ENVIRONMENT(String dokumentInfoId, HttpHeaders originalHeader) {
         System.out.println("Vi er inne i service og har hentet dokumentID " + dokumentInfoId);
-        String url = "/mock/rest/hentdokument/journalpostid/" + dokumentInfoId;
+        String endpoint = "/mock/rest/hentdokument/journalpostid/" + dokumentInfoId;
 
         return webClient.get()
-                .uri(url)
+                .uri(url+endpoint)
                 .headers(h -> h.addAll(originalHeader))
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->

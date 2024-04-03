@@ -27,3 +27,8 @@ mock-oauth2-server:
   token-url: ${mock-oauth2-server.combined}/default/token
   clientId: dittClientId
   clientSecret: dinClientSecret
+
+wiremock:
+  url: localhost
+  port: 8081
+  combined: http://${wiremock.url}:${wiremock.port}

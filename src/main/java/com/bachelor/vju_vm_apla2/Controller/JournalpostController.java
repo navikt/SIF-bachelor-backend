@@ -87,7 +87,7 @@ public class JournalpostController {
     public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestParam("journalpostId") String journalpostId,  @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + dokumentInfoId +
                 "\n" + "Nå går vi inn i service klassen");
-        return simpleService.hentDokument_Test_ENVIRONMENT(dokumentInfoId, headers)
+        return simpleService.hentDokument(dokumentInfoId, journalpostId, headers)
                 .map(pdfResource ->
                         ResponseEntity.ok()
                                 .contentType(MediaType.APPLICATION_PDF)
