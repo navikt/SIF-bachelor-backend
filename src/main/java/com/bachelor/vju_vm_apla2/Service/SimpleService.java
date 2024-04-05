@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
 public class SimpleService {
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
     private final WebClient webClient;
-    @Value("${wiremock.combined}")
+    @Value("${db.Service}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     public SimpleService() {
@@ -41,7 +41,7 @@ public class SimpleService {
         String graphQLQuery = createGraphQLQuery(query); // Generer GraphQL-forespørselen
         System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + graphQLQuery);
         return this.webClient.post()
-                .uri(url+"/mock/graphql")
+                .uri(url+"/graphql")
                 .headers(headers -> headers.addAll(originalHeader))
                 .bodyValue(graphQLQuery) // Genererte GraphQL-forespørselen
                 .retrieve()
@@ -70,7 +70,7 @@ public class SimpleService {
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
     public Mono<FraGrapQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(FraKlient_DTO query, HttpHeaders headers) {
         return webClient.post()
-                .uri(url+"/mock/graphql")
+                .uri(url+"/graphql")
                 .headers(h -> h.addAll(headers))
                 .bodyValue(query)
                 .retrieve()
@@ -141,7 +141,7 @@ public class SimpleService {
     //Metoden tar i mot bare dokumentID. Det skal endres til at den også tar i mot journalpostID
     public Mono<Resource> hentDokument(String dokumentInfoId, String journalpostId, HttpHeaders originalHeader) {
         System.out.println("Vi er inne i service og har hentent dokumentID " + dokumentInfoId);
-        String endpoint = "/mock/rest/hentdokument/"+journalpostId+"/" + dokumentInfoId;
+        String endpoint = "/rest/hentdokument/"+journalpostId+"/" + dokumentInfoId;
 
         return webClient.get()
                 .uri(url+endpoint)
@@ -183,7 +183,7 @@ public class SimpleService {
     //Metoden tar i mot bare dokumentID. Det skal endres til at den også tar i mot journalpostID
     public Mono<Resource> hentDokument_Test_ENVIRONMENT(String dokumentInfoId, HttpHeaders originalHeader) {
         System.out.println("Vi er inne i service og har hentet dokumentID " + dokumentInfoId);
-        String endpoint = "/mock/rest/hentdokument/journalpostid/" + dokumentInfoId;
+        String endpoint = "/rest/hentdokument/journalpostid/" + dokumentInfoId;
 
         return webClient.get()
                 .uri(url+endpoint)

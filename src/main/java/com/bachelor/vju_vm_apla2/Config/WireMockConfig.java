@@ -18,9 +18,9 @@ public class WireMockConfig {
        same project) is instantiated.  https://www.baeldung.com/spring-bean
        destroyMethod is what should be called right before Spring destroys the bean. */
     //to make everything fun with just one config file <3
-    @Value("${wiremock.port}")
+    @Value("${db.port}")
     public int portnr;
-    @Value("${wiremock.url}")
+    @Value("${db.url}")
     public String url;
     @Bean(initMethod = "start", destroyMethod = "stop")
     public WireMockServer wireMockServer() {

@@ -16,3 +16,16 @@ logging.level:
   no.nav: DEBUG
 
 
+mock-oauth2-server:
+  url: localhost
+  port: 8282
+  combined: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}
+  token-url: ${mock-oauth2-server.combined}/default/token
+  clientId: dittClientId
+  clientSecret: dinClientSecret
+
+db:
+  url: localhost
+  port: 8081
+  combined: http://${db.url}:${db.port}
+  combinedMock: ${db.combined}/mock
