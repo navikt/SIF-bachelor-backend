@@ -28,6 +28,7 @@ services:
        mock-oauth2-server.port: 8282
        db.url : localhost
        db.port : 8082
+       LOG_LEVEL : "debug"
        #if you want  to change the entire service url, you can look at db.Service global variable
        #IMPORTANT::: CHANGE the file location for the wiremock server to /vju/__files from ., and back when you dont need it anymore
 
