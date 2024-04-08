@@ -33,3 +33,4 @@ db:
   port: 8081
   combined: http://${db.url}:${db.port}
   combinedInService: ${db.combined}/mock
+  files: .
