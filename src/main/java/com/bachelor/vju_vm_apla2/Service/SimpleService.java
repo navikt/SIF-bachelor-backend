@@ -1,8 +1,8 @@
 package com.bachelor.vju_vm_apla2.Service;
 
 import com.bachelor.vju_vm_apla2.Config.CustomClientException;
-import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
-import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +37,7 @@ public class SimpleService {
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
-    public Mono<FraGrapQl_DTO> hentJournalpostListe(FraKlient_DTO query, HttpHeaders originalHeader) {
+    public Mono<ReturnFromGraphQl_DTO> hentJournalpostListe(GetJournalpostList_DTO query, HttpHeaders originalHeader) {
         String graphQLQuery = createGraphQLQuery(query); // Generer GraphQL-forespørselen
         System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + graphQLQuery);
         return this.webClient.post()
@@ -52,14 +52,14 @@ public class SimpleService {
                             String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
                         }))
-                .bodyToMono(FraGrapQl_DTO.class)
+                .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
                     // Håndter generelle feil som ikke er knyttet til HTTP-statuskoder
                     if (!(e instanceof CustomClientException)) {
                         System.out.println("Vi er inne i Servoce-klassen som skal gi GENERISK error kode:");
                         // Logg feilen og returner en generisk feilrespons
                         logger.error("En uventet feil oppstod: ", e);
-                        return Mono.just(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
+                        return Mono.just(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
                     }
                     // Viderefør CustomClientException slik at den kan håndteres oppstrøms
                     return Mono.error(e);
@@ -68,7 +68,7 @@ public class SimpleService {
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
-    public Mono<FraGrapQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(FraKlient_DTO query, HttpHeaders headers) {
+    public Mono<ReturnFromGraphQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(GetJournalpostList_DTO query, HttpHeaders headers) {
         return webClient.post()
                 .uri(url+"/mock/graphql")
                 .headers(h -> h.addAll(headers))
@@ -81,14 +81,14 @@ public class SimpleService {
                             String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
                         }))
-                .bodyToMono(FraGrapQl_DTO.class)
+                .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
                     // Håndter generelle feil som ikke er knyttet til HTTP-statuskoder
                     if (!(e instanceof CustomClientException)) {
                         System.out.println("Vi er inne i Servoce-klassen som skal gi GENERISK error kode:");
                         // Logg feilen og returner en generisk feilrespons
                         logger.error("En uventet feil oppstod: ", e);
-                        return Mono.just(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
+                        return Mono.just(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
                     }
                     // Viderefør CustomClientException slik at den kan håndteres oppstrøms
                     return Mono.error(e);
@@ -97,7 +97,7 @@ public class SimpleService {
 
 
     //Bygger en GraphQL-forespørsel som en streng basert på input-data fra klienten
-    private String createGraphQLQuery(FraKlient_DTO query) {
+    private String createGraphQLQuery(GetJournalpostList_DTO query) {
         // Formatter for å konvertere datoer til ønsket format
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

@@ -1,9 +1,9 @@
 package com.bachelor.vju_vm_apla2;
 
 import com.bachelor.vju_vm_apla2.Controller.JournalpostController;
-import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
-import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
-import com.bachelor.vju_vm_apla2.Models.POJO.graphql.*;
+import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
+import com.bachelor.vju_vm_apla2.Models.POJO.Saf.*;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import lombok.SneakyThrows;
 import org.junit.Test;
@@ -58,12 +58,12 @@ public class JournalPostControllerTest {
 
         tt.add(Tema.AAP);
         BrukerIdInput bIdInput= new BrukerIdInput("001",BrukerIdType.FNR);
-        FraKlient_DTO brukerId = new FraKlient_DTO(new BrukerIdInput(bIdInput.getId(), bIdInput.getType()), "2024-12-12", "2025-12-12", jpts, jptts, tt);
+        GetJournalpostList_DTO brukerId = new GetJournalpostList_DTO(new BrukerIdInput(bIdInput.getId(), bIdInput.getType()), "2024-12-12", "2025-12-12", jpts, jptts, tt);
         Dokumentoversikt  dO = new Dokumentoversikt();
-        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");
-        Mono <FraGrapQl_DTO> MfgglTest = Mono.just(fgqlTest);
-        Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
-        Mono<ResponseEntity<FraGrapQl_DTO>> resultMono = jpController.hentJournalpostListe(brukerId, headers);
+        ReturnFromGraphQl_DTO fgqlTest = new ReturnFromGraphQl_DTO(dO, "hello world");
+        Mono <ReturnFromGraphQl_DTO> MfgglTest = Mono.just(fgqlTest);
+        Mockito.when(serviceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
+        Mono<ResponseEntity<ReturnFromGraphQl_DTO>> resultMono = jpController.hentJournalpostListe(brukerId, headers);
     //Not sure how this works, but rolls with it for now
         StepVerifier.create(resultMono).assertNext(fraGrapQlDtoResponseEntity -> {
             assertEquals(HttpStatus.OK, fraGrapQlDtoResponseEntity.getStatusCode());
@@ -76,7 +76,7 @@ public class JournalPostControllerTest {
     @Test(expected=Exception.class)
     public void hentJornalpostThrowE(){
         Dokumentoversikt  dO = new Dokumentoversikt();
-        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");
+        ReturnFromGraphQl_DTO fgqlTest = new ReturnFromGraphQl_DTO(dO, "hello world");
         Journalpost jp1 = new Journalpost();
         List<Journalpost> JPtester = new ArrayList<>();
         JPtester.add(jp1);
@@ -89,10 +89,10 @@ public class JournalPostControllerTest {
         List<Tema>tt = new ArrayList<>();
         HttpHeaders headers = new HttpHeaders();
         BrukerIdInput bk0 = new BrukerIdInput("hei", BrukerIdType.FNR);
-        FraKlient_DTO DTO = new FraKlient_DTO(bk0, "2023-10-20", "2023-11-20",jpts, jptts, tt);
+        GetJournalpostList_DTO DTO = new GetJournalpostList_DTO(bk0, "2023-10-20", "2023-11-20",jpts, jptts, tt);
         headers.add("Authorization", "bearer");
         //trying without mocking anything as we will throw an exception
-        Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
+        Mockito.when(serviceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
         String res = String.valueOf(jpController.hentJournalpostListe(DTO, headers));
 
  assertEquals(any(Exception.class), res);
@@ -114,11 +114,11 @@ public class JournalPostControllerTest {
 
         tt.add(Tema.AAP);
         BrukerIdInput bIdInput= new BrukerIdInput("001",BrukerIdType.FNR);
-        FraKlient_DTO brukerId = new FraKlient_DTO(bIdInput, "2024-12-12", "2025-12-12", jpts, jptts, tt);
+        GetJournalpostList_DTO brukerId = new GetJournalpostList_DTO(bIdInput, "2024-12-12", "2025-12-12", jpts, jptts, tt);
         Dokumentoversikt  dO = new Dokumentoversikt();
-        FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");
-        Mono <FraGrapQl_DTO> MfgglTest = Mono.just(Objects.requireNonNull(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).contentType(MediaType.APPLICATION_JSON).body(fgqlTest).getBody()));
-        Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
+        ReturnFromGraphQl_DTO fgqlTest = new ReturnFromGraphQl_DTO(dO, "hello world");
+        Mono <ReturnFromGraphQl_DTO> MfgglTest = Mono.just(Objects.requireNonNull(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).contentType(MediaType.APPLICATION_JSON).body(fgqlTest).getBody()));
+        Mockito.when(serviceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
 
 
         headers.add("Authorization", "Bearer ");

@@ -28,7 +28,12 @@ mock-oauth2-server:
   clientId: dittClientId
   clientSecret: dinClientSecret
 
-wiremock:
+wiremock-saf:
   url: localhost
   port: 8081
-  combined: http://${wiremock.url}:${wiremock.port}
+  combined: http://${wiremock-saf.url}:${wiremock-saf.port}
+
+wiremock-dok:
+  url: localhost
+  port: 8082
+  combined: http://${wiremock-dok.url}:${wiremock-dok.port}
