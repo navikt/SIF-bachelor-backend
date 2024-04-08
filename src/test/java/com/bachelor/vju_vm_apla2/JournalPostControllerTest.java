@@ -31,7 +31,13 @@ import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JournalPostControllerTest {
+    /**
+     * @UnitTests: Journalpost Controller
+     */
+    //TODO: clean up comments
+    //todo: clean up TODOS
 
+//TODO: debug: journnalpostTest and journalposttestFail
     @Mock
     SimpleService serviceMock;
     @InjectMocks
@@ -62,7 +68,7 @@ public class JournalPostControllerTest {
         Dokumentoversikt  dO = new Dokumentoversikt();
         FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");
         Mono <FraGrapQl_DTO> MfgglTest = Mono.just(fgqlTest);
-        Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
+        Mockito.when(serviceMock.hentJournalpostListe_Test_ENVIRONMENT(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
         Mono<ResponseEntity<FraGrapQl_DTO>> resultMono = jpController.hentJournalpostListe(brukerId, headers);
     //Not sure how this works, but rolls with it for now
         StepVerifier.create(resultMono).assertNext(fraGrapQlDtoResponseEntity -> {
@@ -118,7 +124,7 @@ public class JournalPostControllerTest {
         Dokumentoversikt  dO = new Dokumentoversikt();
         FraGrapQl_DTO fgqlTest = new FraGrapQl_DTO(dO, "hello world");
         Mono <FraGrapQl_DTO> MfgglTest = Mono.just(Objects.requireNonNull(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).contentType(MediaType.APPLICATION_JSON).body(fgqlTest).getBody()));
-        Mockito.when(serviceMock.hentJournalpostListe(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
+        Mockito.when(serviceMock.hentJournalpostListe_Test_ENVIRONMENT(any(FraKlient_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
 
 
         headers.add("Authorization", "Bearer ");
@@ -144,7 +150,9 @@ public class JournalPostControllerTest {
 
         assertEquals(cmp, res);
     }
+    //todo: write unit tests for sec controller:
 
+    //todo: write test for costum error handling exception
     @Test
     public void protectedTest() {
         assertEquals("I am protected", jpController.protectedPath());
