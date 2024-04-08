@@ -35,6 +35,6 @@ public class DokArkivController {
         logger.info("Inne i metoden hentJournalpostListe med data: {}", meta);
 
         //denne skal returnere
-
+        return null;
     }
 }

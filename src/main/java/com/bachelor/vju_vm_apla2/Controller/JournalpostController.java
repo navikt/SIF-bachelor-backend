@@ -42,7 +42,7 @@ public class JournalpostController {
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
 
     @CrossOrigin// Allows CORS communication from the frontend, if you want to add extra, you can do that in CorsConfig
-    @PostMapping("/hentJournalpostListe")
+    @PostMapping("/arkiv_hentJournalpostListe")
     public Mono<ResponseEntity<ReturnFromGraphQl_DTO>> hentJournalpostListe(@RequestBody GetJournalpostList_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
@@ -80,7 +80,7 @@ public class JournalpostController {
     //Metode for å hente dokumentID basert på response fra SAF - graphql s
     //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
     @CrossOrigin
-    @GetMapping("/hentDokumenter")
+    @GetMapping("/arkiv_hentDokumenter")
     public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestParam("journalpostId") String journalpostId,  @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + dokumentInfoId +
                 "\n" + "Nå går vi inn i service klassen");
@@ -119,38 +119,6 @@ public class JournalpostController {
 
     //TODO: opprett en metode som tar i mot endepunkt "opprettJournalpost
 
-    @CrossOrigin// Allows CORS communication from the frontend, if you want to add extra, you can do that in CorsConfig
-    @PostMapping("/opprettJournalpost")
-    public Mono<ResponseEntity<ReturnFromGraphQl_DTO>> opprettJournalpost(@RequestBody GetJournalpostList_DTO query, @RequestHeader HttpHeaders headers) {
-        System.out.println("Kontroller - Mottatt query: " + query +
-                "\n" + "Kontroller - Mottatt headers: " + headers);
-        return simpleService.hentJournalpostListe_Test_ENVIRONMENT(query, headers)
-                .map(response -> ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
-                        .body(response))
-                .defaultIfEmpty(ResponseEntity.notFound().build())
-                /* Added error handling below, which triggers if something wrong happens during processing of the stream, which
-                   represents fetching the journalpost metadata. If that happens, then we will call the errorResume. This will
-                   then return an INTERNAL SERVER ERROR. Why use this? Try catch is blocking, whilst this method doesn't block the
-                   main thread. */
-                .onErrorResume(e -> {
-                    if (e instanceof CustomClientException) {
-                        System.out.println("Vi er inne i kontroller-klassen som skal gi spesikk error kode:");
-                        // 2. Håndtere statusfeil fra service
-                        CustomClientException cce = (CustomClientException) e;
-                        return Mono.just(ResponseEntity
-                                .status(cce.getStatusCode())
-                                .body(new ReturnFromGraphQl_DTO(cce.getMessage())));
-                    } else {
-                        // 3. Generell feilhåndtering
-                        System.out.println("Vi er inne i kontroller-klassen som skal gi Generisk feil:");
-                        return Mono.just(ResponseEntity
-                                .internalServerError()
-                                .body(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere.")));
-                    }
-                });
-    }
 
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////
