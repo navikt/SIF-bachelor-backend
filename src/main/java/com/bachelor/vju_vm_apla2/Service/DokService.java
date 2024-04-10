@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -32,12 +33,7 @@ public class DokService {
     public Mono<String>hentDokument(){
         return Mono.just("aaaa");
     }
-//    private static List<byte[]> tobyteArray(Dokumenter [] fysiskdok){
-//
-//        for (Object o : Arrays.stream(fysiskdok).toArray()) {
-//
-//        }
-//
-//
-//    }
+    public String tobase64 (String input){
+        return Base64.getEncoder().encodeToString(input.getBytes());
+    }
 }
