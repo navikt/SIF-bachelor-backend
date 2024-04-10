@@ -33,7 +33,7 @@ public class DokService {
     public Mono<String>hentDokument(){
         return Mono.just("aaaa");
     }
-    public String tobase64 (String input){
+    private static String tobase64 (String input){ //private until we decide otherwise
         return Base64.getEncoder().encodeToString(input.getBytes());
     }
 }
