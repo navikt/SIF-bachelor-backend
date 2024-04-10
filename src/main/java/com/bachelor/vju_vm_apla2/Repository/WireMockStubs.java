@@ -680,7 +680,7 @@ public class WireMockStubs {
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
-                        .withStatus(401)
+                        .withStatus(404)
                         .withBody(
                                 "Dokumentet ble ikke funnet i fagarkivet.\n" +
                                         "Dette kan være av midlertidig natur i tilfeller der konsument får en claim check på en journalpostId før den er ferdig arkivert.\n" +
