@@ -32,3 +32,4 @@ db:
   port: 8081
   combined: http://${db.url}:${db.port}
   Service: ${db.combined}/mock # <- this can be changed to the  right endpoint in the url
+  files: /vju/resources/__files
