@@ -6,6 +6,7 @@ import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,8 +24,9 @@ public class SafService {
 
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
     private final WebClient webClient;
-    private final String url = "http://localhost:8080"; // Eksempelbase URL for WireMock-serveren
 
+    @Value("${wiremock-saf.combined}")
+    private String url;
     public SafService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl(url).build();
     }
