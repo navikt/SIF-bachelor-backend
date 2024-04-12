@@ -28,7 +28,7 @@ public class SimpleService {
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     public SimpleService() {
         this.webClient = WebClient.builder()
-                .baseUrl(url)
+                .baseUrl(url) //tokensupport here
                 .build();
     }
 
