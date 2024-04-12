@@ -27,9 +27,9 @@ public class DokArkivController {
         this.dokService = dokService;
     }
 
-
+    @RequestMapping("/dokarkivAPI")
     @CrossOrigin
-    @PostMapping("createJournalpost")
+    @PostMapping("/createJournalpost")
     public Mono<ResponseEntity<ControllerReponse_DTO[]>> createJournalpost(@RequestBody CreateJournalpost_DTO meta, @RequestHeader HttpHeaders header){
 
         logger.info("Inne i metoden hentJournalpostListe med data: {}", meta);
