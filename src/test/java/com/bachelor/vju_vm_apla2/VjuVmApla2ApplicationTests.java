@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = VjuLocalApplication.class, properties = {"discoveryUrl=http://localhost:${mock-oauth2-server.port}/test/.well-known/openid-configuration"}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = VjuLocalApplication.class, properties = {"discoveryUrl=${mock-oauth2-server.combined}/test/.well-known/openid-configuration"}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @EnableMockOAuth2Server(port = 8082)
 class VjuVmApla2ApplicationTests {
 

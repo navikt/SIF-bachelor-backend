@@ -1,18 +1,14 @@
 package com.bachelor.vju_vm_apla2.Repository;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.http.Request;
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.HttpClientErrorException;
 
 import static com.bachelor.vju_vm_apla2.Repository.WireMockResponseList.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.http.HttpStatus.*;
+
 
 @Configuration
 public class WireMockStubs {

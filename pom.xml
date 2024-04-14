@@ -74,6 +74,7 @@
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock-standalone</artifactId>
             <version>3.3.1</version> <!--todo: TALK TO THE GROUP ABOUT THIS -->
+            <scope>test</scope>
         </dependency>
 
         <dependency>

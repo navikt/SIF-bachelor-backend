@@ -26,35 +26,39 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableJwtTokenValidation
 //based on : https://github.com/navikt/sendsoknad-boot/blob/04feb113ff98c7916d646aa0af5f4f57aac2a271/sendsoknad-web/src/main/java/no/nav/sbl/dialogarena/config/TokenSupportConfig.java#L40
 public class SecurityConfig {
+/*
 @Bean
     public MultiIssuerProperties mulitIssuerProperties() {
     return new MultiIssuerProperties();
 }
-/*
-@Bean
+
+*/
+/*@Bean
     public FilterRegistrationBean<JwtTokenValidationFilter> oidcTokenValidationFilterBean(MultiIssuerConfiguration config){
-    return new FilterRegistrationBean<JwtTokenValidationFilter>(new JaxrsJwtTokenValidationFilter(config));
-}
-@Bean
-    public MultiIssuerConfiguration multiIssuerConfiguration(MultiIssuerProperties issuerProperties, ProxyAwareResourceRetriever resourceRetriever){
+    return new FilterRegistrationBean<>(new JaxrsJwtTokenValidationFilter(config));
+}*//*
+
+@Bean//this one
+    public MultiIssuerConfiguration multiIssuerConfigurations(MultiIssuerProperties issuerProperties, ProxyAwareResourceRetriever resourceRetriever){
     return  new MultiIssuerConfiguration(issuerProperties.getIssuer(), resourceRetriever);
 }
-*/
+
 
 @Bean
     public ProxyAwareResourceRetriever oidcResourceReteiver(){
     return new ProxyAwareResourceRetriever();
 }
-/*@Bean
+@Bean
     public RequestContextListener requestContextListener(){
     return new RequestContextListener();
 }
-*/
+
 @Bean
     public TokenValidationContextHolder jaxrsContextHolder() {
     return JaxrsTokenValidationContextHolder.getHolder();
 }
 
 
+*/
 
 }
