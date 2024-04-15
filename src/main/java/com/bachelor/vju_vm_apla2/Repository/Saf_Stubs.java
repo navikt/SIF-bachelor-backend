@@ -25,7 +25,10 @@ public class Saf_Stubs {
         wireMockServer.start();
         // todo :  adding edge cases for calls that needs to be authenticated
         // todo : Add errorcode handling
-
+        wireMockServer.stubFor(get(urlEqualTo("/hello"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody("Hello")));
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 //todo: 401 and 500 here
 //        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));

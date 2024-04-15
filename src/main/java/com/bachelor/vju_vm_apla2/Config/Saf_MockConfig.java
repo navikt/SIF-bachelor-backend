@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
@@ -25,8 +26,8 @@ public class Saf_MockConfig {
     @Value("${wiremock-saf.url}")
     public String saf_url;
 
-
-    @Bean(initMethod = "start", destroyMethod = "stop")
+    @Primary
+    @Bean(initMethod = "start", destroyMethod = "stop", name = "wireMockServerSaf")
     public WireMockServer SafMockServer() {
         return new WireMockServer(options()
                 .bindAddress(saf_url)

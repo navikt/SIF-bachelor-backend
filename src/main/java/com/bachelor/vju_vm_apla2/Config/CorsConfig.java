@@ -16,15 +16,18 @@ public class CorsConfig {
    @Value("${mock-oauth2-server.combined}")
    private String OAUTH2Server;
    //wiremock url
-   @Value("${wiremock.combined}")
-   private String wiremock;
+   @Value("${wiremock-saf.combined}")
+   private String wiremocksaf;
+
+   @Value("{wiremock-dok.combined}")
+   private String wiremockdok;
     @Bean
     public WebMvcConfigurer corsconf() {
     //all the different urls that are allowed to talk to the backend
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry reg) {
-                reg.addMapping("/**").allowedOrigins(CROS, OAUTH2Server, wiremock).allowedMethods("*").allowedHeaders("*");
+                reg.addMapping("/**").allowedOrigins(CROS, OAUTH2Server, wiremocksaf, wiremockdok).allowedMethods("*").allowedHeaders("*");
 
             }
 

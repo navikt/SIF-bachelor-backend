@@ -35,5 +35,5 @@ wiremock-saf:
 
 wiremock-dok:
   url: localhost
-  port: 8082
+  port: 8081
   combined: http://${wiremock-dok.url}:${wiremock-dok.port}

@@ -3,9 +3,11 @@ package com.bachelor.vju_vm_apla2.Controller;
 import com.bachelor.vju_vm_apla2.Config.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
+import com.bachelor.vju_vm_apla2.Service.DokService;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
 import no.nav.security.token.support.core.api.Protected;
+import no.nav.security.token.support.core.api.Unprotected;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +26,11 @@ import java.nio.charset.StandardCharsets;
 @RestController
 public class SafController {
     private final SimpleService simpleService;
-
+    private final DokService dokService;
     @Autowired
-    public SafController(SimpleService simpleService) {
+    public SafController(SimpleService simpleService, DokService dokService) {
         this.simpleService = simpleService;
+        this.dokService = dokService;
     }
 
     // Logger-instansen for å logge informasjon og feil.
@@ -38,6 +41,26 @@ public class SafController {
      * Bruker RequestBody for å ta imot søkedata fra klienten og HttpHeaders for å behandle HTTP-headerinformasjon.
      * Returnerer en liste med journalposter pakket i en ResponseEntity med JSON-innholdstype.
      */
+
+
+    @CrossOrigin
+    @Unprotected
+    @GetMapping("/hello")
+    public Mono<ResponseEntity<String>> hello() {
+        return dokService.fetchHello()
+                .map(response -> {
+                logger.info("HEI PA DEG");
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                        .body(response);
+                })
+                    .defaultIfEmpty(ResponseEntity.notFound().build())
+                    .onErrorResume(e -> {
+                        logger.error("Feil ved henting av journalposter: {}", e.getMessage());
+                        return ErrorHandling.handleError(e);
+                    });
+    }
     @CrossOrigin
     @PostMapping("/hentJournalpostListe")
     public Mono<ResponseEntity<ReturnFromGraphQl_DTO>> hentJournalpostListe(@RequestBody GetJournalpostList_DTO query, @RequestHeader HttpHeaders headers) {

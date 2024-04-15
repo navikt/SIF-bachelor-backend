@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
 public class SimpleService {
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
     private final WebClient webClient;
-    @Value("${wiremock.combined}")
+    @Value("${wiremock-saf.combined}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     public SimpleService() {
@@ -42,7 +42,7 @@ public class SimpleService {
         System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + graphQLQuery);
         return this.webClient.post()
                 .uri(url+"/mock/graphql")
-                .headers(headers -> headers.addAll(originalHeader))
+                .headers(headers -> headers.addAll(originalHeader)) //add own token here
                 .bodyValue(graphQLQuery) // Genererte GraphQL-forespørselen
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
