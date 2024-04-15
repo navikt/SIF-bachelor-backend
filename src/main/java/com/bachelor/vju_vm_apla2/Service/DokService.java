@@ -33,4 +33,27 @@ public class DokService {
                 .retrieve()
                 .bodyToMono(String.class);
     }
+
+
+
+    /////////////////////////////// HandleDok BETA METODER ///////////////////////////
+    //TODO: HandleDok(DTO_createJP)
+
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+    //TODO: GetDok_dokarkiv(FysiskdokId)
+
+    //TODO: Create_Dok(DTO old/New)
 }
