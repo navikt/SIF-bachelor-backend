@@ -1,5 +1,6 @@
 package com.bachelor.vju_vm_apla2.Service;
 
+import ch.qos.logback.core.net.server.Client;
 import com.bachelor.vju_vm_apla2.Config.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
@@ -12,6 +13,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient.Builder;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -22,15 +24,18 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class SimpleService {
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
-    private final WebClient webClient;
+    //private final WebClient webClient;
+    private Builder builder;
     @Value("${db.Service}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
-    public SimpleService() {
+    //TODO: work with clientauth
+   /* public SimpleService() {
         this.webClient = WebClient.builder()
                 .baseUrl(url)
                 .build();
-    }
+    }*/
+    private WebClient webclient = (WebClient) this.builder.baseUrl(url).build();
 
 
 ////////////////////////////////////////////REAL ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
@@ -40,7 +45,7 @@ public class SimpleService {
     public Mono<FraGrapQl_DTO> hentJournalpostListe(FraKlient_DTO query, HttpHeaders originalHeader) {
         String graphQLQuery = createGraphQLQuery(query); // Generer GraphQL-forespørselen
         System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + graphQLQuery);
-        return this.webClient.post()
+        return webclient.post()
                 .uri(url+"/graphql")
                 .headers(headers -> headers.addAll(originalHeader))
                 .bodyValue(graphQLQuery) // Genererte GraphQL-forespørselen
@@ -69,7 +74,7 @@ public class SimpleService {
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
     public Mono<FraGrapQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(FraKlient_DTO query, HttpHeaders headers) {
-        return webClient.post()
+        return webclient.post()
                 .uri(url+"/graphql")
                 .headers(h -> h.addAll(headers))
                 .bodyValue(query)
@@ -143,7 +148,7 @@ public class SimpleService {
         System.out.println("Vi er inne i service og har hentent dokumentID " + dokumentInfoId);
         String endpoint = "/rest/hentdokument/"+journalpostId+"/" + dokumentInfoId;
 
-        return webClient.get()
+        return webclient.get()
                 .uri(url+endpoint)
                 .headers(h -> h.addAll(originalHeader))
                 .retrieve()
@@ -185,7 +190,7 @@ public class SimpleService {
         System.out.println("Vi er inne i service og har hentet dokumentID " + dokumentInfoId);
         String endpoint = "/rest/hentdokument/journalpostid/" + dokumentInfoId;
 
-        return webClient.get()
+        return webclient.get()
                 .uri(url+endpoint)
                 .headers(h -> h.addAll(originalHeader))
                 .retrieve()
