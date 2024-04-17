@@ -661,7 +661,7 @@ public class Saf_Stubs {
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
-                        .withStatus(401)
+                        .withStatus(403)
                         .withBody(
                                 "Vi kan ikke gi tilgang til dokumentet på grunn av sikkerhet eller personvern.\n" +
                                         "F.eks dokumentet tilhører egen ansatt eller bruker som bor på hemmelig adresse. Eller bruker har ikke tilgang til tema.\n" +
@@ -679,7 +679,7 @@ public class Saf_Stubs {
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
-                        .withStatus(401)
+                        .withStatus(404)
                         .withBody(
                                 "Dokumentet ble ikke funnet i fagarkivet.\n" +
                                         "Dette kan være av midlertidig natur i tilfeller der konsument får en claim check på en journalpostId før den er ferdig arkivert.\n" +
