@@ -49,7 +49,8 @@ public class SimpleService {
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            // String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            String errorMessage = "";
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
@@ -78,8 +79,12 @@ public class SimpleService {
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
+                            // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
+                            // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
                             String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            // String errorMessage = "";
+                            logger.error(errorMessage);
+                            return Mono.error(new CustomClientException(statusValue, errorBody));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {

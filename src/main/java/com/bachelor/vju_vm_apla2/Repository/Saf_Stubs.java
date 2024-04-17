@@ -631,7 +631,7 @@ public class Saf_Stubs {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(400)
                         .withBody(
-                                "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL.\n" +
+                                        "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL. " +
                                         "Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost)."
                         )// Returner HTTP 400 OK
                        ));
@@ -647,7 +647,7 @@ public class Saf_Stubs {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(401)
                         .withBody(
-                                "Vi kan ikke autorisere bruker gjennom token eller system som har gitt token er ukjent for saf.\n" +
+                                "Vi kan ikke autorisere bruker gjennom token eller system som har gitt token er ukjent for saf. " +
                                         "F.eks ugyldig, utgått, manglende OIDC token eller ingen audience hos saf."
                         )
                 ));
@@ -663,9 +663,9 @@ public class Saf_Stubs {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(403)
                         .withBody(
-                                "Vi kan ikke gi tilgang til dokumentet på grunn av sikkerhet eller personvern.\n" +
-                                        "F.eks dokumentet tilhører egen ansatt eller bruker som bor på hemmelig adresse. Eller bruker har ikke tilgang til tema.\n" +
-                                        "Referer til dokumentasjon om tilgangskontrollen til saf for mer informasjon.\n" +
+                                "Vi kan ikke gi tilgang til dokumentet på grunn av sikkerhet eller personvern. " +
+                                        "F.eks dokumentet tilhører egen ansatt eller bruker som bor på hemmelig adresse. Eller bruker har ikke tilgang til tema." +
+                                        "Referer til dokumentasjon om tilgangskontrollen til saf for mer informasjon. " +
                                         "Tilgang for saksbehandler og system styres gjennom NORG og gruppemedlemskap i AD."
                         )
                 ));
@@ -681,9 +681,7 @@ public class Saf_Stubs {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(404)
                         .withBody(
-                                "Dokumentet ble ikke funnet i fagarkivet.\n" +
-                                        "Dette kan være av midlertidig natur i tilfeller der konsument får en claim check på en journalpostId før den er ferdig arkivert.\n" +
-                                        "Det er opp til utvikleren å vurdere om det skal forsøkes retry på denne feilstatusen."
+                                "Dokumentet ble ikke funnet i fagarkivet."
                         )
                 ));
 
