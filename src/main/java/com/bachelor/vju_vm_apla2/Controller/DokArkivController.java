@@ -39,8 +39,8 @@ public class DokArkivController {
     @PostMapping("/createJournalpost")
     public Mono<ResponseEntity<String>> createJournalpost(@RequestBody CreateJournalpost_DTO meta) {
         // Logger for å logge informasjon om mottatt data
-
         logger.info("Received JSON data: {}", meta);
+        dokService.createJournalpost(meta);
 
         // Returnerer en Mono som inneholder ResponseEntity
         // ResponseEntity.ok() bygger en ResponseEntity med en OK (HTTP 200) status

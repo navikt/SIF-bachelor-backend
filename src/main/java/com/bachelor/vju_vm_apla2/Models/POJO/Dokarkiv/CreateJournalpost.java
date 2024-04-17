@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CreateJournalpost {
 
-    private Journalposttype journalposttype;
+    private String journalposttype;
     private Bruker bruker;
     private String tittel;
     private Tema tema;

@@ -131,7 +131,7 @@ public class SafService {
      * @param originalHeader HttpHeaders som inkluderer nødvendige autentiseringsinformasjon.
      * @return Mono<Resource> som inneholder det hentede dokumentet, eller feilinformasjon hvis en feil oppstår.
      */
-    public Mono<Resource> hentDokument(String dokumentInfoId, String journalpostId, HttpHeaders originalHeader) {
+    public Mono<Resource> hentDokument_Saf(String dokumentInfoId, String journalpostId, HttpHeaders originalHeader) {
         String endpoint = String.format("/mock/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
         logger.info("Henter dokument med ID: {} for journalpostID: {}", dokumentInfoId, journalpostId);
 

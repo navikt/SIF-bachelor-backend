@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class CreateJournalpost_DTO {
+    public String journalpostID;
     public CreateJournalpost oldMetadata;
     public CreateJournalpost newMetadata;
 }
