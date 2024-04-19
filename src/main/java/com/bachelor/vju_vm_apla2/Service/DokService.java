@@ -27,10 +27,11 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class DokService {
-    private static final Logger logger = LogManager.getLogger(SimpleService.class);
+    private static final Logger logger = LogManager.getLogger(DokService.class);
 
     private final WebClient webClient;
     @Value("${wiremock-dok.combined}")
@@ -72,29 +73,30 @@ public class DokService {
      *         from both metadata POST requests if successful, or logs and returns errors if any arise during the operations.
      */
     public Mono<ResponseEntity<String>> createJournalpost(CreateJournalpost_DTO meta) {
-        // First, update the document IDs in both old and new metadata asynchronously
-        Mono<Void> updateOldMeta = updateDocumentIdsInDto(meta.getOldMetadata());
-        Mono<Void> updateNewMeta = updateDocumentIdsInDto(meta.getNewMetadata());
+        logger.info("1 . Inne i createJournalpost - Received JSON data: {}", meta);
 
-        // Wait for both updates to complete before sending the POST requests
-        return Mono.when(updateOldMeta, updateNewMeta)
-                .then(Mono.defer(() -> {
-                    // Serialize oldMetadata and newMetadata separately
-                    Mono<String> oldMetaJson = serializeAndSendJournalpost(meta.getOldMetadata());
-                    Mono<String> newMetaJson = serializeAndSendJournalpost(meta.getNewMetadata());
+        // Setter versjon på metadata
+        meta.getOldMetadata().setVersjon("old");
+        meta.getNewMetadata().setVersjon("new");
 
-                    // Combine both POST requests and log responses or errors
-                    return Mono.zip(
-                                    oldMetaJson, newMetaJson,
-                                    (oldResponse, newResponse) -> "Old Meta Response: " + oldResponse + ", New Meta Response: " + newResponse
-                            )
-                            .flatMap(combinedResponse -> {
-                                logger.info(combinedResponse);
-                                return Mono.just(ResponseEntity.ok().body(combinedResponse));
-                            })
-                            .doOnError(error -> logger.error("Error during POST request", error));
-                }));
+        Mono<CreateJournalpost> updatedOldMeta = updateDocumentIdsInDto(meta.getOldMetadata()).thenReturn(meta.getOldMetadata());
+        Mono<CreateJournalpost> updatedNewMeta = updateDocumentIdsInDto(meta.getNewMetadata()).thenReturn(meta.getNewMetadata());
+
+        return Mono.zip(updatedOldMeta, updatedNewMeta)
+                .doOnSuccess(item -> logger.info("12. Nå skal begge DTO være klare for å sende til dokarkiv gjennom serializeAndSendJournalpost"))
+                .flatMap(tuple -> {
+                    Mono<String> responseForOldMeta = serializeAndSendJournalpost(tuple.getT1());
+                    Mono<String> responseForNewMeta = serializeAndSendJournalpost(tuple.getT2());
+                    return Mono.zip(responseForOldMeta, responseForNewMeta);
+                })
+                .map(tuple -> "Responses: " + tuple.getT1() + ", " + tuple.getT2())
+                .map(combinedResponse -> {
+                    logger.info(combinedResponse);
+                    return ResponseEntity.ok().body(combinedResponse);
+                })
+                .doOnError(error -> logger.error("Error in processing", error));
     }
+
 
     /**
      * Serializes a CreateJournalpost object to a JSON string and sends it as a POST request to a defined URI.
@@ -119,13 +121,15 @@ public class DokService {
      *         or errors out with a CustomClientException or a serialization-related exception if not.
      */
     private Mono<String> serializeAndSendJournalpost(CreateJournalpost journalPost) {
+        logger.info("13. Vi er i serializeAndSendJournalpost med " + journalPost + " og prøver å gjøre kall til wiremock nå");
+
         try {
             String jsonPayload = objectMapper.writeValueAsString(journalPost);
-            logger.info("Sending JSON data: {}", jsonPayload);  // Log the serialized JSON string.
+            logger.info("14 . Sending JSON data: {}", jsonPayload);  // Log the serialized JSON string.
 
             String uri = "/mock/dockarkiv";
             return webClient.post()
-                    .uri(uri)
+                    .uri(url+"/mock/dockarkiv")
                     .header("Content-Type", "application/json")  // Specify media type of the request body
                     .bodyValue(jsonPayload)  // Attach the JSON payload to the POST request
                     .retrieve()  // Initiate the retrieval of the response
@@ -146,7 +150,6 @@ public class DokService {
             return Mono.error(e);
         }
     }
-
 
 
     ////////////////////////////Handle Beta Metode avansert//////////////////////////////////////////////////////
@@ -171,16 +174,16 @@ public class DokService {
      * @return Mono<Void> A Mono that signals completion of the update process, used for chaining further reactive operations if necessary.
      */
     private Mono<Void> updateDocumentIdsInDto(CreateJournalpost dto) {
-        Mono<List<String>> updatedDocumentIds = extractAndReplaceDocumentIds(dto);
+        logger.info("2. Vi er inne i updateDocumentIdsInDto og Starting to update Document IDs in DTO: {}", dto);
+        Mono<List<String>> cachedDocumentIds = extractAndReplaceDocumentIds(dto).cache();  // Cache the results of this operation
 
-        // Subscribe to the list of new IDs and update the DTO accordingly
-        updatedDocumentIds.subscribe(newIds -> {
-            replaceDocumentIdsInDto(dto, newIds);  // Apply the new IDs to the DTO
-            logger.info("Updated DTO: {}", dto);   // Log the updated DTO for verification
-        });
+        logger.info("8. Vi er tilbake i updateDocumentIdsInDto og skal nå sette Base64 string inn i DTO med metode replaceDocumentIdsInDto");
 
-        // Ensure that all ID updates are completed before finishing the operation
-        return extractAndReplaceDocumentIds(dto).then();
+        return cachedDocumentIds
+                .flatMap(newIds -> replaceDocumentIdsInDto(dto, newIds))
+                .then()
+                .doOnSuccess(done -> logger.info("11. Tilbake til updateDocumentIdsInDto etter at DTO har fått nye fysiskID. Vi skal tilbake til craetejournapost"))
+                .doOnError(error -> logger.error("Error updating document IDs", error));
     }
 
     /**
@@ -201,21 +204,23 @@ public class DokService {
      * @param newIds A list of new document IDs intended to replace the existing ones. This list must be at least as long
      *               as the number of document variants in the DTO to avoid index errors.
      */
-    private void replaceDocumentIdsInDto(CreateJournalpost dto, List<String> newIds) {
+    private Mono<Void> replaceDocumentIdsInDto(CreateJournalpost dto, List<String> newIds) {
+        logger.info("9. Vi er i replaceDocumentIdsInDto og kommet inn med DTO: {} og nye IDer: {}", dto, newIds);
         int count = 0;
-        // First pass to replace IDs in each document variant
         for (Dokumenter dokument : dto.getDokumenter()) {
             for (Dokumentvariant variant : dokument.getDokumentvarianter()) {
-                variant.setFysiskDokument(newIds.get(count++));  // Update the ID from newIds list
+                if (count < newIds.size()) {
+                    String oldId = variant.getFysiskDokument();  // Lagrer gammel ID for logging
+                    variant.setFysiskDokument(newIds.get(count));
+                    logger.info("Erstattet gammel ID: {} med ny ID: {} for dokumentvariant", oldId, newIds.get(count));
+                    count++;
+                }
             }
         }
-        // Second pass for verification and final updates
-        for (Dokumenter dokument : dto.getDokumenter()) {
-            for (Dokumentvariant variant : dokument.getDokumentvarianter()) {
-                variant.setFysiskDokument(newIds.get(count++));  // Ensure all IDs are properly updated
-            }
-        }
+        logger.info("10. Ferdig med å erstatte IDer i DTO, oppdatert DTO: {}", dto);
+        return Mono.empty();  // Returnerer en tom Mono for å signalisere fullførelse.
     }
+
 
     /**
      * Extracts and replaces all document IDs within a given CreateJournalpost object and combines the results
@@ -238,20 +243,18 @@ public class DokService {
      *         combined after both processing calls.
      */
     private Mono<List<String>> extractAndReplaceDocumentIds(CreateJournalpost dto) {
-        // Placeholder for actual journal post ID which should be dynamically determined or passed correctly
-        String journalpostId = "1";  // TODO: Replace with correct ID for production
+        logger.info("3. Vi er inne i extractAndReplaceDocumentIds og Starting ID extraction for: {}", dto);
 
-        // Process the document IDs twice, possibly under different conditions or scenarios
-        return Mono.zip(
-                processDocuments(dto, journalpostId),  // First processing pass
-                processDocuments(dto, journalpostId),  // Second processing pass (redundant in current form)
-                (oldIds, newIds) -> {
-                    List<String> allIds = new ArrayList<>();
-                    allIds.addAll(oldIds);  // Combine IDs from the first pass
-                    allIds.addAll(newIds);  // Combine IDs from the second pass
-                    return allIds;  // Return the combined list of all IDs
-                }
-        );
+        // Obtain the journal post ID in a correct manner
+        String journalpostId = "1";  // Replace with dynamic ID retrieval logic
+
+        // Single call to process the documents
+        return processDocuments(dto, journalpostId)
+                .map(ids -> {
+                    // Optionally you can handle the IDs further here if needed
+                    logger.info("7. Vi er tilbake til extractAndReplaceDocumentIds og har en liste med encoded string som skal returners");
+                    return ids;
+                });
     }
 
 
@@ -276,24 +279,29 @@ public class DokService {
      * @return Mono<List<String>> A reactive Mono that emits a list of new document IDs, one for each variant in the metadata.
      */
     private Mono<List<String>> processDocuments(CreateJournalpost metadata, String journalpostId) {
+        logger.info("4. Processing documents for metadata: {} and journalPostID: {} ", metadata + " " +  journalpostId);
+
+        // Creating a list to hold Monos of document IDs
         List<Mono<String>> documentIdMonos = new ArrayList<>();
 
+        // Iterate over all documents and their variants to replace document IDs
         for (Dokumenter dokument : metadata.getDokumenter()) {
             for (Dokumentvariant variant : dokument.getDokumentvarianter()) {
                 Mono<String> documentIdMono = hentDokument_DokArkiv(variant.getFysiskDokument(), journalpostId)
-                        //Mono<String> documentIdMono = random_hentdok_dokarkiv(variant.getFysiskDokument(), journalpostId)
-                        .doOnNext(newId -> logger.info("Replaced ID {} with {} for journal post {}", variant.getFysiskDokument(), newId, journalpostId));
+                //Mono<String> documentIdMono = random_hentdok_dokarkiv(variant.getFysiskDokument(), journalpostId)
+                        .doOnNext(newId -> logger.info("6 Vi er tilbake til processDocuments og har mottat en Base64 string fra hentDokument_DokArkiv og puttet i en liste" ) )
+                        .cache(); // Cache each Mono to ensure the operation is performed only once
                 documentIdMonos.add(documentIdMono);
             }
         }
 
-        // Use Mono.zip to wait for all document ID fetching operations to complete, then collect and return the results
+        // Use Mono.zip to wait for all document ID fetching operations to complete and then collect the results
         return Mono.zip(documentIdMonos, results ->
-                List.of(results).stream()
-                        .map(result -> (String) result)
-                        .collect(Collectors.toList())
-        );
+                        Stream.of(results).map(result -> (String) result).collect(Collectors.toList())
+                )
+                .doOnNext(allIds -> logger.info("All document IDs processed and collected: {}", allIds));
     }
+
 
 
     /**
@@ -319,6 +327,8 @@ public class DokService {
      *         or errors out with appropriate exceptions if issues occur during the process.
      */
     public Mono<String> hentDokument_DokArkiv(String dokumentInfoId, String journalpostId) {
+
+        logger.info("5. vi er inne i hentDokument_DokArkiv med denne meta" + dokumentInfoId + "og " + journalpostId);
         String endpoint = String.format("/mock/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
         logger.info("Fetching document with ID: {} for journal post ID: {}", dokumentInfoId, journalpostId);
 

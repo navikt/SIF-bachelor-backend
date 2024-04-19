@@ -47,18 +47,36 @@ public class Saf_Stubs {
 
         //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST/////////////////////////////////////////////////////////////
 
+        // Stub that checks the body for an "old" or "new" indicator
         wireMockServer.stubFor(post(urlEqualTo("/mock/dockarkiv"))
+                .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Allow requests from all origins
-                        .withHeader("Content-Type", "application/json") // Set the correct Content-Type for the response
-                        .withStatus(200) // Return HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody("{\n" +
                                 "  \"dokumenter\": [\n" +
                                 "    {\n" +
-                                "      \"dokumentInfoId\": \"123\"\n" +
+                                "      \"dokumentInfoId\": \"123-old\"\n" +
                                 "    }\n" +
                                 "  ],\n" +
-                                "  \"journalpostId\": \"467010363\",\n" +
+                                "  \"journalpostId\": \"467010363-old\",\n" +
+                                "  \"journalpostferdigstilt\": false\n" +
+                                "}")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/mock/dockarkiv"))
+                .withRequestBody(equalToJson("{\"versjon\":\"new\"}", true, true))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody("{\n" +
+                                "  \"dokumenter\": [\n" +
+                                "    {\n" +
+                                "      \"dokumentInfoId\": \"123-new\"\n" +
+                                "    }\n" +
+                                "  ],\n" +
+                                "  \"journalpostId\": \"467010363-new\",\n" +
                                 "  \"journalpostferdigstilt\": false\n" +
                                 "}")));
 
