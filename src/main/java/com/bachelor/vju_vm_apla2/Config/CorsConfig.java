@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsConfig {
     //Frontend URL
     @Value("${FRONTEND.COMBINED}")
-    private String CROS;
+    private String CORS;
     //ouath2 url
    @Value("${mock-oauth2-server.combined}")
    private String OAUTH2Server;
@@ -27,7 +27,7 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry reg) {
-                reg.addMapping("/**").allowedOrigins(CROS, OAUTH2Server, wiremocksaf, wiremockdok).allowedMethods("*").allowedHeaders("*");
+                reg.addMapping("/**").allowedOrigins(CORS, OAUTH2Server, wiremocksaf, wiremockdok).allowedMethods("*").allowedHeaders("*");
 
             }
 
