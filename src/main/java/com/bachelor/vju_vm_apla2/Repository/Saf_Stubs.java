@@ -29,6 +29,41 @@ public class Saf_Stubs {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withBody("Hello")));
+
+
+        //////////////////////////////////////////////////////////////STUBS FOR FINNE DOKUMENTER/////////////////////////////////////////////////////////////
+
+        //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
+        //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
+        // Eksempel på en spesifikk stub for dokumentID "00001111"
+        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/1/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/pdf")
+                        .withStatus(200)
+                        .withHeader("Content-Disposition", "inline; filename=\"example.pdf\"")
+                        .withTransformers("dynamic-pdf-response-transformer")));
+
+
+        //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST/////////////////////////////////////////////////////////////
+
+        wireMockServer.stubFor(post(urlEqualTo("/mock/dockarkiv"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Allow requests from all origins
+                        .withHeader("Content-Type", "application/json") // Set the correct Content-Type for the response
+                        .withStatus(200) // Return HTTP 200 OK
+                        .withBody("{\n" +
+                                "  \"dokumenter\": [\n" +
+                                "    {\n" +
+                                "      \"dokumentInfoId\": \"123\"\n" +
+                                "    }\n" +
+                                "  ],\n" +
+                                "  \"journalpostId\": \"467010363\",\n" +
+                                "  \"journalpostferdigstilt\": false\n" +
+                                "}")));
+
+
+
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 //todo: 401 and 500 here
 //        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
@@ -130,16 +165,6 @@ public class Saf_Stubs {
 
 
 
-        //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
-        //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
-        // Eksempel på en spesifikk stub for dokumentID "00001111"
-        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/1/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
-                .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*")
-                        .withHeader("Content-Type", "application/pdf")
-                        .withStatus(200)
-                        .withHeader("Content-Disposition", "inline; filename=\"example.pdf\"")
-                        .withTransformers("dynamic-pdf-response-transformer")));
 
 
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.

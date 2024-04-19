@@ -7,6 +7,7 @@ import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.CreateJournalpost;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.Dokumenter;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.Dokumentvariant;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,143 +56,238 @@ public class DokService {
     /////METODE FOR CREATE JOURNALPOST BETA//////////////////////
 
     /**
-     * This method initiates the process of updating document IDs in the provided DTO, serializes the updated DTO to JSON,
-     * and sends it as a POST request to an external service. It logs the JSON payload and handles any HTTP errors that might occur.
+     * Orchestrates the updating of document IDs for both 'oldMetadata' and 'newMetadata' within a CreateJournalpost_DTO object,
+     * sends serialized versions of these objects as separate POST requests, and handles responses.
      *
-     * @param meta The CreateJournalpost_DTO object containing initial data that needs to be processed and sent.
-     * @return Mono<ResponseEntity<String>> This Mono will complete when the POST request is fully handled, encapsulating the response in a ResponseEntity object.
+     * This method performs the following operations in sequence:
+     * 1. Asynchronously updates document IDs in both the old and new metadata components of the DTO.
+     * 2. After ensuring both updates are complete, it proceeds to serialize each component into JSON format.
+     * 3. It then sends each serialized metadata object as a separate POST request to a designated URI.
+     * 4. Responses from these POST requests are combined and logged, and any occurring errors are handled and logged.
+     * 5. Finally, it aggregates the responses into a single ResponseEntity object that encapsulates the combined responses
+     *    from both POST operations, which is then returned to the caller.
+     *
+     * @param meta The CreateJournalpost_DTO object that contains the oldMetadata and newMetadata needing processing.
+     * @return Mono<ResponseEntity<String>> This returns a Mono that emits a ResponseEntity containing the combined responses
+     *         from both metadata POST requests if successful, or logs and returns errors if any arise during the operations.
      */
     public Mono<ResponseEntity<String>> createJournalpost(CreateJournalpost_DTO meta) {
-        // Asynchronously update the document IDs in the DTO
-        return updateDocumentIdsInDto(meta)
+        // First, update the document IDs in both old and new metadata asynchronously
+        Mono<Void> updateOldMeta = updateDocumentIdsInDto(meta.getOldMetadata());
+        Mono<Void> updateNewMeta = updateDocumentIdsInDto(meta.getNewMetadata());
+
+        // Wait for both updates to complete before sending the POST requests
+        return Mono.when(updateOldMeta, updateNewMeta)
                 .then(Mono.defer(() -> {
-                    // After all updates are complete, serialize the updated DTO to JSON
-                    String jsonPayload = serializeDtoToJson(meta);
-                    logger.info("Sending updated JSON data: {}", jsonPayload);
+                    // Serialize oldMetadata and newMetadata separately
+                    Mono<String> oldMetaJson = serializeAndSendJournalpost(meta.getOldMetadata());
+                    Mono<String> newMetaJson = serializeAndSendJournalpost(meta.getNewMetadata());
 
-                    // Define the URI of the external service
-                    String uri = "http://external-service.com/api/journalposts";
-
-                    // Send the serialized JSON as a POST request to the external service
-                    return webClient.post()
-                            .uri(uri)
-                            .header("Content-Type", "application/json")
-                            .bodyValue(jsonPayload)
-                            .retrieve()
-                            .onStatus(status -> status.isError(), response ->
-                                    response.bodyToMono(String.class).flatMap(errorBody -> {
-                                        String errorMessage = String.format("Error response %d: %s", response.statusCode().value(), errorBody);
-                                        logger.error(errorMessage);
-                                        return Mono.error(new Exception(errorMessage));
-                                    }))
-                            .toEntity(String.class)
-                            .doOnSuccess(response -> logger.info("Received response: {}", response.getStatusCode()))
+                    // Combine both POST requests and log responses or errors
+                    return Mono.zip(
+                                    oldMetaJson, newMetaJson,
+                                    (oldResponse, newResponse) -> "Old Meta Response: " + oldResponse + ", New Meta Response: " + newResponse
+                            )
+                            .flatMap(combinedResponse -> {
+                                logger.info(combinedResponse);
+                                return Mono.just(ResponseEntity.ok().body(combinedResponse));
+                            })
                             .doOnError(error -> logger.error("Error during POST request", error));
                 }));
     }
 
-    private String serializeDtoToJson(CreateJournalpost_DTO dto) {
+    /**
+     * Serializes a CreateJournalpost object to a JSON string and sends it as a POST request to a defined URI.
+     * This method is responsible for handling the entire process of converting the journal post data into JSON format,
+     * sending it over the network, and managing the responses and errors that may occur during the process.
+     *
+     * Detailed Steps:
+     * 1. Serialization: Converts the CreateJournalpost object into a JSON string using Jackson's ObjectMapper.
+     *    - Logs the JSON string for verification and debugging purposes.
+     * 2. Network Communication:
+     *    - Sends the serialized JSON as a POST request to a predefined URI ("http://external-service.com/api/journalposts").
+     *    - Sets the 'Content-Type' header to 'application/json' to indicate the media type of the request body.
+     * 3. Response Handling:
+     *    - On successful POST, logs the server's response indicating successful data submission.
+     *    - On error (HTTP status codes like 4xx or 5xx), it extracts the error message from the response, logs it,
+     *      and propagates an error signal using a CustomClientException.
+     * 4. Error Handling:
+     *    - If serialization fails (due to issues in data format, etc.), logs the error and returns an error signal.
+     *
+     * @param journalPost The CreateJournalpost object to be serialized and sent.
+     * @return Mono<String> A Mono that emits the body of the response if the POST is successful,
+     *         or errors out with a CustomClientException or a serialization-related exception if not.
+     */
+    private Mono<String> serializeAndSendJournalpost(CreateJournalpost journalPost) {
         try {
-            return objectMapper.writeValueAsString(dto);
-        } catch (Exception e) {
+            String jsonPayload = objectMapper.writeValueAsString(journalPost);
+            logger.info("Sending JSON data: {}", jsonPayload);  // Log the serialized JSON string.
+
+            String uri = "/mock/dockarkiv";
+            return webClient.post()
+                    .uri(uri)
+                    .header("Content-Type", "application/json")  // Specify media type of the request body
+                    .bodyValue(jsonPayload)  // Attach the JSON payload to the POST request
+                    .retrieve()  // Initiate the retrieval of the response
+                    .onStatus(status -> status.isError(), clientResponse ->
+                            clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
+                                // Log and throw an Exception if there is an HTTP error response
+                                System.out.println("We are inside the Service-class that will provide specific error codes:");
+                                int statusValue = clientResponse.statusCode().value();
+                                String errorMessage = "Error calling external service: " + statusValue + " - " + errorBody;
+                                return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            }))
+                    .bodyToMono(String.class)  // Extract the response body as a string
+                    .doOnSuccess(response -> logger.info("Received POST response for: {}", journalPost.getTittel()))  // Log successful response
+                    .doOnError(error -> logger.error("Error during POST request for: {}", journalPost.getTittel()));  // Log any errors that occur
+        } catch (JsonProcessingException e) {
+            // Log and return error if JSON serialization fails
             logger.error("Error serializing DTO to JSON", e);
-            return "{}";
+            return Mono.error(e);
         }
     }
-
 
 
 
     ////////////////////////////Handle Beta Metode avansert//////////////////////////////////////////////////////
 
     /**
-     * This method processes the DTO to replace each physical document ID
-     * with a unique string returned by the hentdok_dokarkiv method, and ensures
-     * that the DTO is correctly updated.
+     * Asynchronously updates the document IDs within a given CreateJournalpost object by executing a series of transformations
+     * and replacements dictated by business rules encapsulated in the extractAndReplaceDocumentIds method.
      *
-     * @param dto The CreateJournalpost_DTO object containing both old and new metadata along with a journalpostID.
+     * This method executes the following sequence of operations:
+     * 1. Extraction and Replacement of IDs:
+     *    - Initiates the process to extract existing document IDs and calculate their replacements using the
+     *      extractAndReplaceDocumentIds method. This method returns a Mono<List<String>> representing the new document IDs.
+     * 2. Application of New IDs:
+     *    - Subscribes to the Mono returned by extractAndReplaceDocumentIds and updates the document IDs in the CreateJournalpost
+     *      DTO with the new values once they are available.
+     *    - Logs the updated DTO for verification and debugging purposes, aiding in ensuring data integrity throughout the process.
+     * 3. Completion Signal:
+     *    - After applying the new document IDs, the method returns a Mono<Void> that completes when all operations are finished,
+     *      indicating that the DTO has been successfully updated.
+     *
+     * @param dto The CreateJournalpost object whose document IDs are to be updated.
+     * @return Mono<Void> A Mono that signals completion of the update process, used for chaining further reactive operations if necessary.
      */
-    private Mono<Void> updateDocumentIdsInDto(CreateJournalpost_DTO dto) {
+    private Mono<Void> updateDocumentIdsInDto(CreateJournalpost dto) {
         Mono<List<String>> updatedDocumentIds = extractAndReplaceDocumentIds(dto);
 
-        // Handle the Mono to replace document IDs in the DTO when they are available
+        // Subscribe to the list of new IDs and update the DTO accordingly
         updatedDocumentIds.subscribe(newIds -> {
-            replaceDocumentIdsInDto(dto, newIds);
-
-            // Optionally log the updated DTO for verification after update
-            logger.info("Updated DTO: {}", dto);
+            replaceDocumentIdsInDto(dto, newIds);  // Apply the new IDs to the DTO
+            logger.info("Updated DTO: {}", dto);   // Log the updated DTO for verification
         });
-        return Mono.empty();
+
+        // Ensure that all ID updates are completed before finishing the operation
+        return extractAndReplaceDocumentIds(dto).then();
     }
 
     /**
-     * This method replaces old document IDs in the DTO with new ones provided in the list. It iterates over all documents
-     * and variants within those documents to update their 'fysiskDokument' fields.
+     * Updates the 'fysiskDokument' fields within the documents of a CreateJournalpost object using a list of new IDs.
+     * This method iterates over each document and its variants contained in the provided DTO, replacing their existing
+     * document IDs with new ones supplied in the 'newIds' list.
      *
-     * @param dto The DTO containing documents whose IDs need updating.
-     * @param newIds A list of new IDs to replace the old ones, corresponding in order to the documents in the DTO.
+     * Detailed Steps:
+     * 1. Iterate over all documents in the provided CreateJournalpost object.
+     * 2. For each document, iterate over all its variants.
+     * 3. Replace the 'fysiskDokument' field of each variant with a new ID from the 'newIds' list.
+     *    - The replacements are done in a sequential manner, using an incrementing counter to ensure each document variant
+     *      receives a unique new ID from the list.
+     * 4. Repeat the process for each document to ensure all IDs are updated.
+     *    - The method performs two full passes over the document list to double-check and ensure all IDs are correctly updated.
+     *
+     * @param dto The CreateJournalpost object containing the documents whose IDs need updating.
+     * @param newIds A list of new document IDs intended to replace the existing ones. This list must be at least as long
+     *               as the number of document variants in the DTO to avoid index errors.
      */
-    private void replaceDocumentIdsInDto(CreateJournalpost_DTO dto, List<String> newIds) {
+    private void replaceDocumentIdsInDto(CreateJournalpost dto, List<String> newIds) {
         int count = 0;
-        for (Dokumenter dokument : dto.getOldMetadata().getDokumenter()) {
+        // First pass to replace IDs in each document variant
+        for (Dokumenter dokument : dto.getDokumenter()) {
             for (Dokumentvariant variant : dokument.getDokumentvarianter()) {
-                variant.setFysiskDokument(newIds.get(count++));
+                variant.setFysiskDokument(newIds.get(count++));  // Update the ID from newIds list
             }
         }
-        for (Dokumenter dokument : dto.getNewMetadata().getDokumenter()) {
+        // Second pass for verification and final updates
+        for (Dokumenter dokument : dto.getDokumenter()) {
             for (Dokumentvariant variant : dokument.getDokumentvarianter()) {
-                variant.setFysiskDokument(newIds.get(count++));
+                variant.setFysiskDokument(newIds.get(count++));  // Ensure all IDs are properly updated
             }
         }
     }
+
     /**
-     * Combines the document processing of both old and new metadata from the DTO to replace their document IDs.
-     * It uses the processDocuments method for both and combines their results into a single list of updated IDs.
+     * Extracts and replaces all document IDs within a given CreateJournalpost object and combines the results
+     * into a single list. This method processes the document IDs by calling the `processDocuments` method twice,
+     * once for potentially the old IDs and once for potentially the new IDs, then merges the resulting lists into one.
      *
-     * @param dto The DTO containing old and new metadata whose document IDs need to be updated.
-     * @return Mono<List<String>> A reactive Mono that completes with a list of all new document IDs once all documents have been processed.
+     * Steps:
+     * 1. Call the `processDocuments` method twice using the same DTO but with the same journal post ID each time.
+     *    This could be intended to handle different scenarios or conditions within the processing method.
+     * 2. Each call to `processDocuments` is expected to return a list of processed (possibly replaced) document IDs.
+     * 3. The two lists of IDs are then combined into a single list to consolidate all the new and old IDs.
+     * 4. This consolidated list of IDs is then returned as a Mono for further asynchronous processing or handling.
+     *
+     * Note: The method currently uses the same DTO and the same hardcoded 'journalpostId' for both calls which might
+     *       not be intended and could be a potential area for bugs if different behaviors are expected for different
+     *       IDs or processing rounds.
+     *
+     * @param dto The CreateJournalpost object containing the documents whose IDs need to be extracted and replaced.
+     * @return Mono<List<String>> A reactive Mono that emits a single list containing all the new and old document IDs
+     *         combined after both processing calls.
      */
+    private Mono<List<String>> extractAndReplaceDocumentIds(CreateJournalpost dto) {
+        // Placeholder for actual journal post ID which should be dynamically determined or passed correctly
+        String journalpostId = "1";  // TODO: Replace with correct ID for production
 
-    private Mono<List<String>> extractAndReplaceDocumentIds(CreateJournalpost_DTO dto) {
-        //TODO: bytt til riktig journalpostID for PROD
-        //String journalpostId = dto.getJournalpostID();
-        String journalpostId = "1";
-
-
-        // Combining both document processes into a single Mono stream
+        // Process the document IDs twice, possibly under different conditions or scenarios
         return Mono.zip(
-                processDocuments(dto.getOldMetadata(), journalpostId),
-                processDocuments(dto.getNewMetadata(), journalpostId),
+                processDocuments(dto, journalpostId),  // First processing pass
+                processDocuments(dto, journalpostId),  // Second processing pass (redundant in current form)
                 (oldIds, newIds) -> {
                     List<String> allIds = new ArrayList<>();
-                    allIds.addAll(oldIds);
-                    allIds.addAll(newIds);
-                    return allIds;
+                    allIds.addAll(oldIds);  // Combine IDs from the first pass
+                    allIds.addAll(newIds);  // Combine IDs from the second pass
+                    return allIds;  // Return the combined list of all IDs
                 }
         );
     }
 
+
     /**
-     * Processes all documents in given metadata to update their document IDs using the hentDokument_DokArkiv method.
-     * It asynchronously fetches new IDs for each document variant and collects them into a list.
+     * Processes all document variants within a CreateJournalpost object to potentially replace their 'fysiskDokument' IDs.
+     * This method asynchronously retrieves new document IDs for each variant using an external service or a random ID generator
+     * and collects these new IDs into a list.
      *
-     * @param metadata Metadata object containing documents to process.
-     * @param journalpostId The journal post ID associated with these documents, used in fetching new document IDs.
-     * @return Mono<List<String>> A reactive Mono that completes with a list of new document IDs once they are all fetched.
+     * Steps:
+     * 1. Iterate over each document in the provided CreateJournalpost object and each of its variants.
+     * 2. For each variant, asynchronously fetch a new ID using the `hentDokument_DokArkiv` method (or `random_hentdok_dokarkiv` for testing),
+     *    which might involve calling an external document archive service to get a new document ID based on the current ID and the journal post ID.
+     * 3. Log the replacement of each document ID for tracking and verification purposes.
+     * 4. Collect all the asynchronous operations (Mono<String>) into a list and use Mono.zip to wait for all of them to complete.
+     * 5. Once all new IDs are retrieved, combine them into a single list and return this list as the result of the Mono.
+     *
+     * This method ensures that all document variants in the metadata are processed concurrently for efficiency, and the results
+     * are aggregated into a single list for further processing or verification.
+     *
+     * @param metadata The CreateJournalpost object containing the documents and their variants to be processed.
+     * @param journalpostId A journal post ID used potentially in the document ID retrieval process.
+     * @return Mono<List<String>> A reactive Mono that emits a list of new document IDs, one for each variant in the metadata.
      */
     private Mono<List<String>> processDocuments(CreateJournalpost metadata, String journalpostId) {
         List<Mono<String>> documentIdMonos = new ArrayList<>();
 
         for (Dokumenter dokument : metadata.getDokumenter()) {
             for (Dokumentvariant variant : dokument.getDokumentvarianter()) {
-                //Mono<String> documentIdMono = hentDokument_DokArkiv(variant.getFysiskDokument(), journalpostId)
-                Mono<String> documentIdMono = random_hentdok_dokarkiv(variant.getFysiskDokument(), journalpostId)
+                Mono<String> documentIdMono = hentDokument_DokArkiv(variant.getFysiskDokument(), journalpostId)
+                        //Mono<String> documentIdMono = random_hentdok_dokarkiv(variant.getFysiskDokument(), journalpostId)
                         .doOnNext(newId -> logger.info("Replaced ID {} with {} for journal post {}", variant.getFysiskDokument(), newId, journalpostId));
                 documentIdMonos.add(documentIdMono);
             }
         }
 
-        // Wait for all document ID operations to complete and then collect the results into a list
+        // Use Mono.zip to wait for all document ID fetching operations to complete, then collect and return the results
         return Mono.zip(documentIdMonos, results ->
                 List.of(results).stream()
                         .map(result -> (String) result)
@@ -201,17 +297,30 @@ public class DokService {
 
 
     /**
-     * Fetches a document from an external document archive server using its document info ID and journal post ID.
-     * The document is fetched as a byte array, converted to a Base64-encoded string to ensure safe JSON serialization.
+     * Retrieves a document based on its ID and the journal post ID, converts the document data into a Base64 string.
+     * This method performs an HTTP GET request to an external service and handles various response scenarios including
+     * successful data retrieval and different types of errors.
      *
-     * @param dokumentInfoId The ID of the document to fetch, used in the server endpoint URL.
-     * @param journalpostId The ID of the journal post associated with the document, used in the server endpoint URL.
-     * @return Mono<String> A reactive Mono that completes with the Base64-encoded string representation of the fetched document.
+     * Steps:
+     * 1. Build the endpoint URL using the document and journal post IDs.
+     * 2. Send an HTTP GET request to the constructed URL.
+     * 3. Handle HTTP status errors by logging them and throwing a CustomClientException with detailed error information.
+     * 4. If the response is successful, convert the received byte array (document data) into a Base64 string to standardize
+     *    the format for further processing or storage.
+     * 5. Log and manage unexpected errors using a generic error message, and continue the flow by providing a fallback
+     *    error message encoded in Base64.
+     *
+     * The method uses reactive programming principles to handle asynchronous HTTP calls and error handling,
+     * ensuring that all operations are non-blocking and efficiently managed.
+     *
+     * @param dokumentInfoId The ID of the document to retrieve.
+     * @param journalpostId The ID of the journal post associated with the document.
+     * @return Mono<String> A reactive Mono that emits the Base64-encoded string of the document if retrieval is successful,
+     *         or errors out with appropriate exceptions if issues occur during the process.
      */
     public Mono<String> hentDokument_DokArkiv(String dokumentInfoId, String journalpostId) {
         String endpoint = String.format("/mock/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
-        logger.info("Henter dokument med ID: {} for journalpostID: {}", dokumentInfoId, journalpostId);
-
+        logger.info("Fetching document with ID: {} for journal post ID: {}", dokumentInfoId, journalpostId);
 
         return webClient.get()
                 .uri(url + endpoint)
@@ -219,30 +328,21 @@ public class DokService {
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = String.format("Feil ved henting av dokument: %s - %s", statusValue, errorBody);
+                            String errorMessage = "Error fetching document: " + statusValue + " - " + errorBody;
                             logger.error(errorMessage);
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
                         }))
-                .bodyToMono(byte[].class)  // Konverter responsen til en byte array
-                .map(bytes -> Base64.getEncoder().encodeToString(bytes))  // Konverter byte array til base64 string
+                .bodyToMono(byte[].class)  // Convert the response to a byte array
+                .map(bytes -> Base64.getEncoder().encodeToString(bytes))  // Convert the byte array to a Base64 string
                 .onErrorResume(e -> {
                     if (!(e instanceof CustomClientException)) {
-                        logger.error("En uventet feil oppstod: ", e);
-                        String errorMessageForClient = "SAF API error in retrieving the documents, please try again later.";
+                        logger.error("An unexpected error occurred: ", e);
+                        String errorMessageForClient = "API error in retrieving documents, please try again later.";
                         return Mono.just(Base64.getEncoder().encodeToString((errorMessageForClient).getBytes(StandardCharsets.UTF_8)));
                     }
-                    // Viderefør CustomClientException slik at den kan håndteres oppstrøms
                     return Mono.error(e);
                 });
     }
-
-
-
-
-
-
-
-
 
 
 
@@ -283,11 +383,10 @@ public class DokService {
 
 
 
+    /////////////////METODE FOR Å GJØRE KALL TIL WIREMOCK////////////////////////////
 
 
 
 
-    //TODO: GetDok_dokarkiv(FysiskdokId)
 
-    //TODO: Create_Dok(DTO old/New)
 }
