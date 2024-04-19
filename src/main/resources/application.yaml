@@ -11,6 +11,33 @@ no.nav.security.jwt:
     issuer2:
       discovery-url: ${mock-oauth2-server.combined}/default/.well-known/openid-configuration
       accepted_audience: default
+  registration:
+    demoserver1:
+      token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
+      grant-type: client_credentials
+      authentication:
+        client-id: testclient
+        client-jwk: ${mock-oauth2-server.combined}/default/token
+        client-auth-method: private_key_jwt
+
+    demoserver2:
+      token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
+      grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+      scope: scope1, scope2
+      authentication:
+        client-id: testclient
+        client-secret: testsecret
+        client-auth-method: client_secret_basic
+
+    demoserver3:
+      token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
+      grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+      authentication:
+        client-id: cluster:namespace:app1
+        client-jwk: ${mock-oauth2-server.combined}/default/token
+        client-auth-method: private_key_jwt
+      token-exchange:
+        audience: cluster:namespace:app2
 
 logging.level:
   org.springframework: INFO
