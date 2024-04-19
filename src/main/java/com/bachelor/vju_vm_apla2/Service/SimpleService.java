@@ -59,6 +59,7 @@ public class SimpleService {
                             int statusValue = clientResponse.statusCode().value();
                             // String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
                             String errorMessage = "";
+                            // BUG! dersom vi kommer til Mono.error linje nedenfor, returneres 200 OK tilbake til client. Det burde vi endre på - Gisle 19/4/24
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
