@@ -2,6 +2,7 @@ package com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv;
 
 
 import com.bachelor.vju_vm_apla2.Models.POJO.Saf.BrukerIdType;
+import lombok.Data;
 
 /**
  * Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.
@@ -10,6 +11,7 @@ import com.bachelor.vju_vm_apla2.Models.POJO.Saf.BrukerIdType;
     value = "com.kobylynskyi.graphql.codegen.GraphQLCodegen",
     date = "2024-02-28T09:45:41+0100"
 )
+@Data
 public class Bruker implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;

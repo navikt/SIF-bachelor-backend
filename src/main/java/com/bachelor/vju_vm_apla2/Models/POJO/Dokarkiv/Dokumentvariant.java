@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class Dokumentvariant {
     private String filtype;
-    private byte[] fysiskDokument;
+    private String fysiskDokument;
     private String variantformat;
 
     public Dokumentvariant(){

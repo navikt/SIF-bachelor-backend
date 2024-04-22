@@ -9,6 +9,7 @@ import lombok.Data;
 public class Dokumenter {
 
     private String tittel;
+    private String brevkode;
     private java.util.List<Dokumentvariant> dokumentvarianter;
 
 }

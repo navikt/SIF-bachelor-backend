@@ -25,6 +25,62 @@ public class Saf_Stubs {
         wireMockServer.start();
         // todo :  adding edge cases for calls that needs to be authenticated
         // todo : Add errorcode handling
+        wireMockServer.stubFor(get(urlEqualTo("/hello"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody("Hello")));
+
+
+        //////////////////////////////////////////////////////////////STUBS FOR FINNE DOKUMENTER/////////////////////////////////////////////////////////////
+
+        //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
+        //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
+        // Eksempel på en spesifikk stub for dokumentID "00001111"
+        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/1/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/pdf")
+                        .withStatus(200)
+                        .withHeader("Content-Disposition", "inline; filename=\"example.pdf\"")
+                        .withTransformers("dynamic-pdf-response-transformer")));
+
+
+        //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST/////////////////////////////////////////////////////////////
+
+        // Stub that checks the body for an "old" or "new" indicator
+        wireMockServer.stubFor(post(urlEqualTo("/mock/dockarkiv"))
+                .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody("{\n" +
+                                "  \"dokumenter\": [\n" +
+                                "    {\n" +
+                                "      \"dokumentInfoId\": \"123-old\"\n" +
+                                "    }\n" +
+                                "  ],\n" +
+                                "  \"journalpostId\": \"467010363-old\",\n" +
+                                "  \"journalpostferdigstilt\": false\n" +
+                                "}")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/mock/dockarkiv"))
+                .withRequestBody(equalToJson("{\"versjon\":\"new\"}", true, true))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody("{\n" +
+                                "  \"dokumenter\": [\n" +
+                                "    {\n" +
+                                "      \"dokumentInfoId\": \"123-new\"\n" +
+                                "    }\n" +
+                                "  ],\n" +
+                                "  \"journalpostId\": \"467010363-new\",\n" +
+                                "  \"journalpostferdigstilt\": false\n" +
+                                "}")));
+
+
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
 //todo: 401 and 500 here
@@ -127,16 +183,6 @@ public class Saf_Stubs {
 
 
 
-        //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
-        //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
-        // Eksempel på en spesifikk stub for dokumentID "00001111"
-        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/1/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
-                .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*")
-                        .withHeader("Content-Type", "application/pdf")
-                        .withStatus(200)
-                        .withHeader("Content-Disposition", "inline; filename=\"example.pdf\"")
-                        .withTransformers("dynamic-pdf-response-transformer")));
 
 
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
@@ -628,7 +674,7 @@ public class Saf_Stubs {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(400)
                         .withBody(
-                                "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL.\n" +
+                                        "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL. " +
                                         "Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost)."
                         )// Returner HTTP 400 OK
                        ));
@@ -644,7 +690,7 @@ public class Saf_Stubs {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(401)
                         .withBody(
-                                "Vi kan ikke autorisere bruker gjennom token eller system som har gitt token er ukjent for saf.\n" +
+                                "Vi kan ikke autorisere bruker gjennom token eller system som har gitt token er ukjent for saf. " +
                                         "F.eks ugyldig, utgått, manglende OIDC token eller ingen audience hos saf."
                         )
                 ));
@@ -658,11 +704,11 @@ public class Saf_Stubs {
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
-                        .withStatus(401)
+                        .withStatus(403)
                         .withBody(
-                                "Vi kan ikke gi tilgang til dokumentet på grunn av sikkerhet eller personvern.\n" +
-                                        "F.eks dokumentet tilhører egen ansatt eller bruker som bor på hemmelig adresse. Eller bruker har ikke tilgang til tema.\n" +
-                                        "Referer til dokumentasjon om tilgangskontrollen til saf for mer informasjon.\n" +
+                                "Vi kan ikke gi tilgang til dokumentet på grunn av sikkerhet eller personvern. " +
+                                        "F.eks dokumentet tilhører egen ansatt eller bruker som bor på hemmelig adresse. Eller bruker har ikke tilgang til tema." +
+                                        "Referer til dokumentasjon om tilgangskontrollen til saf for mer informasjon. " +
                                         "Tilgang for saksbehandler og system styres gjennom NORG og gruppemedlemskap i AD."
                         )
                 ));
@@ -676,11 +722,9 @@ public class Saf_Stubs {
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
-                        .withStatus(401)
+                        .withStatus(404)
                         .withBody(
-                                "Dokumentet ble ikke funnet i fagarkivet.\n" +
-                                        "Dette kan være av midlertidig natur i tilfeller der konsument får en claim check på en journalpostId før den er ferdig arkivert.\n" +
-                                        "Det er opp til utvikleren å vurdere om det skal forsøkes retry på denne feilstatusen."
+                                "Dokumentet ble ikke funnet i fagarkivet."
                         )
                 ));
 
