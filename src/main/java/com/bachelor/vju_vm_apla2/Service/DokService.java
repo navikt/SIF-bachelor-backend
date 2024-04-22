@@ -73,7 +73,7 @@ public class DokService {
      * @return Mono<ResponseEntity<String>> This returns a Mono that emits a ResponseEntity containing the combined responses
      *         from both metadata POST requests if successful, or logs and returns errors if any arise during the operations.
      */
-    public Mono<ResponseEntity<String>> createJournalpost(CreateJournalpost_DTO meta) {
+    public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>>createJournalpost(CreateJournalpost_DTO meta) {
         logger.info("1 . Inne i createJournalpost - Received JSON data: {}", meta);
 
         // Setter versjon på metadata
@@ -88,12 +88,11 @@ public class DokService {
                 .flatMap(tuple -> {
                     Mono<ResponeReturnFromDokArkiv_DTO> responseForOldMeta = serializeAndSendJournalpost(tuple.getT1());
                     Mono<ResponeReturnFromDokArkiv_DTO> responseForNewMeta = serializeAndSendJournalpost(tuple.getT2());
-                    return Mono.zip(responseForOldMeta, responseForNewMeta);
+                    return Mono.zip(responseForOldMeta, responseForNewMeta, List::of);
                 })
-                .map(tuple -> "Responses: " + tuple.getT1() + ", " + tuple.getT2())
-                .map(combinedResponse -> {
-                    logger.info(combinedResponse);
-                    return ResponseEntity.ok().body(combinedResponse);
+                .map(responses -> {
+                    logger.info("Responses: {}, {}", responses.get(0), responses.get(1));
+                    return ResponseEntity.ok().body(responses);
                 })
                 .doOnError(error -> logger.error("Error in processing", error));
     }
