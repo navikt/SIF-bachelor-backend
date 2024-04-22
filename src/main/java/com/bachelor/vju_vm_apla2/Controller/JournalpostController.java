@@ -5,7 +5,6 @@ import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -15,10 +14,8 @@ import no.nav.security.token.support.core.api.Unprotected;
 import reactor.core.publisher.Mono;
 import org.apache.logging.log4j.Logger;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
-import wiremock.org.checkerframework.common.returnsreceiver.qual.This;
 
 
 /* By using the @Protected annotation, we are securing access to this class, which was already configured in our

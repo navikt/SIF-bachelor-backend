@@ -1,21 +1,25 @@
-
 http.proxy.parametername: notused
 
 no.nav.security.jwt:
   expirythreshold: 10 #threshold in minutes until token expires
   issuer:
     issuer1:
-      discovery-url: http://localhost:${mock-oauth2-server.port}/default/.well-known/openid-configuration
+      discovery-url: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}/default/.well-known/openid-configuration
       accepted_audience: default
     issuer2:
-      discovery-url: http://localhost:${mock-oauth2-server.port}/default/.well-known/openid-configuration
+      discovery-url: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}/default/.well-known/openid-configuration
       accepted_audience: default
 
 logging.level:
   org.springframework: INFO
   no.nav: DEBUG
 
-
+FRONTEND:
+  COMBINED: http://${FRONTEND.URL}:${FRONTEND.PORT}
+  URL: localhost
+  PORT: 3000
+#VIKTIG
+#Variabel for å sette statisk port for mock serveren utenfor testing enviroment.
 mock-oauth2-server:
   url: localhost
   port: 8282
@@ -28,4 +32,5 @@ db:
   url: localhost
   port: 8081
   combined: http://${db.url}:${db.port}
-  combinedMock: ${db.combined}/mock
+  combinedInService: ${db.combined}/mock
+  files: .

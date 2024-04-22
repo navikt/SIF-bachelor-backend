@@ -11,6 +11,18 @@ no.nav.security.jwt:
     issuer2:
       discovery-url: ${mock-oauth2-server.combined}/default/.well-known/openid-configuration
       accepted_audience: default
+  client:
+    registration:
+      demoserver1:
+        token-endpoint-url: ${mock-oauth2-server.token-url}
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: scope3, scope4
+        authentication:
+          client-id: ${mock-oauth2-server.clientId}
+          client-secret: ${mock-oauth2-server.clientSecret}
+          client-auth-method: client_secret_basic
+
+
 
 logging.level:
   org.springframework: INFO

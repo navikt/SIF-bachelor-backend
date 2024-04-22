@@ -9,9 +9,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient.Builder;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -23,15 +28,20 @@ import java.time.format.DateTimeFormatter;
 public class SimpleService {
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
     private final WebClient webClient;
+    //private final WebClient webClient;
+    private Builder builder;
     @Value("${db.Service}")
     private String url;
+    @Value("${mock-oauth2-server.combined}")
+    private String ouath2;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
-    public SimpleService() {
+    //TODO: work with clientauth
+   public SimpleService() {
         this.webClient = WebClient.builder()
-                .baseUrl(url)
+                .baseUrl(ouath2)
                 .build();
     }
-
+//    private RestClient client = builder.baseUrl(ouath2).build();
 
 ////////////////////////////////////////////REAL ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
 
@@ -40,7 +50,7 @@ public class SimpleService {
     public Mono<FraGrapQl_DTO> hentJournalpostListe(FraKlient_DTO query, HttpHeaders originalHeader) {
         String graphQLQuery = createGraphQLQuery(query); // Generer GraphQL-forespørselen
         System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + graphQLQuery);
-        return this.webClient.post()
+        return webClient.post()
                 .uri(url+"/graphql")
                 .headers(headers -> headers.addAll(originalHeader))
                 .bodyValue(graphQLQuery) // Genererte GraphQL-forespørselen
@@ -68,6 +78,7 @@ public class SimpleService {
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
+
     public Mono<FraGrapQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(FraKlient_DTO query, HttpHeaders headers) {
         return webClient.post()
                 .uri(url+"/graphql")
@@ -147,13 +158,14 @@ public class SimpleService {
                 .uri(url+endpoint)
                 .headers(h -> h.addAll(originalHeader))
                 .retrieve()
-                .onStatus(status -> status.isError(), clientResponse ->
+                .onStatus(HttpStatus.INTERNAL_SERVER_ERROR::equals, clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Service-klassen som skal gi spesifikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
                             String errorMessage = "Feil ved kall til ekstern tjeneste: " + "endpoint" + statusValue+ " - " + errorBody;
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
-                        }))
+                        })
+                )
                 .bodyToMono(byte[].class) // Konverter responsen til en byte array
                 .map(ByteArrayResource::new) // Konverter byte array til en ByteArrayResource
                 .cast(Resource.class) // Cast the ByteArrayResource to Resource

@@ -23,7 +23,8 @@ public class WireMockConfig {
     @Value("${db.url}")
     public String url;
     @Value("${db.files}")
-    public String files;
+    private String files;
+
     @Bean(initMethod = "start", destroyMethod = "stop")
     public WireMockServer wireMockServer() {
         return new WireMockServer(options()

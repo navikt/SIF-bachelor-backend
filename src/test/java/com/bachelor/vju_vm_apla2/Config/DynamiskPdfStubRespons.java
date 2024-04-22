@@ -6,7 +6,6 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
 
-
 /*
 Hovedformålet med å implementere en ResponseDefinitionTransformer er å
  tillate dynamisk generering av responser basert på forespørselsdata.
