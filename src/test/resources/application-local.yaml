@@ -11,7 +11,7 @@ no.nav.security.jwt:
       accepted_audience: default
   client:
     registration:
-      demoserver1:
+      webClient:
         token-endpoint-url: ${mock-oauth2-server.token-url}
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: scope3, scope4
