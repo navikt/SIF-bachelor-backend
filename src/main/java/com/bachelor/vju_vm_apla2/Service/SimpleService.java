@@ -12,6 +12,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -26,9 +28,15 @@ public class SimpleService {
     @Value("${wiremock-saf.combined}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
+
+    // NB! Spring Webflux har som default 12kB eller noe sånt og vi må manuelt config maks grensen for å få større filer
     public SimpleService() {
         this.webClient = WebClient.builder()
-                .baseUrl(url)
+                .exchangeStrategies(ExchangeStrategies.builder()
+                        .codecs(clientDefaultCodecsConfigurer -> {
+                            clientDefaultCodecsConfigurer.defaultCodecs().maxInMemorySize(500 * 1024 * 1024);
+                        })
+                        .build())
                 .build();
     }
 
@@ -49,7 +57,9 @@ public class SimpleService {
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            // String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            String errorMessage = "";
+                            // BUG! dersom vi kommer til Mono.error linje nedenfor, returneres 200 OK tilbake til client. Det burde vi endre på - Gisle 19/4/24
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
@@ -78,8 +88,12 @@ public class SimpleService {
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
+                            // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
+                            // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
                             String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            // String errorMessage = "";
+                            logger.error(errorMessage);
+                            return Mono.error(new CustomClientException(statusValue, errorBody));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
@@ -155,6 +169,7 @@ public class SimpleService {
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
                         }))
                 .bodyToMono(byte[].class) // Konverter responsen til en byte array
+                .doOnNext(bytes -> System.out.println("Received byte array of size: " + bytes.length))
                 .map(ByteArrayResource::new) // Konverter byte array til en ByteArrayResource
                 .cast(Resource.class) // Cast the ByteArrayResource to Resource
                 .onErrorResume(e -> {
