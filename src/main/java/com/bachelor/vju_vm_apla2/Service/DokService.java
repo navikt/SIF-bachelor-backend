@@ -2,6 +2,7 @@ package com.bachelor.vju_vm_apla2.Service;
 
 import com.bachelor.vju_vm_apla2.Config.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.CreateJournalpost_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.ResponeReturnFromDokArkiv_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.CreateJournalpost;
@@ -85,8 +86,8 @@ public class DokService {
         return Mono.zip(updatedOldMeta, updatedNewMeta)
                 .doOnSuccess(item -> logger.info("12. Nå skal begge DTO være klare for å sende til dokarkiv gjennom serializeAndSendJournalpost"))
                 .flatMap(tuple -> {
-                    Mono<String> responseForOldMeta = serializeAndSendJournalpost(tuple.getT1());
-                    Mono<String> responseForNewMeta = serializeAndSendJournalpost(tuple.getT2());
+                    Mono<ResponeReturnFromDokArkiv_DTO> responseForOldMeta = serializeAndSendJournalpost(tuple.getT1());
+                    Mono<ResponeReturnFromDokArkiv_DTO> responseForNewMeta = serializeAndSendJournalpost(tuple.getT2());
                     return Mono.zip(responseForOldMeta, responseForNewMeta);
                 })
                 .map(tuple -> "Responses: " + tuple.getT1() + ", " + tuple.getT2())
@@ -120,7 +121,7 @@ public class DokService {
      * @return Mono<String> A Mono that emits the body of the response if the POST is successful,
      *         or errors out with a CustomClientException or a serialization-related exception if not.
      */
-    private Mono<String> serializeAndSendJournalpost(CreateJournalpost journalPost) {
+    private Mono<ResponeReturnFromDokArkiv_DTO> serializeAndSendJournalpost(CreateJournalpost journalPost) {
         logger.info("13. Vi er i serializeAndSendJournalpost med " + journalPost + " og prøver å gjøre kall til wiremock nå");
 
         try {
@@ -141,7 +142,7 @@ public class DokService {
                                 String errorMessage = "Error calling external service: " + statusValue + " - " + errorBody;
                                 return Mono.error(new CustomClientException(statusValue, errorMessage));
                             }))
-                    .bodyToMono(String.class)  // Extract the response body as a string
+                    .bodyToMono(ResponeReturnFromDokArkiv_DTO.class)  // Extract the response body as a string
                     .doOnSuccess(response -> logger.info("Received POST response for: {}", journalPost.getTittel()))  // Log successful response
                     .doOnError(error -> logger.error("Error during POST request for: {}", journalPost.getTittel()));  // Log any errors that occur
         } catch (JsonProcessingException e) {
