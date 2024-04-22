@@ -1,9 +1,8 @@
 package com.bachelor.vju_vm_apla2.Controller;
 
-import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.CreateJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.ResponeReturnFromDokArkiv_DTO;
-import com.bachelor.vju_vm_apla2.Service.DokService;
+import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.OpprettNyeJournalposter_CREATE;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.Unprotected;
 import org.apache.logging.log4j.LogManager;
@@ -20,13 +19,13 @@ import java.util.List;
 @RestController
 public class DokArkivController {
 
-    private static final Logger logger = LogManager.getLogger(DokService.class);
+    private static final Logger logger = LogManager.getLogger(OpprettNyeJournalposter_CREATE.class);
 
-    private final DokService dokService;
+    private final OpprettNyeJournalposter_CREATE opprettNyeJournalposterCREATE;
 
     @Autowired
-    public DokArkivController(DokService dokService){
-        this.dokService = dokService;
+    public DokArkivController(OpprettNyeJournalposter_CREATE opprettNyeJournalposterCREATE){
+        this.opprettNyeJournalposterCREATE = opprettNyeJournalposterCREATE;
     }
 
 
@@ -41,7 +40,7 @@ public class DokArkivController {
         logger.info("Received JSON data: {}", meta);
 
         // Call the service and handle its response asynchronously
-        return dokService.createJournalpost(meta)
+        return opprettNyeJournalposterCREATE.createJournalpost(meta)
                 .map(response -> {
                     // Directly return the ResponseEntity created in the service layer
                     logger.info("Response received from service: {}", response.getBody());
