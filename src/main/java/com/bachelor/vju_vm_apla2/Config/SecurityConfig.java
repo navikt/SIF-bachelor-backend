@@ -1,30 +1,8 @@
 package com.bachelor.vju_vm_apla2.Config;
-
-import no.nav.security.token.support.client.core.ClientProperties;
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
-import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher;
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client;
-
-import no.nav.security.token.support.client.spring.oauth2.OAuth2ClientRequestInterceptor;
-import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
-import no.nav.security.token.support.filter.JwtTokenValidationFilter;
-import no.nav.security.token.support.jaxrs.servlet.JaxrsJwtTokenValidationFilter;
-import no.nav.security.token.support.spring.MultiIssuerProperties;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.boot.web.client.RestClientCustomizer;
-import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.context.request.RequestContextListener;
-import org.springframework.web.reactive.function.client.WebClient;
 
-
-import java.net.URI;
-import java.util.Map;
 
 /* Essentially, the main annotation here for our prod project, is the @EnableJwtTokenValidation, which enables
    JWT validation on incoming requests. So any request that doesn't have a valid JWT token will be rejected */
