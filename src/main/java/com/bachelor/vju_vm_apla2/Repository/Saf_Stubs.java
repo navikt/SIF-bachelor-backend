@@ -36,7 +36,7 @@ public class Saf_Stubs {
         //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
         //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
         // Eksempel på en spesifikk stub for dokumentID "00001111"
-        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/1/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
+        wireMockServer.stubFor(get(urlPathMatching("/rest/hentdokument/1/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/pdf")
@@ -48,8 +48,9 @@ public class Saf_Stubs {
         //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST/////////////////////////////////////////////////////////////
 
         // Stub that checks the body for an "old" or "new" indicator
-        wireMockServer.stubFor(post(urlEqualTo("/mock/dockarkiv"))
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
                 .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
+                        .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
@@ -64,8 +65,9 @@ public class Saf_Stubs {
                                 "  \"journalpostferdigstilt\": false\n" +
                                 "}")));
 
-        wireMockServer.stubFor(post(urlEqualTo("/mock/dockarkiv"))
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
                 .withRequestBody(equalToJson("{\"versjon\":\"new\"}", true, true))
+                        .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
@@ -87,7 +89,7 @@ public class Saf_Stubs {
 //        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
 //        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
         //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
                 .withHeader("Authorizaton", containing("Bearer"))
                 .willReturn(aResponse()
@@ -187,24 +189,24 @@ public class Saf_Stubs {
 
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
         wireMockServer.
-                stubFor(post(urlEqualTo("/mock/graphql")).
+                stubFor(post(urlEqualTo("/graphql")).
                         withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).
                         willReturn(aResponse().
                                 withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
-        wireMockServer.stubFor(post("/mock/graphql").willReturn(aResponse().
+        wireMockServer.stubFor(post("/graphql").willReturn(aResponse().
                 withStatus(404).
                 withBody(NOT_FOUND.toString())));
-        wireMockServer.stubFor(get("/mock/graphql").
+        wireMockServer.stubFor(get("/graphql").
                 willReturn(aResponse().
                         withStatus(500). //500 when you tries to use wrong method -> maybe a more detailed response where you can see WHAT you are doing wrong?
                         withBody(INTERNAL_SERVER_ERROR.getReasonPhrase()))); //standard internal server errors for now, maybe consider INTERNAL_SERVER_ERROR?
         //todo: maybe more stubs here?
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer")));
 
 
                         //Mock for søkeresultat "003". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"003\"}}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
@@ -249,7 +251,7 @@ public class Saf_Stubs {
 
 
         //Mock for søkeresultat "004". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"004\"}}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
@@ -391,7 +393,7 @@ public class Saf_Stubs {
 
         //INGEN FILTER
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"002\"}}"
                         , true, true))
@@ -406,7 +408,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", TIL
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -423,7 +425,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", TIL, SYM
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -440,7 +442,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -458,7 +460,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, N
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -477,7 +479,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -495,7 +497,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT_N
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -515,7 +517,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", EKSPEDERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -533,7 +535,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -551,7 +553,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT_I
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -571,7 +573,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT_I_N
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -591,7 +593,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, EKSPEDERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -609,7 +611,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT, EKSPEDERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -627,7 +629,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", FRA 01.01.22 TIL 31.12.22
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -647,7 +649,7 @@ public class Saf_Stubs {
 
         //FILTER
         //Mock for søkeresultat "002", FRA 01.01.23 TIL 31.12.23
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -675,7 +677,7 @@ public class Saf_Stubs {
 
 
         //Mock for søkeresultat "400".
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"400\"}}"
                         , true, true))
@@ -691,7 +693,7 @@ public class Saf_Stubs {
                        ));
 
         //Mock for søkeresultat "401".
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"401\"}}"
                         , true, true))
@@ -707,7 +709,7 @@ public class Saf_Stubs {
                 ));
 
         //Mock for søkeresultat "403".
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"403\"}}"
                         , true, true))
@@ -725,7 +727,7 @@ public class Saf_Stubs {
                 ));
 
         //Mock for søkeresultat "404".
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"404\"}}"
                         , true, true))
@@ -739,13 +741,23 @@ public class Saf_Stubs {
                         )
                 ));
 
-        wireMockServer.stubFor(delete(urlPathMatching("/mock/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
+        wireMockServer.stubFor(delete(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
+                .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withStatus(204)));
 
-        wireMockServer.stubFor(delete(urlPathMatching("/mock/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
+        wireMockServer.stubFor(delete(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
+                .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withStatus(204)));
+
+        wireMockServer.stubFor(delete(urlEqualTo("/rest/test"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(204)));
+
 
 
     }

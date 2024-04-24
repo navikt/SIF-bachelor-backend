@@ -41,14 +41,16 @@ public class DokArkivController {
     @CrossOrigin
     @PostMapping("/createJournalpost")
     public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost(@RequestBody CreateJournalpost_DTO meta, @RequestHeader HttpHeaders headers) {
-        logger.info("Received JSON data: {}", meta);
+        logger.info("0.1 Controller - mottat data fra klienten - Received JSON data: {}", meta);
         System.out.println("----------------------------------------------------------------------------------");
         System.out.println(meta.getJournalpostID() + " " + meta.getOldMetadata().getJournalposttype());
         // Call the service and handle its response asynchronously
-        return opprettNyeJournalposterCREATE.createJournalpost(meta)
+        logger.info("0.2 Controller - Nå går vi inn i createjournalpost med " + meta);
+        return opprettNyeJournalposterCREATE.createJournalpost(meta, headers)
+                //legge til logger eller system printout "("16. Vi er tilabke fra å opprette journalpost og skal nå feilregisterere")"
                 .flatMap(response -> feilRegistrerService.feilRegistrer(meta.getJournalpostID(), meta.getOldMetadata().getJournalposttype(), headers)
                         .flatMap(feilResponse -> {
-                            System.out.println("respons------------------------------------------------------------------");
+                            System.out.println("17. Dokarkiv controller - respons------------------------------------------------------------------");
                             System.out.println(feilResponse);
                             if (!feilResponse.getBody()) { // Accessing the body of ResponseEntity<Boolean>
                                 logger.error("Error registering failure for journal post ID: {}", meta.getJournalpostID());

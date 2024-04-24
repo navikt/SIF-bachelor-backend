@@ -57,7 +57,7 @@ public class SafService {
         logger.info("Starter henting av journalposter med forespørsel: {}", graphQLQuery);
 
         return this.webClient.post()
-                .uri(url + "/mock/graphql")
+                .uri(url + "/graphql")
                 .headers(h -> h.addAll(originalHeader))
                 .bodyValue(graphQLQuery)
                 .retrieve()
@@ -88,7 +88,7 @@ public class SafService {
 
     public Mono<ReturnFromGraphQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(GetJournalpostList_DTO query, HttpHeaders headers) {
         return webClient.post()
-                .uri(url+"/mock/graphql")
+                .uri(url+"/graphql")
                 .headers(h -> h.addAll(headers))
                 .bodyValue(query)
                 .retrieve()
@@ -173,7 +173,7 @@ public class SafService {
      * @return Mono<Resource> som inneholder det hentede dokumentet, eller feilinformasjon hvis en feil oppstår.
      */
     public Mono<Resource> hentDokument(String dokumentInfoId, String journalpostId, HttpHeaders originalHeader) {
-        String endpoint = String.format("/mock/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
+        String endpoint = String.format("/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
         logger.info("Henter dokument med ID: {} for journalpostID: {}", dokumentInfoId, journalpostId);
 
         return webClient.get()

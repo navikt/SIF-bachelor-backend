@@ -33,21 +33,26 @@ public class FeilRegistrer_DELETE {
     }
 
     public Mono<ResponseEntity<Boolean>> feilRegistrer(String journalpostId, String type, HttpHeaders originalHeader) {
+        logger.info("17. Vi er nå på å feilregistere fra opprett journalpost");
         String endpoint = "";
 
+        String endpoint_test = "/mock/rest/test";
+
         if (type.equals("I")) {
-            endpoint = "/mock/rest/journalpostapi/v1/journalpost/" + journalpostId + "/feilregistrer/settStatusUtgaar";
+            endpoint = "/rest/journalpostapi/v1/journalpost/" + journalpostId + "/feilregistrer/settStatusUtgaar";
         } else if (type.equals("U")) {
-            endpoint = "/mock/rest/journalpostapi/v1/journalpost/" + journalpostId + "/feilregistrer/settStatusAvbryt";
+            endpoint = "/rest/journalpostapi/v1/journalpost/" + journalpostId + "/feilregistrer/settStatusAvbryt";
         } else {
             return Mono.just(ResponseEntity.badRequest().body(false)); // Returning a bad request if type is not handled
         }
 
         System.out.println("Service - feilregistrer: vi skal nå inn i wiremock med forespørsel: ");
-        System.out.println(journalpostId + ", " + type);
+        System.out.println("Original headers:");
+
         return this.webClient.delete()
                 .uri(url + endpoint)
-                .headers(headers -> headers.addAll(originalHeader))
+                .header(HttpHeaders.AUTHORIZATION, originalHeader.getFirst(HttpHeaders.AUTHORIZATION))
+                //.headers(headers -> headers.addAll(headersForRequest))
                 .retrieve()
                 .onStatus(status -> status.isError(), response ->
                         response.bodyToMono(String.class)
