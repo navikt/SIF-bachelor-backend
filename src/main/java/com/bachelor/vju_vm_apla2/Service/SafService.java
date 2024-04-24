@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -20,6 +22,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+@Service
 public class SafService {
 
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
@@ -27,8 +30,15 @@ public class SafService {
 
     @Value("${wiremock-saf.combined}")
     private String url;
-    public SafService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl(url).build();
+    public SafService() {
+        this.webClient = WebClient.builder()
+                .exchangeStrategies(ExchangeStrategies.builder()
+                        .codecs(clientDefaultCodecsConfigurer -> {
+                            clientDefaultCodecsConfigurer.defaultCodecs().maxInMemorySize(500 * 1024 * 1024);
+                        })
+                        .build())
+                .baseUrl(url)
+                .build();
     }
 
     /**
@@ -73,6 +83,37 @@ public class SafService {
                         // Returner en generisk feilmelding til klienten
                         return Mono.just(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
                     }
+                });
+    }
+
+    public Mono<ReturnFromGraphQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(GetJournalpostList_DTO query, HttpHeaders headers) {
+        return webClient.post()
+                .uri(url+"/mock/graphql")
+                .headers(h -> h.addAll(headers))
+                .bodyValue(query)
+                .retrieve()
+                .onStatus(status -> status.isError(), clientResponse ->
+                        clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
+                            System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
+                            int statusValue = clientResponse.statusCode().value();
+                            // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
+                            // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
+                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            // String errorMessage = "";
+                            logger.error(errorMessage);
+                            return Mono.error(new CustomClientException(statusValue, errorBody));
+                        }))
+                .bodyToMono(ReturnFromGraphQl_DTO.class)
+                .onErrorResume(e -> {
+                    // Håndter generelle feil som ikke er knyttet til HTTP-statuskoder
+                    if (!(e instanceof CustomClientException)) {
+                        System.out.println("Vi er inne i Servoce-klassen som skal gi GENERISK error kode:");
+                        // Logg feilen og returner en generisk feilrespons
+                        logger.error("En uventet feil oppstod: ", e);
+                        return Mono.just(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
+                    }
+                    // Viderefør CustomClientException slik at den kan håndteres oppstrøms
+                    return Mono.error(e);
                 });
     }
 
@@ -131,7 +172,7 @@ public class SafService {
      * @param originalHeader HttpHeaders som inkluderer nødvendige autentiseringsinformasjon.
      * @return Mono<Resource> som inneholder det hentede dokumentet, eller feilinformasjon hvis en feil oppstår.
      */
-    public Mono<Resource> hentDokument_Saf(String dokumentInfoId, String journalpostId, HttpHeaders originalHeader) {
+    public Mono<Resource> hentDokument(String dokumentInfoId, String journalpostId, HttpHeaders originalHeader) {
         String endpoint = String.format("/mock/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
         logger.info("Henter dokument med ID: {} for journalpostID: {}", dokumentInfoId, journalpostId);
 
