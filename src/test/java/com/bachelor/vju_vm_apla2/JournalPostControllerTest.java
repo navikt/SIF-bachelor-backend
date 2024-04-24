@@ -1,6 +1,6 @@
 package com.bachelor.vju_vm_apla2;
 
-import com.bachelor.vju_vm_apla2.Controller.JournalpostController;
+import com.bachelor.vju_vm_apla2.Controller.SafController;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Saf.*;
@@ -35,7 +35,7 @@ public class JournalPostControllerTest {
     @Mock
     SimpleService serviceMock;
     @InjectMocks
-    JournalpostController jpController;
+    SafController safController;
 
 
     @Mock
@@ -63,8 +63,8 @@ public class JournalPostControllerTest {
         ReturnFromGraphQl_DTO fgqlTest = new ReturnFromGraphQl_DTO(dO, "hello world");
         Mono <ReturnFromGraphQl_DTO> MfgglTest = Mono.just(fgqlTest);
         Mockito.when(serviceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
-        Mono<ResponseEntity<ReturnFromGraphQl_DTO>> resultMono = jpController.hentJournalpostListe(brukerId, headers);
-    //Not sure how this works, but rolls with it for now
+        Mono<ResponseEntity<ReturnFromGraphQl_DTO>> resultMono = safController.hentJournalpostListe(brukerId, headers);
+        //Not sure how this works, but rolls with it for now
         StepVerifier.create(resultMono).assertNext(fraGrapQlDtoResponseEntity -> {
             assertEquals(HttpStatus.OK, fraGrapQlDtoResponseEntity.getStatusCode());
             assertEquals("application/json", fraGrapQlDtoResponseEntity.getHeaders().getContentType().toString());
@@ -93,9 +93,9 @@ public class JournalPostControllerTest {
         headers.add("Authorization", "bearer");
         //trying without mocking anything as we will throw an exception
         Mockito.when(serviceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
-        String res = String.valueOf(jpController.hentJournalpostListe(DTO, headers));
+        String res = String.valueOf(safController.hentJournalpostListe(DTO, headers));
 
- assertEquals(any(Exception.class), res);
+        assertEquals(any(Exception.class), res);
     }
     @Test
     public void hentJournalpostTestFail() {
@@ -122,7 +122,7 @@ public class JournalPostControllerTest {
 
 
         headers.add("Authorization", "Bearer ");
-        String res = String.valueOf(jpController.hentJournalpostListe(brukerId, headers));
+        String res = String.valueOf(safController.hentJournalpostListe(brukerId, headers));
         String cmp = String.valueOf(Mono.just(ResponseEntity.status(HttpStatus.OK).header("Content-Type", "application/json").header("Content-Disposition", "inline").body(fgqlTest)));
         assertEquals("MonoOnErrorResume",res );
     }
@@ -140,18 +140,10 @@ public class JournalPostControllerTest {
 
         Mockito.when(serviceMock.hentDokument(dokumentId, journalpostId, headers)).thenReturn(Mono.just(fakePDFresource));
         String cmp = String.valueOf(Mono.just(ResponseEntity.status(HttpStatus.OK).headers(headers).contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"").body(fakePDFresource)).block());
-        String res = String.valueOf(jpController.hentDokument(dokumentId, journalpostId, headers).block());
+        String res = String.valueOf(safController.hentDokument(dokumentId, journalpostId, headers).block());
 
         assertEquals(cmp, res);
     }
 
-    @Test
-    public void protectedTest() {
-        assertEquals("I am protected", jpController.protectedPath());
-    }
 
-    @Test
-    public void unprotectedTest() {
-        assertEquals("I am unprotected", jpController.unProtectedPath());
-    }
 }
