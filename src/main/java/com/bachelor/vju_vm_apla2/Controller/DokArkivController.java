@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 public class DokArkivController {
 
-    private static final Logger logger = LogManager.getLogger(OpprettNyeJournalposter_CREATE.class);
+    private static final Logger logger = LogManager.getLogger(DokArkivController.class);
 
     private final OpprettNyeJournalposter_CREATE opprettNyeJournalposterCREATE;
     private final FeilRegistrer_DELETE feilRegistrerService;
@@ -37,7 +37,6 @@ public class DokArkivController {
     //TODO: Opprett kontroller CreateJournalpost
 
     /////////////////////////////////// ALPHA METODE FOR CREATE JOURNALPOST///////////////////////////////////////////
-    @Unprotected
 //@RequestMapping("/dokarkivAPI")
     @CrossOrigin
     @PostMapping("/createJournalpost")
