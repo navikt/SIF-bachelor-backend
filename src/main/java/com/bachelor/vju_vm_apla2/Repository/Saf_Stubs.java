@@ -76,7 +76,7 @@ public class Saf_Stubs {
                                 "      \"dokumentInfoId\": \"123-new\"\n" +
                                 "    }\n" +
                                 "  ],\n" +
-                                "  \"journalpostId\": \"467010363-new\",\n" +
+                                "  \"journalpostId\": \"467010364-new\",\n" +
                                 "  \"journalpostferdigstilt\": false\n" +
                                 "}")));
 
@@ -318,7 +318,7 @@ public class Saf_Stubs {
                                 "        \"journalpostId\": \"429108246\",\n" +
                                 "        \"tittel\": \"Rusten Veikryss\",\n" +
                                 "        \"journalposttype\": \"U\",\n" +
-                                "        \"journalstatus\": \"FERDIGSTILT\",\n" +
+                                "        \"journalstatus\": \"UNDER_ARBEID\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2021-11-01T12:00:00Z\",\n" +
                                 "        \"dokumenter\": [\n" +
@@ -739,13 +739,7 @@ public class Saf_Stubs {
                         )
                 ));
 
-        wireMockServer.stubFor(delete(urlPathMatching("/mock/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
-                .willReturn(aResponse()
-                        .withStatus(204)));
 
-        wireMockServer.stubFor(delete(urlPathMatching("/mock/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
-                .willReturn(aResponse()
-                        .withStatus(204)));
 
     }
 
