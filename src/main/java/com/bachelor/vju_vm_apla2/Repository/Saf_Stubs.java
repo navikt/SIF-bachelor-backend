@@ -739,6 +739,13 @@ public class Saf_Stubs {
                         )
                 ));
 
+        wireMockServer.stubFor(delete(urlPathMatching("/mock/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
+                .willReturn(aResponse()
+                        .withStatus(204)));
+
+        wireMockServer.stubFor(delete(urlPathMatching("/mock/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
+                .willReturn(aResponse()
+                        .withStatus(204)));
 
 
     }
