@@ -1,8 +1,8 @@
 package com.bachelor.vju_vm_apla2.Controller;
 
 import com.bachelor.vju_vm_apla2.Config.CustomClientException;
-import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
-import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -42,8 +42,8 @@ public class JournalpostController {
     //POST API, leverer liste med journalposter basert på query(uten filter) fra klienten. Henter liste fra Service klasse
 
     @CrossOrigin// Allows CORS communication from the frontend, if you want to add extra, you can do that in CorsConfig
-    @PostMapping("/hentJournalpostListe")
-    public Mono<ResponseEntity<FraGrapQl_DTO>> hentJournalpostListe(@RequestBody FraKlient_DTO query, @RequestHeader HttpHeaders headers) {
+    @PostMapping("/arkiv_hentJournalpostListe")
+    public Mono<ResponseEntity<ReturnFromGraphQl_DTO>> hentJournalpostListe(@RequestBody GetJournalpostList_DTO query, @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + query +
                 "\n" + "Kontroller - Mottatt headers: " + headers);
         return simpleService.hentJournalpostListe_Test_ENVIRONMENT(query, headers)
@@ -63,13 +63,13 @@ public class JournalpostController {
                         CustomClientException cce = (CustomClientException) e;
                         return Mono.just(ResponseEntity
                                 .status(cce.getStatusCode())
-                                .body(new FraGrapQl_DTO(cce.getMessage())));
+                                .body(new ReturnFromGraphQl_DTO(cce.getMessage())));
                     } else {
                         // 3. Generell feilhåndtering
                         System.out.println("Vi er inne i kontroller-klassen som skal gi Generisk feil:");
                         return Mono.just(ResponseEntity
                                 .internalServerError()
-                                .body(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere.")));
+                                .body(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere.")));
                     }
                 });
     }
@@ -80,7 +80,7 @@ public class JournalpostController {
     //Metode for å hente dokumentID basert på response fra SAF - graphql s
     //Denne metoden innholder ikke mulighet til å legge til journalpostID enda i URL. Vi søker dokumenter for journalostID 001
     @CrossOrigin
-    @GetMapping("/hentDokumenter")
+    @GetMapping("/arkiv_hentDokumenter")
     public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestParam("journalpostId") String journalpostId,  @RequestHeader HttpHeaders headers) {
         System.out.println("Kontroller - Mottatt query: " + dokumentInfoId +
                 "\n" + "Nå går vi inn i service klassen");
@@ -114,6 +114,11 @@ public class JournalpostController {
                     }
                 });
     }
+
+    //////////////////////////////////////////////////// ALPHA METODER //////////////////////////////////////////////////////////
+
+    //TODO: opprett en metode som tar i mot endepunkt "opprettJournalpost
+
 
 
     //////////////////////////////////////////////////////////////// PROTECTED API TEST ENDPOINTS///////////////////////////////////////////

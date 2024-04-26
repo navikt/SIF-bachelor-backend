@@ -39,9 +39,15 @@ mock-oauth2-server:
   clientId: dittClientId
   clientSecret: dinClientSecret
 
-db:
+db-saf:
   url: localhost
   port: 8081
-  combined: http://${db.url}:${db.port}
-  Service: ${db.combined}/mock # <- this can be changed to the  right endpoint in the url
+  combined: http://${db-saf.url}:${db-saf.port}
+  Service: ${db-saf.combined}/mock # <- this can be changed to the  right endpoint in the url
   files: .
+
+db-dok:
+    url: localhost
+    port: 8081
+    combined: http://${db-dok.url}:${db-dok.port}
+    service: ${db-dok.combined}/mock

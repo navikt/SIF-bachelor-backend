@@ -1,8 +1,8 @@
 package com.bachelor.vju_vm_apla2.Service;
 
 import com.bachelor.vju_vm_apla2.Config.CustomClientException;
-import com.bachelor.vju_vm_apla2.Models.DTO.FraGrapQl_DTO;
-import com.bachelor.vju_vm_apla2.Models.DTO.FraKlient_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +17,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import org.springframework.web.client.RestClient.Builder;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -28,26 +30,30 @@ import java.time.format.DateTimeFormatter;
 public class SimpleService {
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
     private final WebClient webClient;
-    //private final WebClient webClient;
-    private Builder builder;
-    @Value("${db.Service}")
+    @Value("${wiremock-saf.combined}")
     private String url;
     @Value("${mock-oauth2-server.combined}")
     private String ouath2;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
-    //TODO: work with clientauth
-   public SimpleService() {
+
+    // NB! Spring Webflux har som default 12kB eller noe sånt og vi må manuelt config maks grensen for å få større filer
+    public SimpleService() {
         this.webClient = WebClient.builder()
                 .baseUrl(ouath2)
+                .exchangeStrategies(ExchangeStrategies.builder()
+                        .codecs(clientDefaultCodecsConfigurer -> {
+                            clientDefaultCodecsConfigurer.defaultCodecs().maxInMemorySize(500 * 1024 * 1024);
+                        })
+                        .build())
                 .build();
     }
-//    private RestClient client = builder.baseUrl(ouath2).build();
+
 
 ////////////////////////////////////////////REAL ENVIRONMENT METODER///////////////////////////////////////////////////////////////////////////////
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
-    public Mono<FraGrapQl_DTO> hentJournalpostListe(FraKlient_DTO query, HttpHeaders originalHeader) {
+    public Mono<ReturnFromGraphQl_DTO> hentJournalpostListe(GetJournalpostList_DTO query, HttpHeaders originalHeader) {
         String graphQLQuery = createGraphQLQuery(query); // Generer GraphQL-forespørselen
         System.out.println("Service - hentjournalpostListe_1: vi skal nå inn i wiremock med forespørsel: " + graphQLQuery);
         return webClient.post()
@@ -59,17 +65,19 @@ public class SimpleService {
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            // String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
+                            String errorMessage = "";
+                            // BUG! dersom vi kommer til Mono.error linje nedenfor, returneres 200 OK tilbake til client. Det burde vi endre på - Gisle 19/4/24
                             return Mono.error(new CustomClientException(statusValue, errorMessage));
                         }))
-                .bodyToMono(FraGrapQl_DTO.class)
+                .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
                     // Håndter generelle feil som ikke er knyttet til HTTP-statuskoder
                     if (!(e instanceof CustomClientException)) {
                         System.out.println("Vi er inne i Servoce-klassen som skal gi GENERISK error kode:");
                         // Logg feilen og returner en generisk feilrespons
                         logger.error("En uventet feil oppstod: ", e);
-                        return Mono.just(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
+                        return Mono.just(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
                     }
                     // Viderefør CustomClientException slik at den kan håndteres oppstrøms
                     return Mono.error(e);
@@ -78,8 +86,7 @@ public class SimpleService {
 
     //tar innkomende data fra JournalPostController og parser dette til webclient object
     //Gjør HTTP kall gjennom WebClient Objekt med GraphQL server (erstattet med Wiremock)
-
-    public Mono<FraGrapQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(FraKlient_DTO query, HttpHeaders headers) {
+    public Mono<ReturnFromGraphQl_DTO> hentJournalpostListe_Test_ENVIRONMENT(GetJournalpostList_DTO query, HttpHeaders headers) {
         return webClient.post()
                 .uri(url+"/graphql")
                 .headers(h -> h.addAll(headers))
@@ -89,17 +96,21 @@ public class SimpleService {
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
+                            // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
+                            // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
                             String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            // String errorMessage = "";
+                            logger.error(errorMessage);
+                            return Mono.error(new CustomClientException(statusValue, errorBody));
                         }))
-                .bodyToMono(FraGrapQl_DTO.class)
+                .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
                     // Håndter generelle feil som ikke er knyttet til HTTP-statuskoder
                     if (!(e instanceof CustomClientException)) {
                         System.out.println("Vi er inne i Servoce-klassen som skal gi GENERISK error kode:");
                         // Logg feilen og returner en generisk feilrespons
                         logger.error("En uventet feil oppstod: ", e);
-                        return Mono.just(new FraGrapQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
+                        return Mono.just(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
                     }
                     // Viderefør CustomClientException slik at den kan håndteres oppstrøms
                     return Mono.error(e);
@@ -108,7 +119,7 @@ public class SimpleService {
 
 
     //Bygger en GraphQL-forespørsel som en streng basert på input-data fra klienten
-    private String createGraphQLQuery(FraKlient_DTO query) {
+    private String createGraphQLQuery(GetJournalpostList_DTO query) {
         // Formatter for å konvertere datoer til ønsket format
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -167,6 +178,7 @@ public class SimpleService {
                         })
                 )
                 .bodyToMono(byte[].class) // Konverter responsen til en byte array
+                .doOnNext(bytes -> System.out.println("Received byte array of size: " + bytes.length))
                 .map(ByteArrayResource::new) // Konverter byte array til en ByteArrayResource
                 .cast(Resource.class) // Cast the ByteArrayResource to Resource
                 .onErrorResume(e -> {
@@ -226,6 +238,8 @@ public class SimpleService {
                 });
     }
 
-////////////////////////////////////////////////////// TEST METODER /////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////// ALPHA METODER /////////////////////////////////////////////////////////////////////
+
+    //TODO: Opprette en metode som gjør kall mot SAF server
 
 }
