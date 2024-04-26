@@ -12,6 +12,11 @@ no.nav.security.jwt:
       discovery-url: ${mock-oauth2-server.combined}/default/.well-known/openid-configuration
       accepted_audience: default
 
+spring:
+  jackson:
+    default-property-inclusion: non_null
+
+
 logging.level:
   org.springframework: INFO
   no.nav: DEBUG
