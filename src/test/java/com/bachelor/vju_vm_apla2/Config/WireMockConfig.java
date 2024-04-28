@@ -22,7 +22,7 @@ public class WireMockConfig {
     @Value("${db-saf.port}")
     public int saf_port;
 
-    @Value("${db-saf.combined}")
+    @Value("${db-saf.url}")
     public String saf_url;
 
     @Value("${db-saf.files}")

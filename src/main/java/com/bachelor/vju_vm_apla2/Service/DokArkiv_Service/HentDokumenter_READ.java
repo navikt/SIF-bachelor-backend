@@ -16,9 +16,10 @@ import java.util.Base64;
 
 public class HentDokumenter_READ {
 
+
     private static final Logger logger = LogManager.getLogger(HentDokumenter_READ.class);
 
-    @Value("${wiremock-dok.combined}")
+    @Value("${db-dok.combined}")
     private String url;
 
 

@@ -14,12 +14,12 @@ public class CorsConfig {
    @Value("${mock-oauth2-server.combined}")
    private String OAUTH2Server;
    //wiremock url
-   @Value("${db.combined}")
+   @Value("${db-saf.combined}")
    private String db;
-   @Value("${wiremock-saf.combined}")
+   @Value("${db-saf.combined}")
    private String wiremocksaf;
 
-   @Value("${wiremock-dok.combined}")
+   @Value("${db-dok.combined}")
    private String wiremockdok;
     @Bean
     public WebMvcConfigurer corsconf() {
