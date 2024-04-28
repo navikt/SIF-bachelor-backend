@@ -346,7 +346,7 @@ public class Saf_Stubs {
                                 "      {\n" +
                                 "        \"journalpostId\": \"428965411\",\n" +
                                 "        \"tittel\": \"Rusten Veikryss\",\n" +
-                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalposttype\": \"N\",\n" +
                                 "        \"journalstatus\": \"EKSPEDERT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2023-11-01T12:00:00Z\",\n" +
