@@ -58,7 +58,7 @@ public class HentDokumenter_READ {
     public Mono<String> hentDokument_DokArkiv(String dokumentInfoId, String journalpostId) {
 
         logger.info("5. vi er inne i hentDokument_DokArkiv med denne meta" + dokumentInfoId + "og " + journalpostId);
-        String endpoint = String.format("/mock/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
+        String endpoint = String.format("/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
         logger.info("Fetching document with ID: {} for journal post ID: {}", dokumentInfoId, journalpostId);
 
         return webClient.get()

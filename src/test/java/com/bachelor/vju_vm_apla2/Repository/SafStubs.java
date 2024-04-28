@@ -36,7 +36,7 @@ public class SafStubs {
         //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
         //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
         // Eksempel på en spesifikk stub for dokumentID "00001111"
-        wireMockServer.stubFor(get(urlPathMatching("/mock/rest/hentdokument/1/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
+        wireMockServer.stubFor(get(urlPathMatching("/rest/hentdokument/1/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/pdf")
@@ -48,8 +48,9 @@ public class SafStubs {
         //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST/////////////////////////////////////////////////////////////
 
         // Stub that checks the body for an "old" or "new" indicator
-        wireMockServer.stubFor(post(urlEqualTo("/mock/dockarkiv"))
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
                 .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
+                        .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
@@ -64,8 +65,9 @@ public class SafStubs {
                                 "  \"journalpostferdigstilt\": false\n" +
                                 "}")));
 
-        wireMockServer.stubFor(post(urlEqualTo("/mock/dockarkiv"))
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
                 .withRequestBody(equalToJson("{\"versjon\":\"new\"}", true, true))
+                        .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
@@ -76,7 +78,7 @@ public class SafStubs {
                                 "      \"dokumentInfoId\": \"123-new\"\n" +
                                 "    }\n" +
                                 "  ],\n" +
-                                "  \"journalpostId\": \"467010363-new\",\n" +
+                                "  \"journalpostId\": \"467010364-new\",\n" +
                                 "  \"journalpostferdigstilt\": false\n" +
                                 "}")));
 
@@ -87,7 +89,7 @@ public class SafStubs {
 //        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
 //        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
         //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
                 .withHeader("Authorizaton", containing("Bearer"))
                 .willReturn(aResponse()
@@ -187,24 +189,24 @@ public class SafStubs {
 
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
         wireMockServer.
-                stubFor(post(urlEqualTo("/mock/graphql")).
+                stubFor(post(urlEqualTo("/graphql")).
                         withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).
                         willReturn(aResponse().
                                 withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
-        wireMockServer.stubFor(post("/mock/graphql").willReturn(aResponse().
+        wireMockServer.stubFor(post("/graphql").willReturn(aResponse().
                 withStatus(404).
                 withBody(NOT_FOUND.toString())));
-        wireMockServer.stubFor(get("/mock/graphql").
+        wireMockServer.stubFor(get("/graphql").
                 willReturn(aResponse().
                         withStatus(500). //500 when you tries to use wrong method -> maybe a more detailed response where you can see WHAT you are doing wrong?
                         withBody(INTERNAL_SERVER_ERROR.getReasonPhrase()))); //standard internal server errors for now, maybe consider INTERNAL_SERVER_ERROR?
         //todo: maybe more stubs here?
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer")));
 
 
                         //Mock for søkeresultat "003". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"003\"}}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
@@ -249,7 +251,7 @@ public class SafStubs {
 
 
         //Mock for søkeresultat "004". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"004\"}}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
@@ -257,119 +259,130 @@ public class SafStubs {
                         .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
                         .withStatus(200) // Returner HTTP 200 OK
                         .withBody("{\n" +
-                                "   \"dokumentoversikt\":{\n" +
-                                "      \"journalposter\":[\n" +
-                                "         {\n" +
-                                "            \"journalpostId\":\"666111111\",\n" +
-                                "            \"tittel\":\"Hemmelig dokument\",\n" +
-                                "            \"journalposttype\":\"U\",\n" +
-                                "            \"journalstatus\":\"FERDIGSTILT\",\n" +
-                                "            \"tema\":\"OPP\",\n" +
-                                "            \"datoOpprettet\":\"2024-03-01T12:00:00Z\",\n" +
-                                "            \"dokumenter\":[\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00006666\",\n" +
-                                "                  \"tittel\":\"Topphemmelig.pdf\"\n" +
-                                "               }\n" +
-                                "            ]\n" +
-                                "         },\n" +
-                                "         {\n" +
-                                "            \"journalpostId\":\"666222222\",\n" +
-                                "            \"tittel\":\"Enda et hemmelig dokument\",\n" +
-                                "            \"journalposttype\":\"I\",\n" +
-                                "            \"journalstatus\":\"JOURNALFOERT\",\n" +
-                                "            \"tema\":\"OPP\",\n" +
-                                "            \"datoOpprettet\":\"2024-03-02T12:00:00Z\",\n" +
-                                "            \"dokumenter\":[\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00007777\",\n" +
-                                "                  \"tittel\":\"VeldigHemmelig.pdf\"\n" +
-                                "               }\n" +
-                                "            ]\n" +
-                                "         },\n" +
-                                "         {\n" +
-                                "            \"journalpostId\":\"429111291\",\n" +
-                                "            \"tittel\":\"Svak Postkasse\",\n" +
-                                "            \"journalposttype\":\"U\",\n" +
-                                "            \"journalstatus\":\"FERDIGSTILT\",\n" +
-                                "            \"tema\":\"OPP\",\n" +
-                                "            \"datoOpprettet\":\"2024-07-01T12:00:00Z\",\n" +
-                                "            \"dokumenter\":[\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00001111\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               },\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00002222\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               },\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00003333\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               }\n" +
-                                "            ]\n" +
-                                "         },\n" +
-                                "         {\n" +
-                                "            \"journalpostId\":\"429108246\",\n" +
-                                "            \"tittel\":\"Rusten Veikryss\",\n" +
-                                "            \"journalposttype\":\"U\",\n" +
-                                "            \"journalstatus\":\"FERDIGSTILT\",\n" +
-                                "            \"tema\":\"OPP\",\n" +
-                                "            \"datoOpprettet\":\"2021-11-01T12:00:00Z\",\n" +
-                                "            \"dokumenter\":[\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00004444\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               },\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00005555\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               }\n" +
-                                "            ]\n" +
-                                "         },\n" +
-                                "         {\n" +
-                                "            \"journalpostId\":\"428965411\",\n" +
-                                "            \"tittel\":\"Rusten Veikryss\",\n" +
-                                "            \"journalposttype\":\"U\",\n" +
-                                "            \"journalstatus\":\"EKSPEDERT\",\n" +
-                                "            \"tema\":\"OPP\",\n" +
-                                "            \"datoOpprettet\":\"2023-11-01T12:00:00Z\",\n" +
-                                "            \"dokumenter\":[\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00006666\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               }\n" +
-                                "            ]\n" +
-                                "         },\n" +
-                                "         {\n" +
-                                "            \"journalpostId\":\"429101111\",\n" +
-                                "            \"tittel\":\"Heisann sveisann\",\n" +
-                                "            \"journalposttype\":\"I\",\n" +
-                                "            \"journalstatus\":\"JOURNALFOERT\",\n" +
-                                "            \"tema\":\"SYM\",\n" +
-                                "            \"datoOpprettet\":\"2020-01-01T12:00:00Z\",\n" +
-                                "            \"dokumenter\":[\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00007777\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               },\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00008888\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               },\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00009999\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               },\n" +
-                                "               {\n" +
-                                "                  \"dokumentInfoId\":\"00010000\",\n" +
-                                "                  \"tittel\":\"MASKERT_FELT\"\n" +
-                                "               }\n" +
-                                "            ]\n" +
-                                "         }\n" +
-                                "      ]\n" +
-                                "   }\n" +
-                                "}\n" +
+                                "  \"dokumentoversikt\": {\n" +
+                                "    \"journalposter\": [\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"666111111\",\n" +
+                                "        \"tittel\": \"Hemmelig dokument\",\n" +
+                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalstatus\": \"FERDIGSTILT\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2024-03-01T12:00:00Z\",\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00006666\",\n" +
+                                "            \"tittel\": \"Topphemmelig.pdf\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          }\n" +
+                                "        ]\n" +
+                                "      },\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"666222222\",\n" +
+                                "        \"tittel\": \"Enda et hemmelig dokument\",\n" +
+                                "        \"journalposttype\": \"I\",\n" +
+                                "        \"journalstatus\": \"JOURNALFOERT\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2024-03-02T12:00:00Z\",\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00007777\",\n" +
+                                "            \"tittel\": \"VeldigHemmelig.pdf\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          }\n" +
+                                "        ]\n" +
+                                "      },\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"429111291\",\n" +
+                                "        \"tittel\": \"Svak Postkasse\",\n" +
+                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalstatus\": \"FERDIGSTILT\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2024-07-01T12:00:00Z\",\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00001111\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00002222\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00003333\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          }\n" +
+                                "        ]\n" +
+                                "      },\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"429108246\",\n" +
+                                "        \"tittel\": \"Rusten Veikryss\",\n" +
+                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalstatus\": \"UNDER_ARBEID\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2021-11-01T12:00:00Z\",\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00004444\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00005555\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          }\n" +
+                                "        ]\n" +
+                                "      },\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"428965411\",\n" +
+                                "        \"tittel\": \"Rusten Veikryss\",\n" +
+                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalstatus\": \"EKSPEDERT\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2023-11-01T12:00:00Z\",\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00006666\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          }\n" +
+                                "        ]\n" +
+                                "      },\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"429101111\",\n" +
+                                "        \"tittel\": \"Heisann sveisann\",\n" +
+                                "        \"journalposttype\": \"I\",\n" +
+                                "        \"journalstatus\": \"JOURNALFOERT\",\n" +
+                                "        \"tema\": \"SYM\",\n" +
+                                "        \"datoOpprettet\": \"2020-01-01T12:00:00Z\",\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00007777\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00008888\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00009999\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00010000\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": []\n" +
+                                "          }\n" +
+                                "        ]\n" +
+                                "      }\n" +
+                                "    ]\n" +
+                                "  }\n" +
                                 "}")));
 
 
@@ -380,7 +393,7 @@ public class SafStubs {
 
         //INGEN FILTER
         //Mock for søkeresultat "002". Gir response basert på brukerID input fra clienten.
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"002\"}}"
                         , true, true))
@@ -395,7 +408,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", TIL
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -412,7 +425,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", TIL, SYM
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -429,7 +442,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -447,7 +460,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, N
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -466,7 +479,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -484,7 +497,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT_N
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -504,7 +517,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", EKSPEDERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -522,7 +535,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -540,7 +553,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT_I
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -560,7 +573,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, JOURNALFOERT_I_N
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -580,7 +593,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FERDIGSTILT, EKSPEDERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -598,7 +611,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", JOURNALFOERT, EKSPEDERT
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -616,7 +629,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FRA 01.01.22 TIL 31.12.22
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -636,7 +649,7 @@ public class SafStubs {
 
         //FILTER
         //Mock for søkeresultat "002", FRA 01.01.23 TIL 31.12.23
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
                                 "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
@@ -664,7 +677,7 @@ public class SafStubs {
 
 
         //Mock for søkeresultat "400".
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"400\"}}"
                         , true, true))
@@ -680,7 +693,7 @@ public class SafStubs {
                        ));
 
         //Mock for søkeresultat "401".
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"401\"}}"
                         , true, true))
@@ -696,7 +709,7 @@ public class SafStubs {
                 ));
 
         //Mock for søkeresultat "403".
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"403\"}}"
                         , true, true))
@@ -714,7 +727,7 @@ public class SafStubs {
                 ));
 
         //Mock for søkeresultat "404".
-        wireMockServer.stubFor(post(urlEqualTo("/mock/graphql"))
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\"brukerId\": {\"id\": \"404\"}}"
                         , true, true))
@@ -727,6 +740,23 @@ public class SafStubs {
                                 "Dokumentet ble ikke funnet i fagarkivet."
                         )
                 ));
+
+        wireMockServer.stubFor(delete(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withStatus(204)));
+
+        wireMockServer.stubFor(delete(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withStatus(204)));
+
+        wireMockServer.stubFor(delete(urlEqualTo("/rest/test"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(204)));
 
 
 

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,7 +24,7 @@ public class OpprettNyeJournalposter_CREATE {
 
     private final SplittingAvJournalposter_UPDATE splittingAvJournalposterUPDATE;
     private final WebClient webClient;
-    @Value("${wiremock-dok.combined}")
+    @Value("${db-dok.combined}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     @Autowired
@@ -63,7 +64,7 @@ public class OpprettNyeJournalposter_CREATE {
      * @return Mono<ResponseEntity<String>> This returns a Mono that emits a ResponseEntity containing the combined responses
      *         from both metadata POST requests if successful, or logs and returns errors if any arise during the operations.
      */
-    public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>>createJournalpost(CreateJournalpost_DTO meta) {
+    public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>>createJournalpost(CreateJournalpost_DTO meta, HttpHeaders originalHeader) {
         logger.info("1 . Inne i createJournalpost - Received JSON data: {}", meta);
 
         // Setter versjon på metadata
@@ -76,12 +77,12 @@ public class OpprettNyeJournalposter_CREATE {
         return Mono.zip(updatedOldMeta, updatedNewMeta)
                 .doOnSuccess(item -> logger.info("12. Nå skal begge DTO være klare for å sende til dokarkiv gjennom serializeAndSendJournalpost"))
                 .flatMap(tuple -> {
-                    Mono<ResponeReturnFromDokArkiv_DTO> responseForOldMeta = serializeAndSendJournalpost(tuple.getT1());
-                    Mono<ResponeReturnFromDokArkiv_DTO> responseForNewMeta = serializeAndSendJournalpost(tuple.getT2());
+                    Mono<ResponeReturnFromDokArkiv_DTO> responseForOldMeta = serializeAndSendJournalpost(tuple.getT1(), originalHeader);
+                    Mono<ResponeReturnFromDokArkiv_DTO> responseForNewMeta = serializeAndSendJournalpost(tuple.getT2(), originalHeader);
                     return Mono.zip(responseForOldMeta, responseForNewMeta, List::of);
                 })
                 .map(responses -> {
-                    logger.info("Responses: {}, {}", responses.get(0), responses.get(1));
+                    logger.info("16. createjournalpost - vi er tilabke fra serialize med  {}, {}", responses.get(0), responses.get(1));
                     return ResponseEntity.ok().body(responses);
                 })
                 .doOnError(error -> logger.error("Error in processing", error));
@@ -110,30 +111,31 @@ public class OpprettNyeJournalposter_CREATE {
      * @return Mono<String> A Mono that emits the body of the response if the POST is successful,
      *         or errors out with a CustomClientException or a serialization-related exception if not.
      */
-    private Mono<ResponeReturnFromDokArkiv_DTO> serializeAndSendJournalpost(CreateJournalpost journalPost) {
+    private Mono<ResponeReturnFromDokArkiv_DTO> serializeAndSendJournalpost(CreateJournalpost journalPost, HttpHeaders originalHeader) {
         logger.info("13. Vi er i serializeAndSendJournalpost med " + journalPost + " og prøver å gjøre kall til wiremock nå");
 
         try {
             String jsonPayload = objectMapper.writeValueAsString(journalPost);
-            logger.info("14 . Sending JSON data: {}", jsonPayload);  // Log the serialized JSON string.
+            logger.info("14 . Vi skal inn i wiremock dockarkiv nå Sending JSON data: {}", jsonPayload);  // Log the serialized JSON string.
+            System.out.println("Original headers:");
+            originalHeader.forEach((key, value) -> System.out.println(key + ": " + value));
 
-            String uri = "/mock/dockarkiv";
             return webClient.post()
-                    .uri(url+"/mock/dockarkiv")
-                    .header("Content-Type", "application/json")  // Specify media type of the request body
+                    .uri(url+"/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false")
+                    .headers(h -> h.addAll(originalHeader))
                     .bodyValue(jsonPayload)  // Attach the JSON payload to the POST request
                     .retrieve()  // Initiate the retrieval of the response
                     .onStatus(status -> status.isError(), clientResponse ->
                             clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                                 // Log and throw an Exception if there is an HTTP error response
-                                System.out.println("We are inside the Service-class that will provide specific error codes:");
+                                System.out.println("15.1 - Vi har kommet tilbake fra /mock/dockarkiv og skal tilbake til createJournalpost ");
                                 int statusValue = clientResponse.statusCode().value();
                                 String errorMessage = "Error calling external service: " + statusValue + " - " + errorBody;
                                 return Mono.error(new CustomClientException(statusValue, errorMessage));
                             }))
                     .bodyToMono(ResponeReturnFromDokArkiv_DTO.class)  // Extract the response body as a string
-                    .doOnSuccess(response -> logger.info("Received POST response for: {}", journalPost.getTittel()))  // Log successful response
-                    .doOnError(error -> logger.error("Error during POST request for: {}", journalPost.getTittel()));  // Log any errors that occur
+                    .doOnSuccess(response -> logger.info("15.0 - Kommet tilbake fra wiremock for /mock/dockarkiv kallet og skal tilabke til createJournalpost( for: {}", journalPost.getTittel()))  // Log successful response
+                    .doOnError(error -> logger.error("15.2 - Error Error during POST request for: {}", journalPost.getTittel()));  // Log any errors that occur
         } catch (JsonProcessingException e) {
             // Log and return error if JSON serialization fails
             logger.error("Error serializing DTO to JSON", e);

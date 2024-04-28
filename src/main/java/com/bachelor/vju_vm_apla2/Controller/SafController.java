@@ -2,8 +2,7 @@ package com.bachelor.vju_vm_apla2.Controller;
 
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
-import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.OpprettNyeJournalposter_CREATE;
-import com.bachelor.vju_vm_apla2.Service.SimpleService;
+import com.bachelor.vju_vm_apla2.Service.SafService;
 import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.Unprotected;
@@ -20,12 +19,10 @@ import reactor.core.publisher.Mono;
 @Protected
 @RestController
 public class SafController {
-    private final SimpleService simpleService;
-    private final OpprettNyeJournalposter_CREATE dokService;
+    private final SafService safService;
     @Autowired
-    public SafController(SimpleService simpleService, OpprettNyeJournalposter_CREATE dokService) {
-        this.simpleService = simpleService;
-        this.dokService = dokService;
+    public SafController(SafService safService) {
+        this.safService = safService;
     }
 
     // Logger-instansen for å logge informasjon og feil.
@@ -39,28 +36,10 @@ public class SafController {
 
 
     @CrossOrigin
-    @Unprotected
-    @GetMapping("/hello")
-    public Mono<ResponseEntity<String>> hello() {
-        return dokService.fetchHello()
-                .map(response -> {
-                logger.info("HEI PA DEG");
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
-                        .body(response);
-                })
-                    .defaultIfEmpty(ResponseEntity.notFound().build())
-                    .onErrorResume(e -> {
-                        logger.error("Feil ved henting av journalposter: {}", e.getMessage());
-                        return ErrorHandling.handleError(e);
-                    });
-    }
-    @CrossOrigin
     @PostMapping("/hentJournalpostListe")
     public Mono<ResponseEntity<ReturnFromGraphQl_DTO>> hentJournalpostListe(@RequestBody GetJournalpostList_DTO query, @RequestHeader HttpHeaders headers) {
         logger.info("Inne i metoden hentJournalpostListe med data: {}", query);
-        return simpleService.hentJournalpostListe_Test_ENVIRONMENT(query, headers)
+        return safService.hentJournalpostListe_Test_ENVIRONMENT(query, headers)
                 .map(response -> {
                     logger.info("Journalposter hentet og sendes tilbake til klienten");
                     return ResponseEntity.ok()
@@ -84,7 +63,7 @@ public class SafController {
     @GetMapping("/hentDokumenter")
     public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestParam("journalpostId") String journalpostId, @RequestHeader HttpHeaders headers) {
         logger.info("Inne i metoden hentDokument for dokumentInfoId: {}, journalpostId: {}", dokumentInfoId, journalpostId);
-        return simpleService.hentDokument(dokumentInfoId, journalpostId, headers)
+        return safService.hentDokument(dokumentInfoId, journalpostId, headers)
                 .map(pdfResource -> {
                     logger.info("Dokument hentet og sendes tilbake til klienten");
                     return ResponseEntity.ok()
@@ -97,6 +76,9 @@ public class SafController {
                     return ErrorHandling.handleError(e);
                 });
     }
+
+
+
 }
 
 

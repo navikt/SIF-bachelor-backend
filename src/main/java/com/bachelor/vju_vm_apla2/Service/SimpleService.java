@@ -30,7 +30,7 @@ import java.time.format.DateTimeFormatter;
 public class SimpleService {
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
     private final WebClient webClient;
-    @Value("${wiremock-saf.combined}")
+    @Value("${db-saf.combined}")
     private String url;
     @Value("${mock-oauth2-server.combined}")
     private String ouath2;
@@ -45,6 +45,7 @@ public class SimpleService {
                             clientDefaultCodecsConfigurer.defaultCodecs().maxInMemorySize(500 * 1024 * 1024);
                         })
                         .build())
+                .baseUrl(url)
                 .build();
     }
 
