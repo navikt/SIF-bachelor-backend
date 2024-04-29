@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class SafService {
-
+    //Vi får en feilmelding grunnet async, dette bør kanskje revurderes
     private static final Logger logger = LogManager.getLogger(SimpleService.class);
     private final WebClient webClient;
 

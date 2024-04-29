@@ -14,7 +14,18 @@ no.nav.security.jwt:
       webClient:
         token-endpoint-url: ${mock-oauth2-server.token-url}
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
-        scope: scope3, scope4
+        scope: test, local
+        authentication:
+          client-id: ${mock-oauth2-server.clientId}
+          client-secret: ${mock-oauth2-server.clientSecret}
+          client-auth-method: client_secret_basic
+
+  client2:
+    registration:
+      webClient:
+        token-endpoint-url: ${mock-oauth2-server.token-url}
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: test, local
         authentication:
           client-id: ${mock-oauth2-server.clientId}
           client-secret: ${mock-oauth2-server.clientSecret}
@@ -43,11 +54,12 @@ db-saf:
   url: localhost
   port: 8081
   combined: http://${db-saf.url}:${db-saf.port}
-  Service: ${db.combined}/mock # <- this can be changed to the  right endpoint in the url
+  Service: ${db.combined} <- this can be changed to the  right endpoint in the url
   files: .
 
 db-dok:
   url: localhost
   port: 8081
   combined: http://${db-dok.url}:${db-dok.port}
-  service: ${db-dok.combined}/mock
+  service: ${db-dok.combined}
+

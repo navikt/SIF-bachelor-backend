@@ -33,24 +33,29 @@ import java.util.Map;
 //enable ouath2client also makes sure that the tokens are vaildated through the webclient as well as
 @Configuration
 @EnableJwtTokenValidation
-
 public class SecurityConfig {
 
     //according to docs - it is auto configurable in spring boot sooo...
 /*@Bean
-public WebClientCustomizer customizer(OAuth2ClientRequestInterceptor reqInterceptor) {
-    return client -> client.(reqInterceptor);
-}*/
-/*@Bean
+public WebClientCustomizer customizer(OAuth2ClientRequestInterceptor requestInterceptor) {
+    return client -> {
+        client.filter();
+    };
+}
+@Bean
     public OAuth2ClientRequestInterceptor oAuth2ClientRequestInterceptor(ClientConfigurationProperties properties, OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
     return new OAuth2ClientRequestInterceptor(properties, service, matcher);
 }*/
-/*    @Bean
+  /* @Bean
     public MultiIssuerProperties multiIssuerConfiguration() {
         return new MultiIssuerProperties();
     }
     @Bean
-    public FilterRegistrationBean<JwtTokenValidationFilter> oidcTokenValidationFilterBean(MultiIssuerConfiguration config) {
+    public FilterRegistration Bean<JwtTokenValidationFilter> oidcTokenValidationFilterBean(MultiIssuerConfiguration config) {
         return new FilterRegistrationBean<>(new JaxrsJwtTokenValidationFilter(config));
+    }
+    @Bean
+    public OAuth2ClientRequestInterceptor requestInterceptor (ClientConfigurationProperties properties, OAuth2AccessTokenService service,  ClientConfigurationPropertiesMatcher matcher) {
+    return new OAuth2ClientRequestInterceptor(properties, service, matcher);
     }*/
 }

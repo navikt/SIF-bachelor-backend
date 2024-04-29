@@ -45,7 +45,7 @@ public class SimpleService {
                             clientDefaultCodecsConfigurer.defaultCodecs().maxInMemorySize(500 * 1024 * 1024);
                         })
                         .build())
-                .baseUrl(url)
+                .baseUrl(ouath2)
                 .build();
     }
 
