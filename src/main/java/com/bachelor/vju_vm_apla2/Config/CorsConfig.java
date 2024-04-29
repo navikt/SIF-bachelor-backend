@@ -14,8 +14,8 @@ public class CorsConfig {
    @Value("${mock-oauth2-server.combined}")
    private String OAUTH2Server;
    //wiremock url
-   @Value("${db-saf.combined}")
-   private String db;
+ /*  @Value("${db-saf.combined}")
+   private String db;*/
    @Value("${db-saf.combined}")
    private String wiremocksaf;
 

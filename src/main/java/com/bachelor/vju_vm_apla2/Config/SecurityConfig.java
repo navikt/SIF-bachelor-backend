@@ -22,8 +22,7 @@ import java.util.Map;
 /* Essentially, the main annotation here for our prod project, is the @EnableJwtTokenValidation, which enables
    JWT validation on incoming requests. So any request that doesn't have a valid JWT token will be rejected */
 //todo: might need to reconfigure this to work with a dockerfile, might need to change url only
-@EnableOAuth2Client(cacheEnabled = true)
-//enable ouath2client also makes sure that the tokens are vaildated through the webclient as well as
+@EnableOAuth2Client(cacheEnabled = true) //enable ouath2client also makes sure that the tokens are vaildated through the webclient as well as
 @Configuration
 @EnableJwtTokenValidation
 public class SecurityConfig {
