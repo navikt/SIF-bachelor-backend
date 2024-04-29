@@ -275,7 +275,12 @@ public class Saf_Stubs {
                                 "            \"logiskeVedlegg\": [],\n" +
                                 "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"67298374528\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Raus Trane\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"666222222\",\n" +
@@ -291,7 +296,12 @@ public class Saf_Stubs {
                                 "            \"logiskeVedlegg\": [],\n" +
                                 "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"16728392011\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Eldar Vågan\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"429111291\",\n" +
@@ -319,7 +329,12 @@ public class Saf_Stubs {
                                 "            \"logiskeVedlegg\": [],\n" +
                                 "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"77351293720\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Maren Lundby\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"429108246\",\n" +
@@ -341,7 +356,12 @@ public class Saf_Stubs {
                                 "            \"logiskeVedlegg\": [],\n" +
                                 "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"11235468820\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Henrik Ibsen\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"428965411\",\n" +
@@ -357,7 +377,12 @@ public class Saf_Stubs {
                                 "            \"logiskeVedlegg\": [],\n" +
                                 "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"45987612091\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Sigrid Undset\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"429101111\",\n" +
@@ -391,7 +416,12 @@ public class Saf_Stubs {
                                 "            \"logiskeVedlegg\": [],\n" +
                                 "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"89567423011\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Liv Ullmann\"\n" +
+                                "        }\n" +
                                 "      }\n" +
                                 "    ]\n" +
                                 "  }\n" +
