@@ -1,28 +1,21 @@
 package com.bachelor.vju_vm_apla2.Config;
 
-import no.nav.security.token.support.client.core.ClientProperties;
+
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher;
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client;
 
 import no.nav.security.token.support.client.spring.oauth2.OAuth2ClientRequestInterceptor;
-import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
-import no.nav.security.token.support.filter.JwtTokenValidationFilter;
-import no.nav.security.token.support.jaxrs.servlet.JaxrsJwtTokenValidationFilter;
 import no.nav.security.token.support.spring.MultiIssuerProperties;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.boot.web.client.RestClientCustomizer;
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
+import javax.servlet.FilterRegistration;
 import java.net.URI;
 import java.util.Map;
 
@@ -34,28 +27,29 @@ import java.util.Map;
 @Configuration
 @EnableJwtTokenValidation
 public class SecurityConfig {
-
-    //according to docs - it is auto configurable in spring boot sooo...
-/*@Bean
-public WebClientCustomizer customizer(OAuth2ClientRequestInterceptor requestInterceptor) {
-    return client -> {
-        client.filter();
-    };
-}
-@Bean
+    @Bean
     public OAuth2ClientRequestInterceptor oAuth2ClientRequestInterceptor(ClientConfigurationProperties properties, OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
-    return new OAuth2ClientRequestInterceptor(properties, service, matcher);
-}*/
-  /* @Bean
+        return new OAuth2ClientRequestInterceptor(properties, service, matcher);
+    }
+    //according to docs - it is auto configurable in spring boot sooo...
+    @Bean
+    public WebClientCustomizer customizer(OAuth2ClientRequestInterceptor requestInterceptor) {
+       return new WebClientCustomizer() {
+           @Override
+           public void customize(WebClient.Builder webClientBuilder) {
+               webClientBuilder.filter(requestInterceptor);
+           }
+       }; 
+    }
+
+    @Bean
+    public Object configMatcher() {
+        return new ClientConfigurationPropertiesMatcher() {};
+    }
+
+    @Bean
     public MultiIssuerProperties multiIssuerConfiguration() {
         return new MultiIssuerProperties();
     }
-    @Bean
-    public FilterRegistration Bean<JwtTokenValidationFilter> oidcTokenValidationFilterBean(MultiIssuerConfiguration config) {
-        return new FilterRegistrationBean<>(new JaxrsJwtTokenValidationFilter(config));
-    }
-    @Bean
-    public OAuth2ClientRequestInterceptor requestInterceptor (ClientConfigurationProperties properties, OAuth2AccessTokenService service,  ClientConfigurationPropertiesMatcher matcher) {
-    return new OAuth2ClientRequestInterceptor(properties, service, matcher);
-    }*/
+
 }

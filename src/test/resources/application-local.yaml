@@ -20,17 +20,6 @@ no.nav.security.jwt:
           client-secret: ${mock-oauth2-server.clientSecret}
           client-auth-method: client_secret_basic
 
-  client2:
-    registration:
-      webClient:
-        token-endpoint-url: ${mock-oauth2-server.token-url}
-        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
-        scope: test, local
-        authentication:
-          client-id: ${mock-oauth2-server.clientId}
-          client-secret: ${mock-oauth2-server.clientSecret}
-          client-auth-method: client_secret_basic
-
 
 logging.level:
   org.springframework: INFO
