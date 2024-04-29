@@ -4,7 +4,7 @@ services:
 
   frontend:
     image: frontend #note: THIS MUST BE CREATED BY THE FRONTEND FIRST see the dockerfile https://github.com/Bad-chelor-ITPE3200/NAV-IT-SIF-bachelor-frontend/blob/main/Dockerfile
-    command: npm start
+    command: npx serve -s build
     ports:
       - "3000:3000"
 #    networks:
