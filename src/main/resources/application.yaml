@@ -1,6 +1,9 @@
 
 
 http.proxy.parametername: notused
+spring:
+  main:
+    allow-bean-definition-overriding: true
 
 no.nav.security.jwt:
   expirythreshold: 10 #threshold in minutes until token expires
@@ -21,7 +24,6 @@ no.nav.security.jwt:
           client-id: ${mock-oauth2-server.clientId}
           client-secret: ${mock-oauth2-server.clientSecret}
           client-auth-method: client_secret_basic
-
 
 
 logging.level:

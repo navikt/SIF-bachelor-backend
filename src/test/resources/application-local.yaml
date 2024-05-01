@@ -52,3 +52,6 @@ db-dok:
   combined: http://${db-dok.url}:${db-dok.port}
   service: ${db-dok.combined}
 
+spring:
+  main:
+    allow-bean-definition-overriding: true
