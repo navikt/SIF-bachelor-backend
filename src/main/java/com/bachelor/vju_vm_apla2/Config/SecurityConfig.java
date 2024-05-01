@@ -14,11 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
-
-import javax.servlet.FilterRegistration;
-import java.net.URI;
-import java.util.Map;
-
 /* Essentially, the main annotation here for our prod project, is the @EnableJwtTokenValidation, which enables
    JWT validation on incoming requests. So any request that doesn't have a valid JWT token will be rejected */
 //todo: might need to reconfigure this to work with a dockerfile, might need to change url only
@@ -26,6 +21,7 @@ import java.util.Map;
 @Configuration
 @EnableJwtTokenValidation
 public class SecurityConfig {
+/*
     @Bean
     public OAuth2ClientRequestInterceptor oAuth2ClientRequestInterceptor(ClientConfigurationProperties properties, OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
         return new OAuth2ClientRequestInterceptor(properties, service, matcher);
@@ -50,5 +46,6 @@ public class SecurityConfig {
     public MultiIssuerProperties multiIssuerConfiguration() {
         return new MultiIssuerProperties();
     }
+*/
 
 }
