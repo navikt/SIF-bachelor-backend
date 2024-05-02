@@ -41,7 +41,7 @@ public class SafController {
         logger.info("Inne i metoden hentJournalpostListe med data: {}", query);
         return safService.hentJournalpostListe_Test_ENVIRONMENT(query, headers)
                 .map(response -> {
-                    logger.info("Journalposter hentet og sendes tilbake til klienten");
+                    logger.info("Controller - SAF - HentJournalpostLise - Journalposter er hentet og sendes tilbake til klienten");
                     return ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
@@ -49,7 +49,7 @@ public class SafController {
                 })
                 .defaultIfEmpty(ResponseEntity.notFound().build())
                 .onErrorResume(e -> {
-                    logger.error("Feil ved henting av journalposter: {}", e.getMessage());
+                    logger.error("Controller - SAF - HentJournalpostLise - Feil ved henting av journalposter: {}", e.getMessage());
                     return ErrorHandling.handleError(e);
                 });
     }

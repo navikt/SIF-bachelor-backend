@@ -27,7 +27,7 @@ public class ErrorHandling {
 
         if (e instanceof CustomClientException) {
             CustomClientException cce = (CustomClientException) e;
-            logger.error("En klientspesifikk feil oppstod: {}", cce.getMessage());
+            logger.error("En feil oppstod: {}", cce.getMessage());
             return Mono.just(ResponseEntity
                     .status(cce.getStatusCode())
                     .body(createErrorResource(cce.getMessage(), MediaType.APPLICATION_JSON)));

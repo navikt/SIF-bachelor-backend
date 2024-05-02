@@ -58,10 +58,12 @@ public class SimpleService {
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
-                            // String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
-                            String errorMessage = "";
-                            // BUG! dersom vi kommer til Mono.error linje nedenfor, returneres 200 OK tilbake til client. Det burde vi endre på - Gisle 19/4/24
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            String origin = "SafService - hentJournalpostListe";
+                            // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
+                            // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
+                            String detailedMessage = String.format("Feil ved kall til ekstern tjeneste (GRAPHQL): %d - %s", statusValue, errorBody);
+                            logger.error(detailedMessage);
+                            return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
@@ -89,12 +91,12 @@ public class SimpleService {
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
+                            String origin = "SafService - hentJournalpostListe";
                             // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
                             // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
-                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
-                            // String errorMessage = "";
-                            logger.error(errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorBody));
+                            String detailedMessage = String.format("Feil ved kall til ekstern tjeneste (GRAPHQL): %d - %s", statusValue, errorBody);
+                            logger.error(detailedMessage);
+                            return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
@@ -164,10 +166,14 @@ public class SimpleService {
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
-                            System.out.println("Vi er inne i Service-klassen som skal gi spesifikk error kode:");
+                            System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + "endpoint" + statusValue+ " - " + errorBody;
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            String origin = "SafService - hentJournalpostListe";
+                            // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
+                            // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
+                            String detailedMessage = String.format("Feil ved kall til ekstern tjeneste (GRAPHQL): %d - %s", statusValue, errorBody);
+                            logger.error(detailedMessage);
+                            return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
                 .bodyToMono(byte[].class) // Konverter responsen til en byte array
                 .doOnNext(bytes -> System.out.println("Received byte array of size: " + bytes.length))
