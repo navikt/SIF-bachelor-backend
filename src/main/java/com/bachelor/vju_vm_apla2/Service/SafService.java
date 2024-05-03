@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class SafService {
 
-    private static final Logger logger = LogManager.getLogger(SimpleService.class);
+    private static final Logger logger = LogManager.getLogger(SafService.class);
     private final WebClient webClient;
 
     @Value("${wiremock-saf.combined}")
