@@ -62,17 +62,17 @@ public class SafController {
     @CrossOrigin
     @GetMapping("/hentDokumenter")
     public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestParam("journalpostId") String journalpostId, @RequestHeader HttpHeaders headers) {
-        logger.info("Inne i metoden hentDokument for dokumentInfoId: {}, journalpostId: {}", dokumentInfoId, journalpostId);
+        logger.info("Controller - SAF - hentDokument - Inne i metoden hentDokument for dokumentInfoId: {}, journalpostId: {}", dokumentInfoId, journalpostId);
         return safService.hentDokument(dokumentInfoId, journalpostId, headers)
                 .map(pdfResource -> {
-                    logger.info("Dokument hentet og sendes tilbake til klienten");
+                    logger.info("Controller - SAF - hentDokument - Dokument hentet og sendes tilbake til klienten");
                     return ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_PDF)
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"")
                             .body(pdfResource);
                 })
                 .onErrorResume(e -> {
-                    logger.error("Feil ved henting av dokument: {}", e.getMessage());
+                    logger.error("Controller - SAF - hentDokument - Feil ved henting av dokument: {}", e.getMessage());
                     return ErrorHandling.handleError(e);
                 });
     }

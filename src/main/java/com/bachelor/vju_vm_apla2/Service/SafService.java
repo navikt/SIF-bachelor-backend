@@ -110,14 +110,9 @@ public class SafService {
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
-                    if (e instanceof CustomClientException) {
-                        // Viderefør CustomClientException slik at den kan håndteres oppstrøms
-                        return Mono.error(e);
-                    } else {
-                        // Logg og håndter generelle feil som ikke er knyttet til HTTP-statuskoder
-                        logger.error("En uventet feil oppstod: ", e);
-                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - HentJournalpostListe - En uventet feil oppstod, vennligst prøv igjen senere.", e));
-                    }
+                    // Siden alle CustomClientExceptions håndteres spesifikt, håndter kun uventede feil her
+                    logger.error("SafService - hentJournalpostListe - En uventet feil oppstod: ", e);
+                    return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - HentJournalpostListe - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                 });
     }
 
