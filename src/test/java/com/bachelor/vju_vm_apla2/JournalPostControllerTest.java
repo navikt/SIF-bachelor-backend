@@ -4,7 +4,7 @@ import com.bachelor.vju_vm_apla2.Controller.SafController;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Saf.*;
-import com.bachelor.vju_vm_apla2.Service.SimpleService;
+import com.bachelor.vju_vm_apla2.Service.SafService;
 import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class JournalPostControllerTest {
 
     @Mock
-    SimpleService serviceMock;
+    SafService serviceMock;
     @InjectMocks
     SafController safController;
 
