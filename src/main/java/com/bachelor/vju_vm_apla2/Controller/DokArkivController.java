@@ -84,6 +84,7 @@ public class DokArkivController {
     }
 
 
+    /*
     @CrossOrigin
     @GetMapping("/feilregistrer")
     public Mono<ResponseEntity<Boolean>> feilregistrer(@RequestParam("journalpostId") String journalpostId, @RequestParam("type") String type, @RequestHeader HttpHeaders headers){
@@ -98,5 +99,20 @@ public class DokArkivController {
                 .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
     }
 
+     */
+
+    @CrossOrigin
+    @GetMapping("/feilregistrer")
+    public Mono<ResponseEntity<Boolean>> feilregistrer(@RequestParam("journalpostId") String journalpostId, @RequestParam("type") String type, @RequestHeader HttpHeaders headers){
+        return feilRegistrerService.feilRegistrer(journalpostId, type, headers)
+
+
+                .onErrorResume(e -> {
+                    // Handle any errors that occur during the service call
+                    logger.error("Feil ved lagring av nye journalposter: {}", e.getMessage());
+                    return ErrorHandling.handleError(e);
+                })
+                .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
+    }
 
 }
