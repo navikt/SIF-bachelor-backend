@@ -1,5 +1,6 @@
 package com.bachelor.vju_vm_apla2.Controller;
 
+import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.CreateJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.ResponeReturnFromDokArkiv_DTO;
 import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.FeilRegistrer_DELETE;
@@ -35,6 +36,7 @@ public class DokArkivController {
 
 
 
+    /*
     @CrossOrigin
     @PostMapping("/createJournalpost")
     public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost(@RequestBody CreateJournalpost_DTO meta, @RequestHeader HttpHeaders headers) {
@@ -61,7 +63,25 @@ public class DokArkivController {
                 .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
     }
 
-    
+     */
+
+    @CrossOrigin
+    @PostMapping("/createJournalpost")
+    public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost(@RequestBody CreateJournalpost_DTO meta, @RequestHeader HttpHeaders headers) {
+        logger.info("Controller - Nå går vi inn i createjournalpost med " + meta);
+        // Generalisert feilhåndtering
+        return opprettNyeJournalposterCREATE.createJournalpost(meta, headers)
+                .flatMap(response -> feilRegistrerService.feilRegistrer(meta.getJournalpostID(), meta.getOldMetadata().getJournalposttype(), headers)
+                        .flatMap(feilRegistrerResponse -> {
+                            return Mono.just(ResponseEntity.ok().body(response.getBody()));
+                        })
+                        .defaultIfEmpty(ResponseEntity.notFound().build())  // Hvis ingen respons fra createJournalpost
+                        .onErrorResume(ErrorHandling::handleError))
+                .defaultIfEmpty(ResponseEntity.notFound().build())  // Hvis ingen respons fra createJournalpost
+                .onErrorResume(ErrorHandling::handleError)
+                .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
+
+    }
 
 
     @CrossOrigin
