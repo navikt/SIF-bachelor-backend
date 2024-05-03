@@ -26,6 +26,7 @@ import java.util.Map;
 @Configuration
 @EnableJwtTokenValidation
 public class SecurityConfig {
+/*
     @Bean
     public OAuth2ClientRequestInterceptor oAuth2ClientRequestInterceptor(ClientConfigurationProperties properties, OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
         return new OAuth2ClientRequestInterceptor(properties, service, matcher);
@@ -50,5 +51,6 @@ public class SecurityConfig {
     public MultiIssuerProperties multiIssuerConfiguration() {
         return new MultiIssuerProperties();
     }
+*/
 
 }
