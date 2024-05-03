@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+//TODO: FERDIG MED FEILHÅNDTERING FOR DENNE KLASSEN
 @Protected
 @RestController
 public class SafController {
@@ -71,6 +72,7 @@ public class SafController {
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"")
                             .body(pdfResource);
                 })
+                .defaultIfEmpty(ResponseEntity.notFound().build())
                 .onErrorResume(e -> {
                     logger.error("Controller - SAF - hentDokument - Feil ved henting av dokument: {}", e.getMessage());
                     return ErrorHandling.handleError(e);

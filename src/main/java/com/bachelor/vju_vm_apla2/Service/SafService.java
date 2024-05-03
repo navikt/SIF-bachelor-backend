@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+//TODO: FERDIG MED FEILHÅNDTERING FOR DENNE KLASSEN
 @Service
 public class SafService {
 
@@ -57,14 +58,13 @@ public class SafService {
         String graphQLQuery = createGraphQLQuery(query);
         logger.info("Starter henting av journalposter med forespørsel: {}", graphQLQuery);
 
-        return this.webClient.post()
-                .uri(url + "/graphql")
+        return webClient.post()
+                .uri(url+"/graphql")
                 .headers(h -> h.addAll(originalHeader))
                 .bodyValue(graphQLQuery)
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
-                            System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
                             String origin = "SafService - hentJournalpostListe";
                             // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
@@ -75,19 +75,9 @@ public class SafService {
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
-                    // Sjekk om feilen er en CustomClientException for spesifikk feilhåndtering
-                    if (e instanceof CustomClientException) {
-                        CustomClientException cce = (CustomClientException) e;
-                        // Logg feilmeldingen med feilkoden for spesifikk feil
-                        logger.error("Spesifikk klientfeil oppstod med statuskode {}: {}", cce.getStatusCode(), cce.getMessage());
-                        // Returner Mono med en ny DTO som inneholder feilmeldingen
-                        return Mono.just(new ReturnFromGraphQl_DTO(cce.getMessage()));
-                    } else {
-                        // For alle andre typer feil, logg dem som generelle serverfeil
-                        logger.error("Generell feil oppstod: ", e);
-                        // Returner en generisk feilmelding til klienten
-                        return Mono.just(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
-                    }
+                    // Siden alle CustomClientExceptions håndteres spesifikt, håndter kun uventede feil her
+                    logger.error("SafService - hentJournalpostListe - En uventet feil oppstod: ", e);
+                    return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - HentJournalpostListe - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                 });
     }
 
@@ -99,7 +89,6 @@ public class SafService {
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
-                            System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
                             String origin = "SafService - hentJournalpostListe";
                             // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
@@ -181,11 +170,10 @@ public class SafService {
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
-                            System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
-                            String origin = "SafService - hentDokument";
-                            String detailedMessage = String.format("Feil ved kall til ekstern tjeneste (SAF): %d - %s", statusValue, errorBody);
-                            logger.error(detailedMessage);
+                            String origin = "SafService - hentDokument" ;
+                            String detailedMessage = String.format(" Feil ved kall til ekstern tjeneste (SAF): %d - %s", statusValue, errorBody);
+                            logger.error(origin + detailedMessage);
                             return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
 
@@ -193,15 +181,9 @@ public class SafService {
                 .map(ByteArrayResource::new) // Konverter byte array til en ByteArrayResource
                 .cast(Resource.class) // Cast the ByteArrayResource to Resource
                 .onErrorResume(e -> {
-                    if (!(e instanceof CustomClientException)) {
-                        logger.error("En uventet feil oppstod: ", e);
-                        String errorMessageForClient = "SAF API error in retrieving the documents, please try again later.";
-                        String jsonErrorMessage = "{\"errorMessage\": \"" + errorMessageForClient.replace("\"", "\\\"") + "\"}";
-                        ByteArrayResource errorResource = new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
-                        return Mono.just(errorResource);
-                    }
-                    // Viderefør CustomClientException slik at den kan håndteres oppstrøms
-                    return Mono.error(e);
+                    // Siden alle CustomClientExceptions håndteres spesifikt, håndter kun uventede feil her
+                    logger.error("SafService - hentDokument - En uventet feil oppstod: ", e);
+                    return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - hentDokument - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                 });
     }
 

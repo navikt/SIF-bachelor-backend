@@ -34,18 +34,11 @@ public class DokArkivController {
     }
 
 
-    //TODO: Opprett kontroller CreateJournalpost
 
-    /////////////////////////////////// ALPHA METODE FOR CREATE JOURNALPOST///////////////////////////////////////////
-//@RequestMapping("/dokarkivAPI")
     @CrossOrigin
     @PostMapping("/createJournalpost")
     public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost(@RequestBody CreateJournalpost_DTO meta, @RequestHeader HttpHeaders headers) {
-        logger.info("0.1 Controller - mottat data fra klienten - Received JSON data: {}", meta);
-        System.out.println("----------------------------------------------------------------------------------");
-        System.out.println(meta.getJournalpostID() + " " + meta.getOldMetadata().getJournalposttype());
-        // Call the service and handle its response asynchronously
-        logger.info("0.2 Controller - Nå går vi inn i createjournalpost med " + meta);
+        logger.info("Controller - Nå går vi inn i createjournalpost med " + meta);
         return opprettNyeJournalposterCREATE.createJournalpost(meta, headers)
                 //legge til logger eller system printout "("16. Vi er tilabke fra å opprette journalpost og skal nå feilregisterere")"
                 .flatMap(response -> feilRegistrerService.feilRegistrer(meta.getJournalpostID(), meta.getOldMetadata().getJournalposttype(), headers)
@@ -68,6 +61,8 @@ public class DokArkivController {
                 .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
     }
 
+    
+
 
     @CrossOrigin
     @GetMapping("/feilregistrer")
@@ -82,19 +77,6 @@ public class DokArkivController {
                 })
                 .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
     }
-    /*
-    @RequestMapping("/dokarkivAPI")
-    @CrossOrigin
-    @PostMapping("/alpha_createJournalpost")
-    public Mono<ResponseEntity<ControllerReponse_DTO[]>> createJournalpost(@RequestBody CreateJournalpost_DTO meta, @RequestHeader HttpHeaders header){
-
-        logger.info("Inne i metoden hentJournalpostListe med data: {}", meta);
-
-        //denne skal returnere
-        return null;
-    }
-
-     */
 
 
 }
