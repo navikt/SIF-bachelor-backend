@@ -5,7 +5,6 @@ import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Saf.*;
 import com.bachelor.vju_vm_apla2.Service.SafService;
-import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
