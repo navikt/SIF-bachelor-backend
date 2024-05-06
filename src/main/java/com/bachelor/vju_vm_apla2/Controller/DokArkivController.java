@@ -2,9 +2,11 @@ package com.bachelor.vju_vm_apla2.Controller;
 
 import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.CreateJournalpost_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.OppdaterJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.ResponeReturnFromDokArkiv_DTO;
 import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.FeilRegistrer_DELETE;
 import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.OpprettNyeJournalposter_CREATE;
+import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.SplittingAvJournalposter_UPDATE;
 import no.nav.security.token.support.core.api.Protected;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,13 +25,16 @@ public class DokArkivController {
     private static final Logger logger = LogManager.getLogger(DokArkivController.class);
 
     private final OpprettNyeJournalposter_CREATE opprettNyeJournalposter_CREATE;
+    private final SplittingAvJournalposter_UPDATE oppdaterJournalposter_UPDATE;
     private final FeilRegistrer_DELETE feilRegistrerService;
 
     @Autowired
-    public DokArkivController(OpprettNyeJournalposter_CREATE opprettNyeJournalposter_CREATE, FeilRegistrer_DELETE feilRegistrerService){
-        this.opprettNyeJournalposter_CREATE = opprettNyeJournalposter_CREATE;
+    public DokArkivController(OpprettNyeJournalposter_CREATE opprettNyeJournalposterCREATE, FeilRegistrer_DELETE feilRegistrerService, SplittingAvJournalposter_UPDATE oppdaterJournalposter_UPDATE){
+        this.opprettNyeJournalposter_CREATE = opprettNyeJournalposterCREATE;
         this.feilRegistrerService = feilRegistrerService;
+        this.oppdaterJournalposter_UPDATE = oppdaterJournalposter_UPDATE;
     }
+
 
 
     @CrossOrigin
@@ -50,7 +55,6 @@ public class DokArkivController {
     }
 
 
-
     @CrossOrigin
     @GetMapping("/feilregistrer")
     public Mono<ResponseEntity<Boolean>> feilregistrer(@RequestParam("journalpostId") String journalpostId, @RequestParam("type") String type, @RequestHeader HttpHeaders headers){
@@ -61,6 +65,19 @@ public class DokArkivController {
                     return ErrorHandling.handleError(e);
                 })
                 .doOnSuccess(response -> logger.info("DokArkivController - feilregister() -  Success - Response sent to client: {}", response.getStatusCode()));
+    }
+
+    @CrossOrigin
+    @PostMapping("/oppdaterJournalpost")
+    public Mono<ResponseEntity<Boolean>> oppdaterJournalpost(@RequestBody OppdaterJournalpost_DTO meta, @RequestHeader HttpHeaders headers){
+        System.out.println("YAY!");
+        return oppdaterJournalposter_UPDATE.oppdaterMottattDato(meta, headers)
+                .onErrorResume(e -> {
+                    // Handle any errors that occur during the service call
+                    logger.error("Feil ved oppdatering av Journalpost: {}", e.getMessage());
+                    return Mono.just(ResponseEntity.internalServerError().body(false));  // Provide an empty list on error
+                })
+                .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
     }
 
 }

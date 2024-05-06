@@ -268,6 +268,9 @@ public class Saf_Stubs {
                                 "        \"journalstatus\": \"FERDIGSTILT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2024-03-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
@@ -289,6 +292,14 @@ public class Saf_Stubs {
                                 "        \"journalstatus\": \"JOURNALFOERT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2024-03-02T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [\n" +
+                                "          {\n" +
+                                "            \"dato\": \"2024-03-01T12:00:00Z\",\n" +
+                                "            \"datotype\": \"DATO_REGISTRERT\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
@@ -310,6 +321,9 @@ public class Saf_Stubs {
                                 "        \"journalstatus\": \"FERDIGSTILT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2024-07-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00001111\",\n" +
@@ -343,6 +357,9 @@ public class Saf_Stubs {
                                 "        \"journalstatus\": \"UNDER_ARBEID\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2021-11-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00004444\",\n" +
@@ -370,6 +387,9 @@ public class Saf_Stubs {
                                 "        \"journalstatus\": \"EKSPEDERT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2023-11-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
@@ -391,6 +411,9 @@ public class Saf_Stubs {
                                 "        \"journalstatus\": \"JOURNALFOERT\",\n" +
                                 "        \"tema\": \"SYM\",\n" +
                                 "        \"datoOpprettet\": \"2020-01-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
@@ -426,7 +449,6 @@ public class Saf_Stubs {
                                 "    ]\n" +
                                 "  }\n" +
                                 "}")));
-
 
 
 
@@ -783,17 +805,17 @@ public class Saf_Stubs {
                         )
                 ));
 
-        wireMockServer.stubFor(delete(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
+        wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withStatus(204)));
 
-        wireMockServer.stubFor(delete(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
+        wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withStatus(204)));
 
-        wireMockServer.stubFor(delete(urlEqualTo("/rest/test"))
+        wireMockServer.stubFor(patch(urlEqualTo("/rest/test"))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
@@ -801,8 +823,20 @@ public class Saf_Stubs {
                         .withStatus(204)));
 
 
+        // For å sette av MottattDato
+        wireMockServer.stubFor(put(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*"))
+                .withRequestBody(matchingJsonPath("$.date", matching("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z")))  // Regex for ISO 8601 format
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200))); // Returner HTTP 200 OK
 
     }
+
+
+
+
 
 
     @PreDestroy

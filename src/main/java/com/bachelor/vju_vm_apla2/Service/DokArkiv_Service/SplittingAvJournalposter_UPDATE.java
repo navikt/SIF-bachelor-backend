@@ -1,31 +1,42 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
+import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.OppdaterJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.CreateJournalpost;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.Dokumenter;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.Dokumentvariant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
 public class SplittingAvJournalposter_UPDATE {
 
+    @Value("${wiremock-dok.combined}")
+    private String url;
 
+    private final WebClient webClient;
     private static final Logger logger = LogManager.getLogger(SplittingAvJournalposter_UPDATE.class);
 
-    private final HentDokumenter_READ hentDokumenterREAD;
+    private final HentDokumenter_READ hentDokumenter_READ;
 
     @Autowired
-    public SplittingAvJournalposter_UPDATE(HentDokumenter_READ hentDokumenterREAD) {
-        this.hentDokumenterREAD = hentDokumenterREAD;
+    public SplittingAvJournalposter_UPDATE(HentDokumenter_READ hentDokumenter_READ) {
+        this.hentDokumenter_READ = hentDokumenter_READ;
+        this.webClient = WebClient.builder()
+                .baseUrl(url)
+                .build();
     }
 
 
@@ -158,7 +169,7 @@ public class SplittingAvJournalposter_UPDATE {
         // Iterate over all documents and their variants to replace document IDs
         for (Dokumenter dokument : metadata.getDokumenter()) {
             for (Dokumentvariant variant : dokument.getDokumentvarianter()) {
-                Mono<String> documentIdMono = hentDokumenterREAD.hentDokument_DokArkiv(variant.getFysiskDokument(), journalpostId)
+                Mono<String> documentIdMono = hentDokumenter_READ.hentDokument_DokArkiv(variant.getFysiskDokument(), journalpostId)
                         //Mono<String> documentIdMono = random_hentdok_dokarkiv(variant.getFysiskDokument(), journalpostId)
                         .doOnNext(newId -> logger.info("6 Vi er tilbake til processDocuments og har mottat en Base64 string fra hentDokument_DokArkiv og puttet i en liste" ) )
                         .cache(); // Cache each Mono to ensure the operation is performed only once
@@ -174,43 +185,49 @@ public class SplittingAvJournalposter_UPDATE {
     }
 
 
-
-
-
-
-
-
-    //////////////////RANDOM STRING RETURNER//////////////
-
-    /**
-     * Asynchronously generates a random 3-letter string and logs the operation.
-     * This method now returns a Mono<String> to fit into a reactive programming model.
-     *
-     * @param dokumentId The original document ID for logging.
-     * @param journalpostId The journal post ID for logging.
-     * @return Mono<String> containing the new random ID.
-     */
-    public Mono<String> random_hentdok_dokarkiv(String dokumentId, String journalpostId) {
-        return Mono.fromSupplier(() -> {
-            String newId = generateRandomString(3);
-            logger.info("Received physical document ID: {}, replaced with: {}", dokumentId, newId);
-            return newId;
-        });
+    // Method to format date
+    public String formatIsoDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return "{\"date\": \"" + sdf.format(date) + "\"}";
     }
 
-    /**
-     * Generates a random string of a given length using characters from A to Z.
-     *
-     * @param length The length of the string to generate.
-     * @return A random string of the specified length.
-     */
-    private String generateRandomString(int length) {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            char tmp = (char) ('A' + random.nextInt('Z' - 'A'));
-            sb.append(tmp);
-        }
-        return sb.toString();
+    public Mono<ResponseEntity<Boolean>> oppdaterMottattDato(OppdaterJournalpost_DTO jpMetadata, HttpHeaders originalHeader) {
+        logger.info("Vi er nå inn i oppdaterJournalpost for å oppdatere Journalpost med mottattDato");
+
+        String journalpostID = jpMetadata.getJournalpostID();
+
+        String endpoint = "/rest/journalpostapi/v1/journalpost/" + journalpostID;
+
+        Date currentDate = jpMetadata.getMottattDato();
+
+        String jsonPayload = formatIsoDate(currentDate);
+
+        System.out.println("Service - oppdaterMottattDato: vi skal nå inn i wiremock med forespørsel: ");
+        System.out.println("Original headers:");
+
+        return this.webClient.put()
+                .uri(url + endpoint)
+                .header(HttpHeaders.AUTHORIZATION, originalHeader.getFirst(HttpHeaders.AUTHORIZATION))
+                //.headers(headers -> headers.addAll(headersForRequest))
+                .bodyValue(jsonPayload)
+                .retrieve()
+                .onStatus(status -> status.isError(), response ->
+                        response.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+                                    logger.error("Error response body: {}", errorBody);
+                                    return Mono.error(new RuntimeException("Error from downstream service: " + errorBody));
+                                })
+                )
+                .bodyToMono(Boolean.class)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(true, HttpStatus.OK)) // Handle 204 No Content
+                .onErrorResume(e -> {
+                    logger.error("Error handling request", e);
+                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false));
+                })
+                .doOnSuccess(response -> logger.info("Operation completed with status: {}", response.getStatusCode()))
+                .doOnError(error -> logger.error("Operation failed", error));
     }
 }
+
