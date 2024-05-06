@@ -32,36 +32,6 @@ public class DokArkivController {
     }
 
 
-    /*
-    @CrossOrigin
-    @PostMapping("/createJournalpost")
-    public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost(@RequestBody CreateJournalpost_DTO meta, @RequestHeader HttpHeaders headers) {
-        logger.info("Controller - Nå går vi inn i createjournalpost med " + meta);
-        Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> inline = opprettNyeJournalposterCREATE.createJournalpost(meta, headers);
-        return inline
-                //legge til logger eller system printout "("16. Vi er tilabke fra å opprette journalpost og skal nå feilregisterere")"
-                .flatMap(response -> feilRegistrerService.feilRegistrer(meta.getJournalpostID(), meta.getOldMetadata().getJournalposttype(), headers)
-                        .flatMap(feilResponse -> {
-                            System.out.println("17. Dokarkiv controller - respons------------------------------------------------------------------");
-                            System.out.println(feilResponse);
-                            if (!feilResponse.getBody()) { // Accessing the body of ResponseEntity<Boolean>
-                                logger.error("Error registering failure for journal post ID: {}", meta.getJournalpostID());
-                                List<ResponeReturnFromDokArkiv_DTO> emptyList = new ArrayList<>();
-                                return Mono.just(ResponseEntity.internalServerError().body(emptyList));
-                            }
-                            logger.info("Response received from service: {}", response.getBody());
-                            return Mono.just(ResponseEntity.ok().body(response.getBody()));
-                        })
-                )
-                .onErrorResume(e -> {
-                    logger.error("Feil ved lagring av nye journalposter: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.internalServerError().body(new ArrayList<>()));  // Provide an empty list on error
-                })
-                .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
-    }
-
-     */
-
     @CrossOrigin
     @PostMapping("/createJournalpost")
     public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost(@RequestBody CreateJournalpost_DTO meta, @RequestHeader HttpHeaders headers) {
@@ -80,22 +50,6 @@ public class DokArkivController {
     }
 
 
-    /*
-    @CrossOrigin
-    @GetMapping("/feilregistrer")
-    public Mono<ResponseEntity<Boolean>> feilregistrer(@RequestParam("journalpostId") String journalpostId, @RequestParam("type") String type, @RequestHeader HttpHeaders headers){
-        return feilRegistrerService.feilRegistrer(journalpostId, type, headers)
-
-
-                .onErrorResume(e -> {
-                    // Handle any errors that occur during the service call
-                    logger.error("Feil ved lagring av nye journalposter: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.internalServerError().body(false));  // Provide an empty list on error
-                })
-                .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
-    }
-
-     */
 
     @CrossOrigin
     @GetMapping("/feilregistrer")
