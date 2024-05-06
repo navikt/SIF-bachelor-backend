@@ -740,6 +740,37 @@ public class Saf_Stubs {
                         ));
 
 
+
+
+        wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withStatus(204)));
+
+        wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withStatus(204)));
+
+        wireMockServer.stubFor(patch(urlEqualTo("/rest/test"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(204)));
+
+
+        // For å sette av MottattDato
+        wireMockServer.stubFor(put(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*"))
+                .withRequestBody(matchingJsonPath("$.date", matching("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z")))  // Regex for ISO 8601 format
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200))); // Returner HTTP 200 OK
+
+
+
         //Mock for søkeresultat "400".
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
@@ -751,10 +782,10 @@ public class Saf_Stubs {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(400)
                         .withBody(
-                                        "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL. " +
+                                "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL. " +
                                         "Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost)."
                         )// Returner HTTP 400 OK
-                       ));
+                ));
 
         //Mock for søkeresultat "401".
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
@@ -804,33 +835,6 @@ public class Saf_Stubs {
                                 "Dokumentet ble ikke funnet i fagarkivet."
                         )
                 ));
-
-        wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
-                .withHeader("Authorization", containing("Bearer"))
-                .willReturn(aResponse()
-                        .withStatus(204)));
-
-        wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
-                .withHeader("Authorization", containing("Bearer"))
-                .willReturn(aResponse()
-                        .withStatus(204)));
-
-        wireMockServer.stubFor(patch(urlEqualTo("/rest/test"))
-                .withHeader("Authorization", containing("Bearer"))
-                .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*")
-                        .withHeader("Content-Type", "application/json")
-                        .withStatus(204)));
-
-
-        // For å sette av MottattDato
-        wireMockServer.stubFor(put(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*"))
-                .withRequestBody(matchingJsonPath("$.date", matching("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z")))  // Regex for ISO 8601 format
-                .withHeader("Authorization", containing("Bearer"))
-                .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200))); // Returner HTTP 200 OK
 
     }
 

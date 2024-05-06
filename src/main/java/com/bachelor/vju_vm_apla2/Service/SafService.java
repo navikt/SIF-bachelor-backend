@@ -61,23 +61,24 @@ public class SafService {
         return webClient.post()
                 .uri(url+"/graphql")
                 .headers(h -> h.addAll(originalHeader))
-                .bodyValue(graphQLQuery)
+                .bodyValue(query)
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             int statusValue = clientResponse.statusCode().value();
                             String origin = "SafService - hentJournalpostListe";
-                            // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
-                            // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
-                            String detailedMessage = String.format("Feil ved kall til ekstern tjeneste (GRAPHQL): %d - %s", statusValue, errorBody);
-                            logger.error(detailedMessage);
+                            String detailedMessage = String.format("SafService - hentJournalpostListe - Feil ved kall til ekstern tjeneste (GRAPHQL): %d - %s", statusValue, errorBody);
+                            logger.error("StatusValue: " + statusValue + " med " +detailedMessage);
                             return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
-                    // Siden alle CustomClientExceptions håndteres spesifikt, håndter kun uventede feil her
-                    logger.error("SafService - hentJournalpostListe - En uventet feil oppstod: ", e);
-                    return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - HentJournalpostListe - En uventet feil oppstod, vennligst prøv igjen senere.", e));
+                    if (e instanceof CustomClientException) {
+                        return Mono.error(e);
+                    } else {
+                        logger.error("SafService - hentJournalpostListe - En uventet feil oppstod: ", e);
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - HentJournalpostListe - En uventet feil oppstod, vennligst prøv igjen senere.", e));
+                    }
                 });
     }
 
@@ -91,17 +92,18 @@ public class SafService {
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             int statusValue = clientResponse.statusCode().value();
                             String origin = "SafService - hentJournalpostListe";
-                            // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
-                            // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
-                            String detailedMessage = String.format("Feil ved kall til ekstern tjeneste (GRAPHQL): %d - %s", statusValue, errorBody);
-                            logger.error(detailedMessage);
+                            String detailedMessage = String.format("SafService - hentJournalpostListe - Feil ved kall til ekstern tjeneste (GRAPHQL): %d - %s", statusValue, errorBody);
+                            logger.error("StatusValue: " + statusValue + " med " +detailedMessage);
                             return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
-                    // Siden alle CustomClientExceptions håndteres spesifikt, håndter kun uventede feil her
-                    logger.error("SafService - hentJournalpostListe - En uventet feil oppstod: ", e);
-                    return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - HentJournalpostListe - En uventet feil oppstod, vennligst prøv igjen senere.", e));
+                    if (e instanceof CustomClientException) {
+                        return Mono.error(e);
+                    } else {
+                        logger.error("SafService - hentJournalpostListe - En uventet feil oppstod: ", e);
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - HentJournalpostListe - En uventet feil oppstod, vennligst prøv igjen senere.", e));
+                    }
                 });
     }
 
@@ -177,14 +179,17 @@ public class SafService {
                             return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
 
-                .bodyToMono(byte[].class) // Konverter responsen til en byte array
-                .map(ByteArrayResource::new) // Konverter byte array til en ByteArrayResource
-                .cast(Resource.class) // Cast the ByteArrayResource to Resource
+                .bodyToMono(byte[].class)
+                .map(ByteArrayResource::new)
+                .cast(Resource.class)
                 .onErrorResume(e -> {
-                    // Siden alle CustomClientExceptions håndteres spesifikt, håndter kun uventede feil her
-                    logger.error("SafService - hentDokument - En uventet feil oppstod: ", e);
-                    return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - hentDokument - En uventet feil oppstod, vennligst prøv igjen senere.", e));
-                });
+                    if (e instanceof CustomClientException){
+                        return Mono.error(e);
+                    } else {
+                        logger.error("SafService - hentDokument - En uventet feil oppstod: ", e);
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - hentDokument - En uventet feil oppstod, vennligst prøv igjen senere.", e));
+                    }
+                    });
     }
 
 
