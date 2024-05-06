@@ -272,9 +272,15 @@ public class Saf_Stubs {
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
                                 "            \"tittel\": \"Topphemmelig.pdf\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"67298374528\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Raus Trane\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"666222222\",\n" +
@@ -287,9 +293,15 @@ public class Saf_Stubs {
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
                                 "            \"tittel\": \"VeldigHemmelig.pdf\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"16728392011\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Eldar Vågan\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"429111291\",\n" +
@@ -302,19 +314,27 @@ public class Saf_Stubs {
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00001111\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00002222\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00003333\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"77351293720\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Maren Lundby\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"429108246\",\n" +
@@ -327,19 +347,26 @@ public class Saf_Stubs {
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00004444\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00005555\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"11235468820\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Henrik Ibsen\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"428965411\",\n" +
                                 "        \"tittel\": \"Rusten Veikryss\",\n" +
-                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalposttype\": \"N\",\n" +
                                 "        \"journalstatus\": \"EKSPEDERT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2023-11-01T12:00:00Z\",\n" +
@@ -347,9 +374,15 @@ public class Saf_Stubs {
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"45987612091\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Sigrid Undset\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"429101111\",\n" +
@@ -362,24 +395,33 @@ public class Saf_Stubs {
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00008888\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00009999\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00010000\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"89567423011\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Liv Ullmann\"\n" +
+                                "        }\n" +
                                 "      }\n" +
                                 "    ]\n" +
                                 "  }\n" +
