@@ -5,8 +5,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
@@ -68,7 +70,7 @@ public class HentDokumenter_READ {
                             int statusValue = clientResponse.statusCode().value();
                             String errorMessage = "Error fetching document: " + statusValue + " - " + errorBody;
                             logger.error(errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            return Mono.error(new CustomClientException(statusValue, errorMessage, "hentDokument_DokArkiv"));
                         }))
                 .bodyToMono(byte[].class)  // Convert the response to a byte array
                 .map(bytes -> Base64.getEncoder().encodeToString(bytes))  // Convert the byte array to a Base64 string
@@ -78,7 +80,7 @@ public class HentDokumenter_READ {
                         String errorMessageForClient = "API error in retrieving documents, please try again later.";
                         return Mono.just(Base64.getEncoder().encodeToString((errorMessageForClient).getBytes(StandardCharsets.UTF_8)));
                     }
-                    return Mono.error(e);
+                    return Mono.error((new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DoArkiv_Service - HentDokumenter_ - FAIL - Feil oppstått ved prosessering av opprettnyejournalposter", e)));
                 });
     }
 }

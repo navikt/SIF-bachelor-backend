@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 public class SplittingAvJournalposter_UPDATE {
 
 
-
     private static final Logger logger = LogManager.getLogger(SplittingAvJournalposter_UPDATE.class);
 
     private final HentDokumenter_READ hentDokumenterREAD;
@@ -49,16 +48,13 @@ public class SplittingAvJournalposter_UPDATE {
      * @param dto The CreateJournalpost object whose document IDs are to be updated.
      * @return Mono<Void> A Mono that signals completion of the update process, used for chaining further reactive operations if necessary.
      */ Mono<Void> updateDocumentIdsInDto(CreateJournalpost dto) {
-        logger.info("2. Vi er inne i updateDocumentIdsInDto og Starting to update Document IDs in DTO: {}", dto);
+        logger.info("DoArkiv_Service - updateDocumentIdsInDto(). Starting to update Document IDs in DTO: {}", dto);
         Mono<List<String>> cachedDocumentIds = extractAndReplaceDocumentIds(dto).cache();  // Cache the results of this operation
-
-        logger.info("8. Vi er tilbake i updateDocumentIdsInDto og skal nå sette Base64 string inn i DTO med metode replaceDocumentIdsInDto");
-
         return cachedDocumentIds
                 .flatMap(newIds -> replaceDocumentIdsInDto(dto, newIds))
                 .then()
-                .doOnSuccess(done -> logger.info("11. Tilbake til updateDocumentIdsInDto etter at DTO har fått nye fysiskID. Vi skal tilbake til craetejournapost"))
-                .doOnError(error -> logger.error("Error updating document IDs", error));
+                .doOnSuccess(done -> logger.info("DoArkiv_Service - updateDocumentIdsInDto() - SUCCESS - Tilbake til updateDocumentIdsInDto etter at DTO har fått nye fysiskID. Vi skal tilbake til craetejournapost"))
+                .onErrorResume(error -> Mono.error(error));
     }
 
     /**
