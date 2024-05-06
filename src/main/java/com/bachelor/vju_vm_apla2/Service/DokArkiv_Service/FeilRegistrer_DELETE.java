@@ -21,7 +21,7 @@ import java.sql.SQLOutput;
 public class FeilRegistrer_DELETE {
     private static final Logger logger = LogManager.getLogger(HentDokumenter_READ.class);
 
-    @Value("${db-dok.combined}")
+    @Value("${mock-oauth2-server.combined}")
     private String url;
 
     private final WebClient webClient;

@@ -24,7 +24,7 @@ public class OpprettNyeJournalposter_CREATE {
 
     private final SplittingAvJournalposter_UPDATE splittingAvJournalposterUPDATE;
     private final WebClient webClient;
-    @Value("${db-dok.combined}")
+    @Value("{mock-oauth2-server.combined}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     @Autowired

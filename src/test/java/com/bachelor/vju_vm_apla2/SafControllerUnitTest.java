@@ -4,6 +4,7 @@ import com.bachelor.vju_vm_apla2.Controller.SafController;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Saf.*;
+import com.bachelor.vju_vm_apla2.Service.SafService;
 import com.bachelor.vju_vm_apla2.Service.SimpleService;
 import lombok.SneakyThrows;
 import org.junit.Test;
@@ -30,10 +31,10 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JournalPostControllerTest {
+public class SafControllerUnitTest {
 
     @Mock
-    SimpleService serviceMock;
+    SafService safServiceMock;
     @InjectMocks
     SafController safController;
 
@@ -41,6 +42,7 @@ public class JournalPostControllerTest {
     @Mock
     WebClient wc;
     @Test
+//we aregoing to have 2 different version of the same test: one WITH the the test_enviorment, and one without
     public void hentJournalpostTest() {
 
         HttpHeaders headers = new HttpHeaders();
@@ -60,9 +62,9 @@ public class JournalPostControllerTest {
         BrukerIdInput bIdInput= new BrukerIdInput("001",BrukerIdType.FNR);
         GetJournalpostList_DTO brukerId = new GetJournalpostList_DTO(new BrukerIdInput(bIdInput.getId(), bIdInput.getType()), "2024-12-12", "2025-12-12", jpts, jptts, tt);
         Dokumentoversikt  dO = new Dokumentoversikt();
-        ReturnFromGraphQl_DTO fgqlTest = new ReturnFromGraphQl_DTO(dO, "hello world");
+        ReturnFromGraphQl_DTO fgqlTest =  new ReturnFromGraphQl_DTO();
         Mono <ReturnFromGraphQl_DTO> MfgglTest = Mono.just(fgqlTest);
-        Mockito.when(serviceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
+        Mockito.when(safServiceMock.hentJournalpostListe_Test_ENVIRONMENT(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
         Mono<ResponseEntity<ReturnFromGraphQl_DTO>> resultMono = safController.hentJournalpostListe(brukerId, headers);
         //Not sure how this works, but rolls with it for now
         StepVerifier.create(resultMono).assertNext(fraGrapQlDtoResponseEntity -> {
@@ -92,7 +94,7 @@ public class JournalPostControllerTest {
         GetJournalpostList_DTO DTO = new GetJournalpostList_DTO(bk0, "2023-10-20", "2023-11-20",jpts, jptts, tt);
         headers.add("Authorization", "bearer");
         //trying without mocking anything as we will throw an exception
-        Mockito.when(serviceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
+        Mockito.when(safServiceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
         String res = String.valueOf(safController.hentJournalpostListe(DTO, headers));
 
         assertEquals(any(Exception.class), res);
@@ -118,7 +120,7 @@ public class JournalPostControllerTest {
         Dokumentoversikt  dO = new Dokumentoversikt();
         ReturnFromGraphQl_DTO fgqlTest = new ReturnFromGraphQl_DTO(dO, "hello world");
         Mono <ReturnFromGraphQl_DTO> MfgglTest = Mono.just(Objects.requireNonNull(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).contentType(MediaType.APPLICATION_JSON).body(fgqlTest).getBody()));
-        Mockito.when(serviceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
+        Mockito.when(safServiceMock.hentJournalpostListe_Test_ENVIRONMENT(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
 
 
         headers.add("Authorization", "Bearer ");
@@ -138,7 +140,7 @@ public class JournalPostControllerTest {
         byte[] fakePDF = "Cool pdfs".getBytes(StandardCharsets.UTF_8);
         ByteArrayResource fakePDFresource = new ByteArrayResource(fakePDF);
 
-        Mockito.when(serviceMock.hentDokument(dokumentId, journalpostId, headers)).thenReturn(Mono.just(fakePDFresource));
+        Mockito.when(safServiceMock.hentDokument(dokumentId, journalpostId, headers)).thenReturn(Mono.just(fakePDFresource));
         String cmp = String.valueOf(Mono.just(ResponseEntity.status(HttpStatus.OK).headers(headers).contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"").body(fakePDFresource)).block());
         String res = String.valueOf(safController.hentDokument(dokumentId, journalpostId, headers).block());
 
