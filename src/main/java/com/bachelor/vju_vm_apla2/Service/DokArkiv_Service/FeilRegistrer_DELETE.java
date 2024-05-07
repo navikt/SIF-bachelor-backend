@@ -1,5 +1,6 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
+import com.bachelor.vju_vm_apla2.Config.CustomClientException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -47,21 +49,26 @@ public class FeilRegistrer_DELETE {
                 .header(HttpHeaders.AUTHORIZATION, originalHeader.getFirst(HttpHeaders.AUTHORIZATION))
                 //.headers(headers -> headers.addAll(headersForRequest))
                 .retrieve()
-                .onStatus(status -> status.isError(), response ->
-                        response.bodyToMono(String.class)
-                                .flatMap(errorBody -> {
-                                    logger.error("Error response body: {}", errorBody);
-                                    return Mono.error(new RuntimeException("Error from downstream service: " + errorBody));
-                                })
-                )
+                .onStatus(status -> status.isError(), clientResponse ->
+                        clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
+                            int statusValue = clientResponse.statusCode().value();
+                            String origin = "HentDokumenter_READ - hentDokument_DokArkiv" ;
+                            String errorMessage = String.format("Feil ved kall til ekstern tjeneste (DokArkiv): %d - %s", statusValue, errorBody);
+                            logger.error("ERROR: " + origin + errorMessage);
+                            return Mono.error(new CustomClientException(statusValue, errorMessage, origin));
+                        }))
                 .bodyToMono(Boolean.class)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(true, HttpStatus.OK)) // Handle 204 No Content
+                .doOnSuccess(response -> logger.info("INFO: FeilRegister_Delete - feilRegistrer_Service - Operation completed with status: {}", response.getStatusCode()))
                 .onErrorResume(e -> {
-                    logger.error("Error handling request", e);
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false));
-                })
-                .doOnSuccess(response -> logger.info("Operation completed with status: {}", response.getStatusCode()))
-                .doOnError(error -> logger.error("Operation failed", error));
+                    if (e instanceof CustomClientException) {
+                        return Mono.error(e);
+                    } else {
+                        logger.error("ERROR: FeilRegister_Delete - feilRegistrer_Service - En uventet feil oppstod: ", e);
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "FeilRegister_Delete - feilRegistrer_Service - En uventet feil oppstod, vennligst prøv igjen senere.", e));
+                    }
+                });
+
     }
 }
