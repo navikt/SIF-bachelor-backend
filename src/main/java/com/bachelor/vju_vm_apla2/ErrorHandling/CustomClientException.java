@@ -1,4 +1,4 @@
-package com.bachelor.vju_vm_apla2.Config;
+package com.bachelor.vju_vm_apla2.ErrorHandling;
 
 public class CustomClientException extends RuntimeException {
     private final int statusCode;

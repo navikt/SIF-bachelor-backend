@@ -1,6 +1,6 @@
 package com.bachelor.vju_vm_apla2.Controller;
 
-import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
+import com.bachelor.vju_vm_apla2.ErrorHandling.ErrorHandling;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.CreateJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.OppdaterJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.ResponeReturnFromDokArkiv_DTO;

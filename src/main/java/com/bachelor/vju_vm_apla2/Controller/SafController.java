@@ -2,10 +2,9 @@ package com.bachelor.vju_vm_apla2.Controller;
 
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
-import com.bachelor.vju_vm_apla2.Service.SafService;
-import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
+import com.bachelor.vju_vm_apla2.Service.Saf_Service.SafService;
+import com.bachelor.vju_vm_apla2.ErrorHandling.ErrorHandling;
 import no.nav.security.token.support.core.api.Protected;
-import no.nav.security.token.support.core.api.Unprotected;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

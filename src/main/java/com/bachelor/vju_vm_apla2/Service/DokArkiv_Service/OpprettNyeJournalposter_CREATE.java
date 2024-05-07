@@ -1,9 +1,10 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
-import com.bachelor.vju_vm_apla2.Config.CustomClientException;
+import com.bachelor.vju_vm_apla2.ErrorHandling.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.CreateJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.ResponeReturnFromDokArkiv_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.CreateJournalpost;
+import com.bachelor.vju_vm_apla2.Service.Utilz.ExtractDokumentIDinDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
@@ -24,14 +25,16 @@ import java.util.List;
 public class OpprettNyeJournalposter_CREATE {
     private static final Logger logger = LogManager.getLogger(OpprettNyeJournalposter_CREATE.class);
 
-    private final OppdateringAvJournalposter_UPDATE oppdateringAvJournalposter_UPDATE;
+
+    private final ExtractDokumentIDinDTO extractDokumentIDinDTO;
+
     private final WebClient webClient;
     @Value("${wiremock-dok.combined}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     @Autowired
-    public OpprettNyeJournalposter_CREATE(OppdateringAvJournalposter_UPDATE oppdateringAvJournalposter_UPDATE) {
-        this.oppdateringAvJournalposter_UPDATE = oppdateringAvJournalposter_UPDATE;
+    public OpprettNyeJournalposter_CREATE(ExtractDokumentIDinDTO extractDokumentIDinDTO) {
+        this.extractDokumentIDinDTO = extractDokumentIDinDTO;
         this.webClient = WebClient.builder()
                 .baseUrl(url)
                 .build();
@@ -76,8 +79,8 @@ public class OpprettNyeJournalposter_CREATE {
 
 
 
-        Mono<CreateJournalpost> updatedOldMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getOldMetadata(), meta.getJournalpostID()).thenReturn(meta.getOldMetadata());
-        Mono<CreateJournalpost> updatedNewMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getNewMetadata(), meta.getJournalpostID()).thenReturn(meta.getNewMetadata());
+        Mono<CreateJournalpost> updatedOldMeta = extractDokumentIDinDTO.updateDocumentIdsInDto(meta.getOldMetadata(), meta.getJournalpostID()).thenReturn(meta.getOldMetadata());
+        Mono<CreateJournalpost> updatedNewMeta = extractDokumentIDinDTO.updateDocumentIdsInDto(meta.getNewMetadata(), meta.getJournalpostID()).thenReturn(meta.getNewMetadata());
 
         return Mono.zip(updatedOldMeta, updatedNewMeta)
                 .doOnSuccess(item -> logger.info("DoArkiv_Service - OpprettNyeJournalposter_CREATE - SUCCSESS - Parsing updateOldMeta/updateNewMeta vellykket -  Nå skal begge DTO være klare for å sende til dokarkiv gjennom postNewJournalpost (opprette nye)"))

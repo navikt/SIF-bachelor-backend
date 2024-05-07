@@ -1,6 +1,6 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
-import com.bachelor.vju_vm_apla2.Config.CustomClientException;
+import com.bachelor.vju_vm_apla2.ErrorHandling.CustomClientException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;

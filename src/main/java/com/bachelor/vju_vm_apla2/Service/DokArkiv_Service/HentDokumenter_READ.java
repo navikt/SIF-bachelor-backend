@@ -1,6 +1,6 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
-import com.bachelor.vju_vm_apla2.Config.CustomClientException;
+import com.bachelor.vju_vm_apla2.ErrorHandling.CustomClientException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +11,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Service
-
 public class HentDokumenter_READ {
 
     private static final Logger logger = LogManager.getLogger(HentDokumenter_READ.class);

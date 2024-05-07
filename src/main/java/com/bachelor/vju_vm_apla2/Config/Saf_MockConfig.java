@@ -32,7 +32,7 @@ public class Saf_MockConfig {
         return new WireMockServer(options()
                 .bindAddress(saf_url)
                 .port(saf_port)
-                .extensions(new DynamiskPdfStubRespons())
+                .extensions(new StubResponsConfig())
                 /* Below is the classpath which is "." meaning current classpath root, where WireMock will look
                    for files such as stubs. */
                 .usingFilesUnderClasspath(".") //change this one for not in use with docker

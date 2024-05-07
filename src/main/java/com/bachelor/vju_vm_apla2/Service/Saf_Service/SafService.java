@@ -1,7 +1,6 @@
-package com.bachelor.vju_vm_apla2.Service;
+package com.bachelor.vju_vm_apla2.Service.Saf_Service;
 
-import com.bachelor.vju_vm_apla2.Config.CustomClientException;
-import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
+import com.bachelor.vju_vm_apla2.ErrorHandling.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +16,6 @@ import reactor.core.publisher.Mono;
 
 import org.springframework.http.*;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
