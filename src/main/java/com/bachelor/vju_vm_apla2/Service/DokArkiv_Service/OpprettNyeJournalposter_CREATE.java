@@ -76,8 +76,8 @@ public class OpprettNyeJournalposter_CREATE {
 
 
 
-        Mono<CreateJournalpost> updatedOldMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getOldMetadata()).thenReturn(meta.getOldMetadata());
-        Mono<CreateJournalpost> updatedNewMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getNewMetadata()).thenReturn(meta.getNewMetadata());
+        Mono<CreateJournalpost> updatedOldMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getOldMetadata(), meta.getJournalpostID()).thenReturn(meta.getOldMetadata());
+        Mono<CreateJournalpost> updatedNewMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getNewMetadata(), meta.getJournalpostID()).thenReturn(meta.getNewMetadata());
 
         return Mono.zip(updatedOldMeta, updatedNewMeta)
                 .doOnSuccess(item -> logger.info("DoArkiv_Service - OpprettNyeJournalposter_CREATE - SUCCSESS - Parsing updateOldMeta/updateNewMeta vellykket -  Nå skal begge DTO være klare for å sende til dokarkiv gjennom postNewJournalpost (opprette nye)"))

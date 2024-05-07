@@ -1,6 +1,7 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
 import com.bachelor.vju_vm_apla2.Config.CustomClientException;
+import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.CreateJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.OppdaterJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.CreateJournalpost;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.Dokumenter;
@@ -60,9 +61,9 @@ public class OppdateringAvJournalposter_UPDATE {
      *
      * @param dto The CreateJournalpost object whose document IDs are to be updated.
      * @return Mono<Void> A Mono that signals completion of the update process, used for chaining further reactive operations if necessary.
-     */ Mono<Void> updateDocumentIdsInDto(CreateJournalpost dto) {
+     */ Mono<Void> updateDocumentIdsInDto(CreateJournalpost dto, String journalpostID) {
         logger.info("DoArkiv_Service - updateDocumentIdsInDto(). Starting to update Document IDs in DTO: {}", dto);
-        Mono<List<String>> cachedDocumentIds = extractAndReplaceDocumentIds(dto).cache();  // Cache the results of this operation
+        Mono<List<String>> cachedDocumentIds = extractAndReplaceDocumentIds(dto,journalpostID ).cache();  // Cache the results of this operation
         return cachedDocumentIds
                 .flatMap(newIds -> replaceDocumentIdsInDto(dto, newIds))
                 .then()
@@ -139,11 +140,12 @@ public class OppdateringAvJournalposter_UPDATE {
      * @return Mono<List<String>> A reactive Mono that emits a single list containing all the new and old document IDs
      *         combined after both processing calls.
      */
-    private Mono<List<String>> extractAndReplaceDocumentIds(CreateJournalpost dto) {
+    private Mono<List<String>> extractAndReplaceDocumentIds(CreateJournalpost dto, String journalpostID) {
         logger.info("INFO: extractAndReplaceDocumentIds - Starter ID extraction for: {}", dto);
 
         //TODO: Huske på å bytte journalpostID med riktig
         String journalpostId = "1";  // Replace with dynamic ID retrieval logic
+        //String journalpostId = journalpostID;  // Replace with dynamic ID retrieval logic
 
 
         // Single call to process the documents
