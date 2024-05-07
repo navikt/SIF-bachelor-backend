@@ -24,14 +24,14 @@ import java.util.List;
 public class OpprettNyeJournalposter_CREATE {
     private static final Logger logger = LogManager.getLogger(OpprettNyeJournalposter_CREATE.class);
 
-    private final SplittingAvJournalposter_UPDATE splittingAvJournalposterUPDATE;
+    private final OppdateringAvJournalposter_UPDATE oppdateringAvJournalposter_UPDATE;
     private final WebClient webClient;
     @Value("${wiremock-dok.combined}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     @Autowired
-    public OpprettNyeJournalposter_CREATE(SplittingAvJournalposter_UPDATE splittingAvJournalposterUPDATE) {
-        this.splittingAvJournalposterUPDATE = splittingAvJournalposterUPDATE;
+    public OpprettNyeJournalposter_CREATE(OppdateringAvJournalposter_UPDATE oppdateringAvJournalposter_UPDATE) {
+        this.oppdateringAvJournalposter_UPDATE = oppdateringAvJournalposter_UPDATE;
         this.webClient = WebClient.builder()
                 .baseUrl(url)
                 .build();
@@ -66,25 +66,25 @@ public class OpprettNyeJournalposter_CREATE {
      * @return Mono<ResponseEntity<String>> This returns a Mono that emits a ResponseEntity containing the combined responses
      *         from both metadata POST requests if successful, or logs and returns errors if any arise during the operations.
      */
-    public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost(CreateJournalpost_DTO meta, HttpHeaders originalHeader) {
-        logger.info("1. Inne i createJournalpost - Received JSON data: {}", meta);
+    public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost_Service(CreateJournalpost_DTO meta, HttpHeaders originalHeader) {
+        logger.info("DokArkiv_Service - createJournalpost() -  Inne i createJournalpost - Received JSON data: {}", meta);
 
         // Setter versjon på metadata
         meta.getOldMetadata().setVersjon("old");
         meta.getNewMetadata().setVersjon("new");
 
-        Mono<CreateJournalpost> updatedOldMeta = splittingAvJournalposterUPDATE.updateDocumentIdsInDto(meta.getOldMetadata()).thenReturn(meta.getOldMetadata());
-        Mono<CreateJournalpost> updatedNewMeta = splittingAvJournalposterUPDATE.updateDocumentIdsInDto(meta.getNewMetadata()).thenReturn(meta.getNewMetadata());
+        Mono<CreateJournalpost> updatedOldMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getOldMetadata()).thenReturn(meta.getOldMetadata());
+        Mono<CreateJournalpost> updatedNewMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getNewMetadata()).thenReturn(meta.getNewMetadata());
 
         return Mono.zip(updatedOldMeta, updatedNewMeta)
-                .doOnSuccess(item -> logger.info("DoArkiv_Service - OpprettNyeJournalposter_CREATE - SUCCSESS - Parsing updateOldMeta/updateNewMeta vellykket -  Nå skal begge DTO være klare for å sende til dokarkiv gjennom serializeAndSendJournalpost (opprette nye)"))
+                .doOnSuccess(item -> logger.info("DoArkiv_Service - OpprettNyeJournalposter_CREATE - SUCCSESS - Parsing updateOldMeta/updateNewMeta vellykket -  Nå skal begge DTO være klare for å sende til dokarkiv gjennom postNewJournalpost (opprette nye)"))
                 .flatMap(tuple -> {
-                    Mono<ResponeReturnFromDokArkiv_DTO> responseForOldMeta = serializeAndSendJournalpost(tuple.getT1(), originalHeader);
-                    Mono<ResponeReturnFromDokArkiv_DTO> responseForNewMeta = serializeAndSendJournalpost(tuple.getT2(), originalHeader);
+                    Mono<ResponeReturnFromDokArkiv_DTO> responseForOldMeta = postNewJournalpost(tuple.getT1(), originalHeader);
+                    Mono<ResponeReturnFromDokArkiv_DTO> responseForNewMeta = postNewJournalpost(tuple.getT2(), originalHeader);
                     return Mono.zip(responseForOldMeta, responseForNewMeta, List::of)
                     .onErrorResume(e -> {
                         logger.error("DoArkiv_Service - OpprettNyeJournalposter_CREATE - FAIL - Feil oppstått ved prosessering av opprettnyejournalposter: {}", e.getMessage());
-                        return Mono.error((e));  //SENDER feil som kommer fra responseForOldMeta til metoden over
+                        return Mono.error((e));
                     });
 
                 })
@@ -122,15 +122,15 @@ public class OpprettNyeJournalposter_CREATE {
      * @return Mono<String> A Mono that emits the body of the response if the POST is successful,
      *         or errors out with a CustomClientException or a serialization-related exception if not.
      */
-    private Mono<ResponeReturnFromDokArkiv_DTO> serializeAndSendJournalpost(CreateJournalpost journalPost, HttpHeaders originalHeader) {
+    private Mono<ResponeReturnFromDokArkiv_DTO> postNewJournalpost(CreateJournalpost journalPost, HttpHeaders originalHeader) {
         logger.info("DoArkiv_Service - serializeAndSendJournalpost() - Inne i metoden med " + journalPost + " og prøver å gjøre kall til wiremock nå");
 
         String jsonPayload;
         try {
             jsonPayload = objectMapper.writeValueAsString(journalPost);
-            logger.info("DoArkiv_Service - serializeAndSendJournalpost() - Vi skal inn i wiremock dokarkiv nå Sending JSON data: {}", jsonPayload);
+            logger.info("DoArkiv_Service - postNewJournalpost() - Vi skal inn i wiremock dokarkiv nå Sending JSON data: {}", jsonPayload);
         } catch (JsonProcessingException e) {
-            logger.error("Error serializing DTO to JSON", e);
+            logger.error("DoArkiv_Service - postNewJournalpost() - FAIL - Error serializing DTO to JSON", e);
             return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DoArkiv_Service - serializeAndSendJournalpost() - FAIL - Error parsing DTO to JSON", e));
         }
 
@@ -142,15 +142,19 @@ public class OpprettNyeJournalposter_CREATE {
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = "DoArkiv_Service - serializeAndSendJournalpost() - FAIL - Error calling external service: " + statusValue + " - " + errorBody;
-                            logger.error("DoArkiv_Service - serializeAndSendJournalpost() - FAIL - Error calling external service:  {}", errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorMessage, "serializeAndSendJournalpost"));
+                            String errorMessage = "DoArkiv_Service - postNewJournalpost() - FAIL - Error calling external service: " + statusValue + " - " + errorBody;
+                            logger.error("DoArkiv_Service - postNewJournalpost() - FAIL - Error calling external service:  {}", errorMessage);
+                            return Mono.error(new CustomClientException(statusValue, errorMessage, "postNewJournalpost"));
                         }))
                 .bodyToMono(ResponeReturnFromDokArkiv_DTO.class)
                 .onErrorResume(e -> {
-                    logger.error("DoArkiv_Service - serializeAndSendJournalpost - FAIL - Error during POST request for: {}", journalPost.getTittel());
-                    return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SerializeAndSendJournalpost - En uventet feil oppstod, vennligst prøv igjen senere.", e));
-                });
+                    if (e instanceof CustomClientException){
+                        return Mono.error(e);
+                    } else {
+                        logger.error("DoArkiv_Service - postNewJournalpost - FAIL - Error during POST request for: {}", journalPost.getTittel());
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DoArkiv_Service - postNewJournalpost - En uventet feil oppstod, vennligst prøv igjen senere.", e));
+                    }
+                    });
     }
 
 

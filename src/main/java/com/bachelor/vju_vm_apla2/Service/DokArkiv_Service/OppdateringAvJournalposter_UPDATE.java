@@ -1,5 +1,6 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
+import com.bachelor.vju_vm_apla2.Config.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.OppdaterJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.CreateJournalpost;
 import com.bachelor.vju_vm_apla2.Models.POJO.Dokarkiv.Dokumenter;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.text.SimpleDateFormat;
@@ -21,18 +23,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class SplittingAvJournalposter_UPDATE {
+public class OppdateringAvJournalposter_UPDATE {
 
     @Value("${wiremock-dok.combined}")
     private String url;
 
     private final WebClient webClient;
-    private static final Logger logger = LogManager.getLogger(SplittingAvJournalposter_UPDATE.class);
+    private static final Logger logger = LogManager.getLogger(OppdateringAvJournalposter_UPDATE.class);
 
     private final HentDokumenter_READ hentDokumenter_READ;
 
     @Autowired
-    public SplittingAvJournalposter_UPDATE(HentDokumenter_READ hentDokumenter_READ) {
+    public OppdateringAvJournalposter_UPDATE(HentDokumenter_READ hentDokumenter_READ) {
         this.hentDokumenter_READ = hentDokumenter_READ;
         this.webClient = WebClient.builder()
                 .baseUrl(url)
@@ -125,17 +127,29 @@ public class SplittingAvJournalposter_UPDATE {
      *         combined after both processing calls.
      */
     private Mono<List<String>> extractAndReplaceDocumentIds(CreateJournalpost dto) {
-        logger.info("3. Vi er inne i extractAndReplaceDocumentIds og Starting ID extraction for: {}", dto);
+        logger.info("INFO: extractAndReplaceDocumentIds - Starter ID extraction for: {}", dto);
 
-        // Obtain the journal post ID in a correct manner
+        //TODO: Huske på å bytte journalpostID med riktig
         String journalpostId = "1";  // Replace with dynamic ID retrieval logic
 
         // Single call to process the documents
         return processDocuments(dto, journalpostId)
                 .map(ids -> {
-                    // Optionally you can handle the IDs further here if needed
-                    logger.info("7. Vi er tilbake til extractAndReplaceDocumentIds og har en liste med encoded string som skal returners");
-                    return ids;
+                    return ids; // Successfully processed document IDs are returned here.
+                })
+                .onErrorResume(e -> {
+                    // Log and handle the error specifically if needed, or just re-throw it.
+                    logger.error("ERROR: extractAndReplaceDocumentIds - Feil ved behandling av dokument IDer: {}", e.getMessage());
+                    if (e instanceof ResponseStatusException) {
+                        // Specific handling for ResponseStatusException potentially coming from lower layers
+                        return Mono.error(e);
+                    } else if (e instanceof CustomClientException) {
+                        // Specific handling for CustomClientException
+                        return Mono.error(e);
+                    } else {
+                        // General error handling for unexpected errors
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "extractAndReplaceDocumentIds - En uventet feil oppstod ved behandling, vennligst prøv igjen.", e));
+                    }
                 });
     }
 
@@ -161,7 +175,7 @@ public class SplittingAvJournalposter_UPDATE {
      * @return Mono<List<String>> A reactive Mono that emits a list of new document IDs, one for each variant in the metadata.
      */
     private Mono<List<String>> processDocuments(CreateJournalpost metadata, String journalpostId) {
-        logger.info("4. Processing documents for metadata: {} and journalPostID: {} ", metadata + " " +  journalpostId);
+        logger.info("OppdateringAvJournalposter_UPDATE - processDocuments - Prosesserer meta og journalpostID: {} ", metadata + " " +  journalpostId);
 
         // Creating a list to hold Monos of document IDs
         List<Mono<String>> documentIdMonos = new ArrayList<>();
@@ -170,18 +184,24 @@ public class SplittingAvJournalposter_UPDATE {
         for (Dokumenter dokument : metadata.getDokumenter()) {
             for (Dokumentvariant variant : dokument.getDokumentvarianter()) {
                 Mono<String> documentIdMono = hentDokumenter_READ.hentDokument_DokArkiv(variant.getFysiskDokument(), journalpostId)
-                        //Mono<String> documentIdMono = random_hentdok_dokarkiv(variant.getFysiskDokument(), journalpostId)
-                        .doOnNext(newId -> logger.info("6 Vi er tilbake til processDocuments og har mottat en Base64 string fra hentDokument_DokArkiv og puttet i en liste" ) )
-                        .cache(); // Cache each Mono to ensure the operation is performed only once
+                        .doOnNext(newId -> logger.info("OppdateringAvJournalposter_UPDATE - processDocuments - Mottatt BASE64STRING fra DokAkriv" ) )
+                        .cache()
+                        .onErrorResume(e -> {
+                            logger.error("ERROR: OppdateringAvJournalposter_UPDATE - processDocuments -> ", e.getMessage());
+                            return Mono.error(e);  // Videreformidle feilen
+                        });
                 documentIdMonos.add(documentIdMono);
             }
         }
 
         // Use Mono.zip to wait for all document ID fetching operations to complete and then collect the results
         return Mono.zip(documentIdMonos, results ->
-                        Stream.of(results).map(result -> (String) result).collect(Collectors.toList())
-                )
-                .doOnNext(allIds -> logger.info("All document IDs processed and collected: {}", allIds));
+                        Stream.of(results).map(result -> (String) result).collect(Collectors.toList()))
+                .doOnNext(allIds -> logger.info("INFO: OppdateringAvJournalposter_UPDATE - processDocuments - Alle dokumentID har blitt prosessert og hentet: {}", allIds))
+                .onErrorResume(e -> {
+                    logger.error("ERROR: OppdateringAvJournalposter_UPDATE - processDocuments - FAIL - Feil oppstått ved prosessering av dokumenter: {}", e.getMessage());
+                    return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "OppdateringAvJournalposter_UPDATE - processDocuments - En uventet feil oppstod ved prosessering, vennligst prøv igjen.", e));
+                });
     }
 
 

@@ -175,7 +175,7 @@ public class SafService {
                             int statusValue = clientResponse.statusCode().value();
                             String origin = "SafService - hentDokument" ;
                             String detailedMessage = String.format(" Feil ved kall til ekstern tjeneste (SAF): %d - %s", statusValue, errorBody);
-                            logger.error(origin + detailedMessage);
+                            logger.error("ERROR: " + origin + detailedMessage);
                             return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
 

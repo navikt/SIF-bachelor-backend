@@ -42,7 +42,7 @@ public class SafController {
         logger.info("Inne i metoden hentJournalpostListe med data: {}", query);
         return safService.hentJournalpostListe_Test_ENVIRONMENT(query, headers)
                 .map(response -> {
-                    logger.info("Controller - SAF - HentJournalpostLise - Journalposter er hentet og sendes tilbake til klienten");
+                    logger.info("Safcontroller - SAF - HentJournalpostLise - Journalposter er hentet og sendes tilbake til klienten");
                     return ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
@@ -50,7 +50,7 @@ public class SafController {
                 })
                 .defaultIfEmpty(ResponseEntity.notFound().build())
                 .onErrorResume(e -> {
-                    logger.error("Controller - SAF - HentJournalpostLise - Feil ved henting av journalposter: {}", e.getMessage());
+                    logger.error("SafController - SAF - HentJournalpostLise - Feil ved henting av journalposter: {}", e.getMessage());
                     return ErrorHandling.handleError(e);
                 });
     }
@@ -66,7 +66,7 @@ public class SafController {
         logger.info("Controller - SAF - hentDokument - Inne i metoden hentDokument for dokumentInfoId: {}, journalpostId: {}", dokumentInfoId, journalpostId);
         return safService.hentDokument(dokumentInfoId, journalpostId, headers)
                 .map(pdfResource -> {
-                    logger.info("Controller - SAF - hentDokument - Dokument hentet og sendes tilbake til klienten");
+                    logger.info("SafController - hentDokument - Dokument hentet og sendes tilbake til klienten");
                     return ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_PDF)
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"")
@@ -74,7 +74,7 @@ public class SafController {
                 })
                 .defaultIfEmpty(ResponseEntity.notFound().build())
                 .onErrorResume(e -> {
-                    logger.error("Controller - SAF - hentDokument - Feil ved henting av dokument: {}", e.getMessage());
+                    logger.error("SafController - hentDokument - Feil ved henting av dokument: {}", e.getMessage());
                     return ErrorHandling.handleError(e);
                 });
     }

@@ -1,21 +1,14 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
-import com.bachelor.vju_vm_apla2.Config.CustomClientException;
-import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
-import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.sql.SQLOutput;
 
 @Service
 public class FeilRegistrer_DELETE {
@@ -32,7 +25,7 @@ public class FeilRegistrer_DELETE {
                 .build();
     }
 
-    public Mono<ResponseEntity<Boolean>> feilRegistrer(String journalpostId, String type, HttpHeaders originalHeader) {
+    public Mono<ResponseEntity<Boolean>> feilRegistrer_Service(String journalpostId, String type, HttpHeaders originalHeader) {
         logger.info("17. Vi er nå på å feilregistere fra opprett journalpost");
         String endpoint = "";
 
