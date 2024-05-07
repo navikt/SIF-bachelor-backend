@@ -61,21 +61,20 @@ public class DokArkivController {
         return feilRegistrerService.feilRegistrer_Service(journalpostId, type, headers)
                 .onErrorResume(e -> {
                     // Handle any errors that occur during the service call
-                    logger.error("DokArkivController - feilregister() - Fail -  Feil ved lagring av nye journalposter: {}", e.getMessage());
+                    logger.error("ERROR: DokArkivController - feilregister() - Fail -  Feil ved feilregistrering: {}", e.getMessage());
                     return ErrorHandling.handleError(e);
                 })
-                .doOnSuccess(response -> logger.info("DokArkivController - feilregister() -  Success - Response sent to client: {}", response.getStatusCode()));
+                .doOnSuccess(response -> logger.info("INFO: DokArkivController - feilregister() -  Success - Response sent to client: {}", response.getStatusCode()));
     }
 
     @CrossOrigin
     @PostMapping("/oppdaterJournalpost")
     public Mono<ResponseEntity<Boolean>> oppdaterJournalpost(@RequestBody OppdaterJournalpost_DTO meta, @RequestHeader HttpHeaders headers){
-        System.out.println("YAY!");
         return oppdaterJournalposter_UPDATE.oppdaterMottattDato(meta, headers)
                 .onErrorResume(e -> {
-                    // Handle any errors that occur during the service call
+
                     logger.error("Feil ved oppdatering av Journalpost: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.internalServerError().body(false));  // Provide an empty list on error
+                    return ErrorHandling.handleError(e);  // Provide an empty list on error
                 })
                 .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
     }

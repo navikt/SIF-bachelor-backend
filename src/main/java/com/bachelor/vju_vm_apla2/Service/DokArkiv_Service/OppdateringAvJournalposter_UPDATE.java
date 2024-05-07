@@ -248,22 +248,27 @@ public class OppdateringAvJournalposter_UPDATE {
                 //.headers(headers -> headers.addAll(headersForRequest))
                 .bodyValue(jsonPayload)
                 .retrieve()
-                .onStatus(status -> status.isError(), response ->
-                        response.bodyToMono(String.class)
-                                .flatMap(errorBody -> {
-                                    logger.error("Error response body: {}", errorBody);
-                                    return Mono.error(new RuntimeException("Error from downstream service: " + errorBody));
-                                })
-                )
+                .onStatus(status -> status.isError(), clientResponse ->
+                        clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
+                            int statusValue = clientResponse.statusCode().value();
+                            String origin = "OppdateringAvJournalposter_UPDATE - oppdaterMottattDato";
+                            String errorMessage = String.format("Feil ved kall til ekstern tjeneste (DokArkiv): %d - %s", statusValue, errorBody);
+                            logger.error("ERROR: " + origin + errorMessage);
+                            return Mono.error(new CustomClientException(statusValue, errorMessage, origin));
+                        }))
                 .bodyToMono(Boolean.class)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(true, HttpStatus.OK)) // Handle 204 No Content
                 .onErrorResume(e -> {
-                    logger.error("Error handling request", e);
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false));
-                })
-                .doOnSuccess(response -> logger.info("Operation completed with status: {}", response.getStatusCode()))
-                .doOnError(error -> logger.error("Operation failed", error));
+                    if (e instanceof CustomClientException){
+                        return Mono.error(e);
+                    } else {
+                        logger.error("ERROR: OppdateringAvJournalposter_UPDATE - oppdaterMottattDato - Error handling request", e);
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "OppdateringAvJournalposter_UPDATE - oppdaterMottattDato - En uventet feil oppstod, vennligst prøv igjen senere.", e));
+
+                    }
+                });
+
     }
 }
 
