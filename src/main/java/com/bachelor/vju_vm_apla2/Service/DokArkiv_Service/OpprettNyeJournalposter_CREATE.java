@@ -69,9 +69,12 @@ public class OpprettNyeJournalposter_CREATE {
     public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost_Service(CreateJournalpost_DTO meta, HttpHeaders originalHeader) {
         logger.info("DokArkiv_Service - createJournalpost() -  Inne i createJournalpost - Received JSON data: {}", meta);
 
-        // Setter versjon på metadata
+
+        // Setter versjon på metadata. Det er for stubs slik at de kan skille mellom dem
         meta.getOldMetadata().setVersjon("old");
         meta.getNewMetadata().setVersjon("new");
+
+
 
         Mono<CreateJournalpost> updatedOldMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getOldMetadata()).thenReturn(meta.getOldMetadata());
         Mono<CreateJournalpost> updatedNewMeta = oppdateringAvJournalposter_UPDATE.updateDocumentIdsInDto(meta.getNewMetadata()).thenReturn(meta.getNewMetadata());

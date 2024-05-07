@@ -67,7 +67,20 @@ public class OppdateringAvJournalposter_UPDATE {
                 .flatMap(newIds -> replaceDocumentIdsInDto(dto, newIds))
                 .then()
                 .doOnSuccess(done -> logger.info("DoArkiv_Service - updateDocumentIdsInDto() - SUCCESS - Tilbake til updateDocumentIdsInDto etter at DTO har fått nye fysiskID. Vi skal tilbake til craetejournapost"))
-                .onErrorResume(error -> Mono.error(error));
+                .onErrorResume(e -> {
+                    // Log and handle the error specifically if needed, or just re-throw it.
+                    logger.error("ERROR: updateDocumentIdsInDto ", e.getMessage());
+                    if (e instanceof ResponseStatusException) {
+                        // Specific handling for ResponseStatusException potentially coming from lower layers
+                        return Mono.error(e);
+                    } else if (e instanceof CustomClientException) {
+                        // Specific handling for CustomClientException
+                        return Mono.error(e);
+                    } else {
+                        // General error handling for unexpected errors
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "updateDocumentIdsInDto - En uventet feil oppstod ved behandling, vennligst prøv igjen.", e));
+                    }
+                });
     }
 
     /**
@@ -131,6 +144,7 @@ public class OppdateringAvJournalposter_UPDATE {
 
         //TODO: Huske på å bytte journalpostID med riktig
         String journalpostId = "1";  // Replace with dynamic ID retrieval logic
+
 
         // Single call to process the documents
         return processDocuments(dto, journalpostId)
