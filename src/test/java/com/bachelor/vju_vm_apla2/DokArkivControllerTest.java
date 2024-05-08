@@ -15,6 +15,8 @@ import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.HentDokumenter_READ;
 import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.OppdateringAvJournalposter_UPDATE;
 import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.OpprettNyeJournalposter_CREATE;
 import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.OppdateringAvJournalposter_UPDATE;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -35,6 +37,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DokArkivControllerTest {
+    private static final Logger logger = LogManager.getLogger(DokArkivControllerTest.class);
     //mocks for CRUD operations
 @Mock
     FeilRegistrer_DELETE feilRegistrer_delete;
@@ -49,6 +52,7 @@ DokArkivController dokArkivController;
 //crud operations tests
 @Test
     public void createDokArkiv() {
+
     Bruker bruker = new Bruker("1", BrukerIdType.FNR);
     List<Dokumenter> docs = new ArrayList<>();
     List<Dokumentvariant>varainter = new ArrayList<>();
@@ -68,13 +72,16 @@ DokArkivController dokArkivController;
     ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>> re = new ResponseEntity<>(responeList, HttpStatus.OK);
     Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> ret;
     ret = Mono.just(re);
+
     Mockito.when(opprettNyeJournalposter_create.createJournalpost_Service(journalpost, headers )).thenReturn(ret);
 
     Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>>res = dokArkivController.createJournalpost_Controller(journalpost, headers);
-    assertEquals(ret, res);
+    assertEquals(ret.doOnSuccess( response1 -> logger.info("DokArkivController - createJournalpost() - Success - Response sent to client: {}", response1.getStatusCode())), res);
 };
 @Test
-    public void updateDokArkiv() {};
+    public void updateDokArkiv() {
+   // Mockito.when(oppdateringAvJournalposterUpdate.oppdaterMottattDato());
+};
 @Test
     public void deleteDokArkiv() {};
 @Test
