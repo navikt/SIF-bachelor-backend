@@ -281,9 +281,13 @@ public class Saf_Stubs {
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"67298374528\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Raus Trane\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Raus Trane\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
+
+
+
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"666222222\",\n" +
@@ -310,8 +314,9 @@ public class Saf_Stubs {
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"16728392011\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Eldar Vågan\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Eldar Vågan\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
@@ -346,8 +351,9 @@ public class Saf_Stubs {
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"77351293720\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Maren Lundby\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Maren Lundby\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
@@ -376,8 +382,9 @@ public class Saf_Stubs {
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"11235468820\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Henrik Ibsen\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Henrik Ibsen\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
@@ -400,8 +407,9 @@ public class Saf_Stubs {
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"45987612091\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Sigrid Undset\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Sigrid Undset\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
@@ -442,8 +450,9 @@ public class Saf_Stubs {
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"89567423011\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Liv Ullmann\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Liv Ullmann\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      }\n" +
                                 "    ]\n" +
