@@ -1,19 +1,19 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
-import com.bachelor.vju_vm_apla2.Config.CustomClientException;
+import com.bachelor.vju_vm_apla2.ErrorHandling.CustomClientException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Service
-
 public class HentDokumenter_READ {
 
 
@@ -31,6 +31,8 @@ public class HentDokumenter_READ {
                 .baseUrl(url)
                 .build();
     }
+
+    //TODO: SKAL DET VÆRE TOKEN I HEADER?
 
 
     /**
@@ -57,29 +59,31 @@ public class HentDokumenter_READ {
      */
     public Mono<String> hentDokument_DokArkiv(String dokumentInfoId, String journalpostId) {
 
-        logger.info("5. vi er inne i hentDokument_DokArkiv med denne meta" + dokumentInfoId + "og " + journalpostId);
+        logger.info("INFO: HentDokument_READ - hentDokument_DokArkiv - med denne meta" + dokumentInfoId + "og " + journalpostId);
         String endpoint = String.format("/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
-        logger.info("Fetching document with ID: {} for journal post ID: {}", dokumentInfoId, journalpostId);
+
 
         return webClient.get()
                 .uri(url + endpoint)
                 .retrieve()
+                //TODO:Legge til header for token?
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = "Error fetching document: " + statusValue + " - " + errorBody;
-                            logger.error(errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            String origin = "HentDokumenter_READ - hentDokument_DokArkiv" ;
+                            String errorMessage = String.format("Feil ved kall til ekstern tjeneste (DokArkiv): %d - %s", statusValue, errorBody);
+                            logger.error("ERROR: " + origin + errorMessage);
+                            return Mono.error(new CustomClientException(statusValue, errorMessage, origin));
                         }))
-                .bodyToMono(byte[].class)  // Convert the response to a byte array
-                .map(bytes -> Base64.getEncoder().encodeToString(bytes))  // Convert the byte array to a Base64 string
+                .bodyToMono(byte[].class)
+                .map(bytes -> Base64.getEncoder().encodeToString(bytes))
                 .onErrorResume(e -> {
-                    if (!(e instanceof CustomClientException)) {
-                        logger.error("An unexpected error occurred: ", e);
-                        String errorMessageForClient = "API error in retrieving documents, please try again later.";
-                        return Mono.just(Base64.getEncoder().encodeToString((errorMessageForClient).getBytes(StandardCharsets.UTF_8)));
+                    if (e instanceof CustomClientException) {
+                        return Mono.error(e);
+                    } else {
+                        logger.error("ERROR: HentDokumenter_READ - hentDokument_DokArkiv - En uventet feil oppstod: ", e);
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "HentDokumenter_READ - hentDokument_DokArkiv - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                     }
-                    return Mono.error(e);
                 });
     }
 }

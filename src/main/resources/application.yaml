@@ -26,6 +26,11 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
 
 
+spring:
+  jackson:
+    default-property-inclusion: non_null
+
+
 logging.level:
   org.springframework: INFO
   no.nav: DEBUG
