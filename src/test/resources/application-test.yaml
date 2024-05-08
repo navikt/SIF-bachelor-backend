@@ -1,4 +1,7 @@
 http.proxy.parametername: notused
+spring:
+  main:
+    allow-bean-definition-overriding: true
 
 no.nav.security.jwt:
   expirythreshold: 10 #threshold in minutes until token expires
@@ -34,3 +37,4 @@ db:
   combined: http://${db.url}:${db.port}
   combinedInService: ${db.combined}/mock
   files: .
+

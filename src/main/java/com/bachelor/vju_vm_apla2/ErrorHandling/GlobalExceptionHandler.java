@@ -1,5 +1,6 @@
-package com.bachelor.vju_vm_apla2.Config;
+package com.bachelor.vju_vm_apla2.ErrorHandling;
 
+import com.bachelor.vju_vm_apla2.ErrorHandling.CustomClientException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

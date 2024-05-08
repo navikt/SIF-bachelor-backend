@@ -268,13 +268,22 @@ public class SafStubs {
                                 "        \"journalstatus\": \"FERDIGSTILT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2024-03-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
                                 "            \"tittel\": \"Topphemmelig.pdf\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"67298374528\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Raus Trane\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"666222222\",\n" +
@@ -283,13 +292,27 @@ public class SafStubs {
                                 "        \"journalstatus\": \"JOURNALFOERT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2024-03-02T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [\n" +
+                                "          {\n" +
+                                "            \"dato\": \"2024-03-01T12:00:00Z\",\n" +
+                                "            \"datotype\": \"DATO_REGISTRERT\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
                                 "            \"tittel\": \"VeldigHemmelig.pdf\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"16728392011\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Eldar Vågan\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"429111291\",\n" +
@@ -298,23 +321,34 @@ public class SafStubs {
                                 "        \"journalstatus\": \"FERDIGSTILT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2024-07-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00001111\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00002222\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00003333\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"77351293720\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Maren Lundby\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"429108246\",\n" +
@@ -323,33 +357,52 @@ public class SafStubs {
                                 "        \"journalstatus\": \"UNDER_ARBEID\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2021-11-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00004444\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00005555\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"11235468820\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Henrik Ibsen\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"428965411\",\n" +
                                 "        \"tittel\": \"Rusten Veikryss\",\n" +
-                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalposttype\": \"N\",\n" +
                                 "        \"journalstatus\": \"EKSPEDERT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2023-11-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"45987612091\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Sigrid Undset\"\n" +
+                                "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
                                 "        \"journalpostId\": \"429101111\",\n" +
@@ -358,33 +411,44 @@ public class SafStubs {
                                 "        \"journalstatus\": \"JOURNALFOERT\",\n" +
                                 "        \"tema\": \"SYM\",\n" +
                                 "        \"datoOpprettet\": \"2020-01-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00008888\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00009999\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00010000\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
-                                "            \"logiskeVedlegg\": []\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
                                 "          }\n" +
-                                "        ]\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"89567423011\",\n" +
+                                "          \"idType\": \"FNR\",\n" +
+                                "          \"navn\": \"Liv Ullmann\"\n" +
+                                "        }\n" +
                                 "      }\n" +
                                 "    ]\n" +
                                 "  }\n" +
                                 "}")));
-
 
 
 
@@ -676,6 +740,37 @@ public class SafStubs {
                         ));
 
 
+
+
+        wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withStatus(204)));
+
+        wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withStatus(204)));
+
+        wireMockServer.stubFor(patch(urlEqualTo("/rest/test"))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(204)));
+
+
+        // For å sette av MottattDato
+        wireMockServer.stubFor(put(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*"))
+                .withRequestBody(matchingJsonPath("$.date", matching("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z")))  // Regex for ISO 8601 format
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
+                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withStatus(200))); // Returner HTTP 200 OK
+
+
+
         //Mock for søkeresultat "400".
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
@@ -687,10 +782,10 @@ public class SafStubs {
                         .withHeader("Content-Type", "application/json")
                         .withStatus(400)
                         .withBody(
-                                        "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL. " +
+                                "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL. " +
                                         "Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost)."
                         )// Returner HTTP 400 OK
-                       ));
+                ));
 
         //Mock for søkeresultat "401".
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
@@ -741,26 +836,11 @@ public class SafStubs {
                         )
                 ));
 
-        wireMockServer.stubFor(delete(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
-                .withHeader("Authorization", containing("Bearer"))
-                .willReturn(aResponse()
-                        .withStatus(204)));
-
-        wireMockServer.stubFor(delete(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
-                .withHeader("Authorization", containing("Bearer"))
-                .willReturn(aResponse()
-                        .withStatus(204)));
-
-        wireMockServer.stubFor(delete(urlEqualTo("/rest/test"))
-                .withHeader("Authorization", containing("Bearer"))
-                .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*")
-                        .withHeader("Content-Type", "application/json")
-                        .withStatus(204)));
-
-
-
     }
+
+
+
+
 
 
     @PreDestroy

@@ -1,7 +1,6 @@
-package com.bachelor.vju_vm_apla2.Service;
+package com.bachelor.vju_vm_apla2.Service.Saf_Service;
 
-import com.bachelor.vju_vm_apla2.Config.CustomClientException;
-import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
+import com.bachelor.vju_vm_apla2.ErrorHandling.CustomClientException;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
 import org.apache.logging.log4j.LogManager;
@@ -12,23 +11,24 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import org.springframework.http.*;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+//TODO: FERDIG MED FEILHÅNDTERING FOR DENNE KLASSEN
 @Service
 public class SafService {
-    //Vi får en feilmelding grunnet async, dette bør kanskje revurderes
-    private static final Logger logger = LogManager.getLogger(SimpleService.class);
+
+    private static final Logger logger = LogManager.getLogger(SafService.class);
     private final WebClient webClient;
 
-    @Value("${mock-oauth2-server.combined}")
+    @Value("${wiremock-saf.combined}")
     private String url;
     public SafService() {
         this.webClient = WebClient.builder()
@@ -56,32 +56,26 @@ public class SafService {
         String graphQLQuery = createGraphQLQuery(query);
         logger.info("Starter henting av journalposter med forespørsel: {}", graphQLQuery);
 
-        return this.webClient.post()
-                .uri(url + "/graphql")
+        return webClient.post()
+                .uri(url+"/graphql")
                 .headers(h -> h.addAll(originalHeader))
-                .bodyValue(graphQLQuery)
+                .bodyValue(query)
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = String.format("Feil ved kall til ekstern tjeneste: %d - %s", statusValue, errorBody);
-                            logger.error(errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            String origin = "SafService - hentJournalpostListe";
+                            String detailedMessage = String.format("SafService - hentJournalpostListe - Feil ved kall til ekstern tjeneste (GRAPHQL): %d - %s", statusValue, errorBody);
+                            logger.error("StatusValue: " + statusValue + " med " +detailedMessage);
+                            return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
-                    // Sjekk om feilen er en CustomClientException for spesifikk feilhåndtering
                     if (e instanceof CustomClientException) {
-                        CustomClientException cce = (CustomClientException) e;
-                        // Logg feilmeldingen med feilkoden for spesifikk feil
-                        logger.error("Spesifikk klientfeil oppstod med statuskode {}: {}", cce.getStatusCode(), cce.getMessage());
-                        // Returner Mono med en ny DTO som inneholder feilmeldingen
-                        return Mono.just(new ReturnFromGraphQl_DTO(cce.getMessage()));
+                        return Mono.error(e);
                     } else {
-                        // For alle andre typer feil, logg dem som generelle serverfeil
-                        logger.error("Generell feil oppstod: ", e);
-                        // Returner en generisk feilmelding til klienten
-                        return Mono.just(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
+                        logger.error("SafService - hentJournalpostListe - En uventet feil oppstod: ", e);
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - HentJournalpostListe - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                     }
                 });
     }
@@ -94,26 +88,20 @@ public class SafService {
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
-                            System.out.println("Vi er inne i Servoce-klassen som skal gi spesikk error kode:");
                             int statusValue = clientResponse.statusCode().value();
-                            // I vanlig hentJournalPostListe, har jeg endret errorMessage til en tom streng fordi den + stub response på 400,
-                            // kunne parses av frontenden. Kanskje gjøre det samme her nede? - Gisle 17/04/2024
-                            String errorMessage = "Feil ved kall til ekstern tjeneste: " + statusValue + " - " + errorBody;
-                            // String errorMessage = "";
-                            logger.error(errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorBody));
+                            String origin = "SafService - hentJournalpostListe";
+                            String detailedMessage = String.format("SafService - hentJournalpostListe - Feil ved kall til ekstern tjeneste (GRAPHQL): %d - %s", statusValue, errorBody);
+                            logger.error("StatusValue: " + statusValue + " med " +detailedMessage);
+                            return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
                 .bodyToMono(ReturnFromGraphQl_DTO.class)
                 .onErrorResume(e -> {
-                    // Håndter generelle feil som ikke er knyttet til HTTP-statuskoder
-                    if (!(e instanceof CustomClientException)) {
-                        System.out.println("Vi er inne i Servoce-klassen som skal gi GENERISK error kode:");
-                        // Logg feilen og returner en generisk feilrespons
-                        logger.error("En uventet feil oppstod: ", e);
-                        return Mono.just(new ReturnFromGraphQl_DTO("En uventet feil oppstod, vennligst prøv igjen senere."));
+                    if (e instanceof CustomClientException) {
+                        return Mono.error(e);
+                    } else {
+                        logger.error("SafService - hentJournalpostListe - En uventet feil oppstod: ", e);
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - HentJournalpostListe - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                     }
-                    // Viderefør CustomClientException slik at den kan håndteres oppstrøms
-                    return Mono.error(e);
                 });
     }
 
@@ -183,25 +171,23 @@ public class SafService {
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = String.format("Feil ved henting av dokument: %s - %s", statusValue, errorBody);
-                            logger.error(errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorMessage));
+                            String origin = "SafService - hentDokument" ;
+                            String detailedMessage = String.format(" Feil ved kall til ekstern tjeneste (SAF): %d - %s", statusValue, errorBody);
+                            logger.error("ERROR: " + origin + detailedMessage);
+                            return Mono.error(new CustomClientException(statusValue, detailedMessage, origin));
                         }))
 
-                .bodyToMono(byte[].class) // Konverter responsen til en byte array
-                .map(ByteArrayResource::new) // Konverter byte array til en ByteArrayResource
-                .cast(Resource.class) // Cast the ByteArrayResource to Resource
+                .bodyToMono(byte[].class)
+                .map(ByteArrayResource::new)
+                .cast(Resource.class)
                 .onErrorResume(e -> {
-                    if (!(e instanceof CustomClientException)) {
-                        logger.error("En uventet feil oppstod: ", e);
-                        String errorMessageForClient = "SAF API error in retrieving the documents, please try again later.";
-                        String jsonErrorMessage = "{\"errorMessage\": \"" + errorMessageForClient.replace("\"", "\\\"") + "\"}";
-                        ByteArrayResource errorResource = new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
-                        return Mono.just(errorResource);
+                    if (e instanceof CustomClientException){
+                        return Mono.error(e);
+                    } else {
+                        logger.error("SafService - hentDokument - En uventet feil oppstod: ", e);
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "SafService - SAF - hentDokument - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                     }
-                    // Viderefør CustomClientException slik at den kan håndteres oppstrøms
-                    return Mono.error(e);
-                });
+                    });
     }
 
 

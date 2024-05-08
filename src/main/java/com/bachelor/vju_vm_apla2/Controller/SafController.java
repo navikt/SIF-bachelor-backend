@@ -2,10 +2,9 @@ package com.bachelor.vju_vm_apla2.Controller;
 
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
-import com.bachelor.vju_vm_apla2.Service.SafService;
-import com.bachelor.vju_vm_apla2.Config.ErrorHandling;
+import com.bachelor.vju_vm_apla2.Service.Saf_Service.SafService;
+import com.bachelor.vju_vm_apla2.ErrorHandling.ErrorHandling;
 import no.nav.security.token.support.core.api.Protected;
-import no.nav.security.token.support.core.api.Unprotected;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+//TODO: FERDIG MED FEILHÅNDTERING FOR DENNE KLASSEN
 @Protected
 @RestController
 public class SafController {
@@ -41,7 +41,7 @@ public class SafController {
         logger.info("Inne i metoden hentJournalpostListe med data: {}", query);
         return safService.hentJournalpostListe_Test_ENVIRONMENT(query, headers)
                 .map(response -> {
-                    logger.info("Journalposter hentet og sendes tilbake til klienten");
+                    logger.info("Safcontroller - SAF - HentJournalpostLise - Journalposter er hentet og sendes tilbake til klienten");
                     return ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
@@ -49,7 +49,7 @@ public class SafController {
                 })
                 .defaultIfEmpty(ResponseEntity.notFound().build())
                 .onErrorResume(e -> {
-                    logger.error("Feil ved henting av journalposter: {}", e.getMessage());
+                    logger.error("SafController - SAF - HentJournalpostLise - Feil ved henting av journalposter: {}", e.getMessage());
                     return ErrorHandling.handleError(e);
                 });
     }
@@ -62,17 +62,18 @@ public class SafController {
     @CrossOrigin
     @GetMapping("/hentDokumenter")
     public Mono<ResponseEntity<Resource>> hentDokument(@RequestParam("dokumentInfoId") String dokumentInfoId, @RequestParam("journalpostId") String journalpostId, @RequestHeader HttpHeaders headers) {
-        logger.info("Inne i metoden hentDokument for dokumentInfoId: {}, journalpostId: {}", dokumentInfoId, journalpostId);
+        logger.info("Controller - SAF - hentDokument - Inne i metoden hentDokument for dokumentInfoId: {}, journalpostId: {}", dokumentInfoId, journalpostId);
         return safService.hentDokument(dokumentInfoId, journalpostId, headers)
                 .map(pdfResource -> {
-                    logger.info("Dokument hentet og sendes tilbake til klienten");
+                    logger.info("SafController - hentDokument - Dokument hentet og sendes tilbake til klienten");
                     return ResponseEntity.ok()
                             .contentType(MediaType.APPLICATION_PDF)
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document.pdf\"")
                             .body(pdfResource);
                 })
+                .defaultIfEmpty(ResponseEntity.notFound().build())
                 .onErrorResume(e -> {
-                    logger.error("Feil ved henting av dokument: {}", e.getMessage());
+                    logger.error("SafController - hentDokument - Feil ved henting av dokument: {}", e.getMessage());
                     return ErrorHandling.handleError(e);
                 });
     }

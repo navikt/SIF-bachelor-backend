@@ -15,7 +15,9 @@ Hovedformålet med å implementere en ResponseDefinitionTransformer er å
 
  Dokumentasjon: https://wiremock.org/docs/extensibility/transforming-responses/
  */
-public class DynamiskPdfStubRespons extends ResponseDefinitionTransformer {
+
+//TODO: Skrive om denne klassen
+public class StubResponsConfig extends ResponseDefinitionTransformer {
 
     @Override
     public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition, com.github.tomakehurst.wiremock.common.FileSource files, com.github.tomakehurst.wiremock.extension.Parameters parameters) {

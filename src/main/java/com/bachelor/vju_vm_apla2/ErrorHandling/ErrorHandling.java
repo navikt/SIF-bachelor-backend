@@ -1,8 +1,7 @@
-package com.bachelor.vju_vm_apla2.Config;
+package com.bachelor.vju_vm_apla2.ErrorHandling;
 
 import com.bachelor.vju_vm_apla2.Controller.SafController;
 import org.apache.logging.log4j.LogManager;
-import org.slf4j.Logger;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +26,7 @@ public class ErrorHandling {
 
         if (e instanceof CustomClientException) {
             CustomClientException cce = (CustomClientException) e;
-            logger.error("En klientspesifikk feil oppstod: {}", cce.getMessage());
+            logger.error("En feil oppstod: {}", cce.getMessage());
             return Mono.just(ResponseEntity
                     .status(cce.getStatusCode())
                     .body(createErrorResource(cce.getMessage(), MediaType.APPLICATION_JSON)));
