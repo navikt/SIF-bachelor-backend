@@ -1,8 +1,6 @@
 package com.bachelor.vju_vm_apla2.Config;
 
-
-import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
+import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher;
@@ -46,13 +44,13 @@ import java.util.logging.LogRecord;
 public class SecurityConfig {
 /*@Bean
 public RequestContextListener requestContextListener() {return new RequestContextListener();}*/
-    @Bean
+   /* @Bean
     public FilterRegistrationBean<RequestContextFilter> requestContextFilterRegistration() {
         FilterRegistrationBean<RequestContextFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new RequestContextFilter());
         registration.setOrder(0); // you might need to set the order
         return registration;
-    }
+    }*/
    /* public WebClientCustomizer customizer(OAuth2ClientRequestInterceptor reqInterceptor) {
         return webClientBuilder -> {
             ExchangeFilterFunction oauthFilter = ExchangeFilterFunction.ofRequestProcessor(
@@ -110,7 +108,7 @@ public RequestContextListener requestContextListener() {return new RequestContex
         registration.setOrder(1);
         return registration;
     }*/
-   @Bean
+ /*  @Bean
    public ExchangeFilterFunction requestContextFilter() {
        return (clientRequest, next) -> {
            try {
@@ -125,7 +123,7 @@ public RequestContextListener requestContextListener() {return new RequestContex
                RequestContextHolder.resetRequestAttributes();
            }
        };
-   }
+   }*/
  }
 
 
