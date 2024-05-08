@@ -39,18 +39,18 @@ mock-oauth2-server:
   clientId: dittClientId
   clientSecret: dinClientSecret
 
-db-saf:
+wiremock-saf:
   url: localhost
   port: 8081
-  combined: http://${db-saf.url}:${db-saf.port}
-  Service: ${db.combined} <- this can be changed to the  right endpoint in the url
+  combined: http://${wiremock-saf.url}:${wiremock-saf.port}
+  Service: ${wiremock-dok.combined} <- this can be changed to the  right endpoint in the url
   files: .
 
-db-dok:
+wiremock-dok:
   url: localhost
   port: 8081
-  combined: http://${db-dok.url}:${db-dok.port}
-  service: ${db-dok.combined}
+  combined: http://${wiremock-dok.url}:${wiremock-dok.port}
+  service: ${wiremock-dok.combined}
 
 spring:
   main:

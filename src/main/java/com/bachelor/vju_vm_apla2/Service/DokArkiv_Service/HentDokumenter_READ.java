@@ -19,7 +19,7 @@ public class HentDokumenter_READ {
 
     private static final Logger logger = LogManager.getLogger(HentDokumenter_READ.class);
 
-    @Value("${mock-oauth2-server.combined}")
+    @Value("${wiremock-dok.combined}")
     private String url;
 
 

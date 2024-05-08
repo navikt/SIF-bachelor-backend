@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 public class FeilRegistrer_DELETE {
     private static final Logger logger = LogManager.getLogger(HentDokumenter_READ.class);
 
-    @Value("${mock-oauth2-server.combined}")
+    @Value("${wiremock-dok.combined}")
     private String url;
 
     private final WebClient webClient;

@@ -29,7 +29,7 @@ public class OpprettNyeJournalposter_CREATE {
     private final ExtractDokumentIDinDTO extractDokumentIDinDTO;
 
     private final WebClient webClient;
-    @Value("{mock-oauth2-server.combined}")
+    @Value("${wiremock-dok.combined}")
     private String url;
     //setter opp HTTP syntax slik at vi kan gjøre kall på serverere (Serevere er erstattet med Wiremock)
     @Autowired

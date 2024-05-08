@@ -44,6 +44,7 @@ import java.util.logging.LogRecord;
 @Configuration
 @EnableJwtTokenValidation
 public class SecurityConfig {
+ //due to the use of webclient, the client spring did not work properly, so it is commented out for now
 /*@Bean
 public RequestContextListener requestContextListener() {return new RequestContextListener();}*/
    /* @Bean

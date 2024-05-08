@@ -16,10 +16,10 @@ public class CorsConfig {
    //wiremock url
  /*  @Value("${db-saf.combined}")
    private String db;*/
-   @Value("${db-saf.combined}")
+   @Value("${wiremock-saf.combined}")
    private String wiremocksaf;
 
-   @Value("${db-dok.combined}")
+   @Value("${wiremock-dok.combined}")
    private String wiremockdok;
     @Bean
     public WebMvcConfigurer corsconf() {
