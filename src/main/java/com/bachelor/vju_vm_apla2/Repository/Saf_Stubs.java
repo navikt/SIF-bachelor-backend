@@ -89,6 +89,7 @@ public class Saf_Stubs {
         //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST FEILHÅNDTERING/////////////////////////////////////////////////////////////
 
 
+
         // 400
         wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
                 .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
@@ -113,7 +114,6 @@ public class Saf_Stubs {
                                 "Kan ikke opprette journalpost"
                         )
                 ));
-
 
 
 
