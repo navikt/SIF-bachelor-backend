@@ -276,7 +276,7 @@ public class Saf_Stubs {
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
                                 "            \"tittel\": \"Topphemmelig.pdf\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
@@ -309,7 +309,7 @@ public class Saf_Stubs {
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
                                 "            \"tittel\": \"VeldigHemmelig.pdf\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
@@ -334,19 +334,19 @@ public class Saf_Stubs {
                                 "            \"dokumentInfoId\": \"00001111\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00002222\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00003333\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
@@ -371,13 +371,13 @@ public class Saf_Stubs {
                                 "            \"dokumentInfoId\": \"00004444\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00005555\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
@@ -402,7 +402,7 @@ public class Saf_Stubs {
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
@@ -427,25 +427,25 @@ public class Saf_Stubs {
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00008888\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00009999\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00010000\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
