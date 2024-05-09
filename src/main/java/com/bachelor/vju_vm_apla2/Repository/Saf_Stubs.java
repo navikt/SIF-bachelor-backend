@@ -47,6 +47,7 @@ public class Saf_Stubs {
 
         //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST/////////////////////////////////////////////////////////////
 
+        /*
         // Stub that checks the body for an "old" or "new" indicator
         wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
                 .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
@@ -81,6 +82,39 @@ public class Saf_Stubs {
                                 "  \"journalpostId\": \"467010364-new\",\n" +
                                 "  \"journalpostferdigstilt\": false\n" +
                                 "}")));
+
+         */
+
+
+        //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST FEILHÅNDTERING/////////////////////////////////////////////////////////////
+
+
+        // 400
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
+                        .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(400)
+                        .withBody(
+                                "Kan ikke opprette journalpost"
+                        )
+                ));
+
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"new\"}", true, true))
+                        .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(400)
+                        .withBody(
+                                "Kan ikke opprette journalpost"
+                        )
+                ));
+
+
 
 
 
@@ -745,19 +779,19 @@ public class Saf_Stubs {
         wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusUtgaar"))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withStatus(204)));
+                        .withStatus(200)));
 
         wireMockServer.stubFor(patch(urlPathMatching("/rest/journalpostapi/v1/journalpost/.*/feilregistrer/settStatusAvbryt"))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withStatus(204)));
+                        .withStatus(200)));
 
         wireMockServer.stubFor(patch(urlEqualTo("/rest/test"))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/json")
-                        .withStatus(204)));
+                        .withStatus(200)));
 
 
         // For å sette av MottattDato
