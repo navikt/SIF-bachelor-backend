@@ -1,7 +1,7 @@
 package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 
 import com.bachelor.vju_vm_apla2.ErrorHandling.CustomClientException;
-import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.OppdaterJournalpost_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Request.PostOppdaterJournalpost_DTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class OppdateringAvJournalposter_UPDATE {
         return "{\"date\": \"" + sdf.format(date) + "\"}";
     }
 
-    public Mono<ResponseEntity<Boolean>> oppdaterMottattDato(OppdaterJournalpost_DTO jpMetadata, HttpHeaders originalHeader) {
+    public Mono<ResponseEntity<Boolean>> oppdaterMottattDato(PostOppdaterJournalpost_DTO jpMetadata, HttpHeaders originalHeader) {
         logger.info("Vi er nå inn i oppdaterJournalpost for å oppdatere Journalpost med mottattDato");
 
         String journalpostID = jpMetadata.getJournalpostID();
