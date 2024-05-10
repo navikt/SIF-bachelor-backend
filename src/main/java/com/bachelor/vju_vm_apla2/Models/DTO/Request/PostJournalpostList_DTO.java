@@ -1,4 +1,4 @@
-package com.bachelor.vju_vm_apla2.Models.DTO.Saf;
+package com.bachelor.vju_vm_apla2.Models.DTO.Request;
 
 import com.bachelor.vju_vm_apla2.Models.POJO.Saf.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class GetJournalpostList_DTO {
+public class PostJournalpostList_DTO {
 
     private BrukerIdInput brukerId;
     private String fraDato;
