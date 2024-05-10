@@ -47,7 +47,7 @@ public class Saf_Stubs {
 
         //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST/////////////////////////////////////////////////////////////
 
-        /*
+
         // Stub that checks the body for an "old" or "new" indicator
         wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
                 .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
@@ -83,7 +83,7 @@ public class Saf_Stubs {
                                 "  \"journalpostferdigstilt\": false\n" +
                                 "}")));
 
-         */
+
 
 
         //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST FEILHÅNDTERING/////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ public class Saf_Stubs {
                         )
                 ));
 
-         */
+
 
         // 403
         wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
@@ -219,6 +219,8 @@ public class Saf_Stubs {
                                 "Internal server error"
                         )
                 ));
+
+         */
 
 
 
