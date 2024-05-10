@@ -116,7 +116,7 @@ public class Saf_Stubs {
                         )
                 ));
 
-         */
+
 
         // 401
         wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
@@ -142,6 +142,84 @@ public class Saf_Stubs {
                                 "Mangler tilgang til å opprette ny journalpost. Ugyldig OIDC token. Denne feilen gis dersom tokenet ikke har riktig format eller er utgått."
                         )
                 ));
+
+         */
+
+        // 403
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(403)
+                        .withBody(
+                                "Bruker mangler tilgang til å opprette journalpost på tema"
+                        )
+                ));
+
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"new\"}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(403)
+                        .withBody(
+                                "Bruker mangler tilgang til å opprette journalpost på tema"
+                        )
+                ));
+
+        // 409
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(409)
+                        .withBody(
+                                "Journalpost med angitt eksternReferanseId eksisterer allerede. Ingen journalpost ble opprettet."
+                        )
+                ));
+
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"new\"}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(409)
+                        .withBody(
+                                "Journalpost med angitt eksternReferanseId eksisterer allerede. Ingen journalpost ble opprettet."
+                        )
+                ));
+
+        // 500
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(500)
+                        .withBody(
+                                 "Internal server error"
+                        )
+                ));
+
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"new\"}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(500)
+                        .withBody(
+                                "Internal server error"
+                        )
+                ));
+
 
 
 
