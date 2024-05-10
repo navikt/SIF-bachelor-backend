@@ -33,17 +33,17 @@ services:
        #if you want  to change the entire service url, you can look at db.Service global variable
        #IMPORTANT::: CHANGE the file location for the wiremock server to /vju/__files from ., and back when you dont need it anymore
 
-#  mock-oauth2-server:
-#    image: ghcr.io/navikt/mock-oauth2-server:2.1.0
-#    ports:
-#      - "8282:8282"
-#    volumes:
-#      - ./src/main/resources/application.yaml:/app/application.yaml
-##      to use the right ouath2server in the frontend:
-##    networks:
-##      oauth2server:
-##        aliases:
-##          - ouath2server
-#    environment:
-#      LOG_LEVEL: "debug"
-#      SERVER_PORT: 8282
+  mock-oauth2-server:
+    image: ghcr.io/navikt/mock-oauth2-server:2.1.0
+    ports:
+      - "8282:8282"
+    volumes:
+      - ./src/main/resources/application.yaml:/app/application.yaml
+#      to use the right ouath2server in the frontend:
+#    networks:
+#      oauth2server:
+#        aliases:
+#          - ouath2server
+    environment:
+      LOG_LEVEL: "debug"
+      SERVER_PORT: 8282
