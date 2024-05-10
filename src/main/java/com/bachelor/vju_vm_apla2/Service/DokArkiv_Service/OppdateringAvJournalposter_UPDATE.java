@@ -46,6 +46,7 @@ public class OppdateringAvJournalposter_UPDATE {
         return "{\"date\": \"" + sdf.format(date) + "\"}";
     }
 
+
     public Mono<ResponseEntity<Boolean>> oppdaterMottattDato(OppdaterJournalpost_DTO jpMetadata, HttpHeaders originalHeader) {
         logger.info("Vi er nå inn i oppdaterJournalpost for å oppdatere Journalpost med mottattDato");
 
