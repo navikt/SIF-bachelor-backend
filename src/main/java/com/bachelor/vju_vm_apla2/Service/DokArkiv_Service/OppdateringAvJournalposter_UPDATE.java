@@ -72,7 +72,7 @@ public class OppdateringAvJournalposter_UPDATE {
                             String origin = "OppdateringAvJournalposter_UPDATE - oppdaterMottattDato";
                             String errorMessage = String.format("Feil ved kall til ekstern tjeneste (DokArkiv): %d - %s", statusValue, errorBody);
                             logger.error("ERROR: " + origin + errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorMessage, origin));
+                            return Mono.just(new CustomClientException(statusValue, errorMessage, origin));
                         }))
                 .bodyToMono(Boolean.class)
                 .map(ResponseEntity::ok)

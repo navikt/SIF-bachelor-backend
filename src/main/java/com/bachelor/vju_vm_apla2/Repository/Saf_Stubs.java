@@ -89,6 +89,7 @@ public class Saf_Stubs {
         //////////////////////////////////////////////////////////////STUBS FOR OPPRETT JOURNALPOST FEILHÅNDTERING/////////////////////////////////////////////////////////////
 
 
+        /*
 
         // 400
         wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
@@ -112,6 +113,33 @@ public class Saf_Stubs {
                         .withStatus(400)
                         .withBody(
                                 "Kan ikke opprette journalpost"
+                        )
+                ));
+
+         */
+
+        // 401
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"old\"}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(401)
+                        .withBody(
+                                "Mangler tilgang til å opprette ny journalpost. Ugyldig OIDC token. Denne feilen gis dersom tokenet ikke har riktig format eller er utgått."
+                        )
+                ));
+
+        wireMockServer.stubFor(post(urlEqualTo("/rest/journapostapi/v1/journalpost?forsoekFerdigstill=false"))
+                .withRequestBody(equalToJson("{\"versjon\":\"new\"}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(401)
+                        .withBody(
+                                "Mangler tilgang til å opprette ny journalpost. Ugyldig OIDC token. Denne feilen gis dersom tokenet ikke har riktig format eller er utgått."
                         )
                 ));
 

@@ -89,7 +89,7 @@ public class OpprettNyeJournalposter_CREATE {
                     Mono<ResponeReturnFromDokArkiv_DTO> responseForNewMeta = postNewJournalpost(tuple.getT2(), originalHeader);
                     return Mono.zip(responseForOldMeta, responseForNewMeta, List::of)
                     .onErrorResume(e -> {
-                        logger.error("Bæsj_10 FAIL: DoArkiv_Service - createJournalpost_Service -  Feil oppstått ved prosessering av opprettnyejournalposter: {}", e.getMessage());
+                        logger.error("FAIL: DoArkiv_Service - createJournalpost_Service -  Feil oppstått ved prosessering av opprettnyejournalposter: {}", e.getMessage());
                         return Mono.error((e));
                     });
 
@@ -99,9 +99,14 @@ public class OpprettNyeJournalposter_CREATE {
                     return ResponseEntity.ok().body(responses);
                 })
                 .onErrorResume(e -> {
-                    logger.error("BÆSJ_99 FAIL - DoArkiv_Service - createJournalpost_Service - Feil oppstått ved prosessering av opprettnyejournalposter: {}", e.getMessage());
-                    return Mono.error((new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DoArkiv_Service - OpprettNyeJournalposter_CREATE - FAIL - Feil oppstått ved prosessering av opprettnyejournalposter", e)));  // Sender en INTERNAL_SERVER_ERROR respons tilbake til klienten
+                    if (e instanceof CustomClientException) {
+                        return Mono.error(e);
+                    } else {
+                        logger.error("FAIL - DoArkiv_Service - createJournalpost_Service - Feil oppstått ved prosessering av opprettnyejournalposter: {}", e.getMessage());
+                        return Mono.error((new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DoArkiv_Service - OpprettNyeJournalposter_CREATE - FAIL - Feil oppstått ved prosessering av opprettnyejournalposter", e)));
+                    }
                 });
+
     }
 
 
@@ -148,17 +153,16 @@ public class OpprettNyeJournalposter_CREATE {
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             int statusValue = clientResponse.statusCode().value();
-                            String errorMessage = "Bæsj_2: DoArkiv_Service - postNewJournalpost() - FAIL - Error calling external service: " + statusValue + " - " + errorBody;
-                            logger.error("Bæsj: DoArkiv_Service - postNewJournalpost() - FAIL - Error calling external service:  {}", errorMessage);
-                            return Mono.just(new CustomClientException(statusValue, errorMessage, "postNewJournalpost"));
+                            logger.error("DoArkiv_Service - postNewJournalpost() - FAIL - Error calling external service:  {}", errorBody);
+                            return Mono.just(new CustomClientException(statusValue, errorBody, "postNewJournalpost"));
                         }))
                 .bodyToMono(ResponeReturnFromDokArkiv_DTO.class)
                 .onErrorResume(e -> {
                     if (e instanceof CustomClientException){
                         return Mono.error(e);
                     } else {
-                        logger.error("Bæsj_3: DoArkiv_Service - postNewJournalpost - FAIL - Error during POST request for: {}", journalPost.getTittel());
-                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Bæsj_4: DoArkiv_Service - postNewJournalpost - En uventet feil oppstod, vennligst prøv igjen senere.", e));
+                        logger.error("DoArkiv_Service - postNewJournalpost - FAIL - Error during POST request for: {}", journalPost.getTittel());
+                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DoArkiv_Service - postNewJournalpost - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                     }
                     });
     }

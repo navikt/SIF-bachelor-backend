@@ -77,7 +77,7 @@ public class HentDokumenter_READ {
                             String origin = "HentDokumenter_READ - hentDokument_DokArkiv" ;
                             String errorMessage = String.format("Feil ved kall til ekstern tjeneste (DokArkiv): %d - %s", statusValue, errorBody);
                             logger.error("ERROR: " + origin + errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorMessage, origin));
+                            return Mono.just(new CustomClientException(statusValue, errorBody, origin));
                         }))
                 .bodyToMono(byte[].class)
                 .map(bytes -> Base64.getEncoder().encodeToString(bytes))
@@ -85,7 +85,7 @@ public class HentDokumenter_READ {
                     if (e instanceof CustomClientException) {
                         return Mono.error(e);
                     } else {
-                        logger.error("ERROR: HentDokumenter_READ - hentDokument_DokArkiv - En uventet feil oppstod: ", e);
+                        logger.error("FAIL: HentDokumenter_READ - hentDokument_DokArkiv - En uventet feil oppstod: ", e);
                         return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "HentDokumenter_READ - hentDokument_DokArkiv - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                     }
                 });
