@@ -4,6 +4,8 @@ LABEL authors="JAGO industries"
 #COPY /.mvn/maven-wrapper.jar maven-wrapper.jar
 #COPY mvnw.cmd mvnw.cmd
 WORKDIR vju
+RUN ./mvnw compile
+RUN ./mvnw package -Dmaven.test.skip
 #Can also be commended out for a real db
 COPY  src/main/resources/__files /vju/resources/__files
 COPY  target/*.jar /vju/sif-vju-backend.jar
