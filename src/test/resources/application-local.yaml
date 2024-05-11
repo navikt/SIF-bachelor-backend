@@ -4,10 +4,10 @@ no.nav.security.jwt:
   expirythreshold: 10 #threshold in minutes until token expires
   issuer:
     issuer1:
-      discovery-url: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}/default/.well-known/openid-configuration
+      discovery-url: https://bachelor.kinde.com/.well-known/openid-configuration
       accepted_audience: default
     issuer2:
-      discovery-url: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}/default/.well-known/openid-configuration
+      discovery-url: https://bachelor.kinde.com/.well-known/openid-configuration
       accepted_audience: default
   client:
     registration:
@@ -34,7 +34,7 @@ FRONTEND:
 mock-oauth2-server:
   url: localhost
   port: 8282
-  combined: http://${mock-oauth2-server.url}:${mock-oauth2-server.port}
+  combined: https://bachelor.kinde.com
   token-url: ${mock-oauth2-server.combined}/default/token
   clientId: dittClientId
   clientSecret: dinClientSecret

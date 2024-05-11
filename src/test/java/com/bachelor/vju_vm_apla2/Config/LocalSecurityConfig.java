@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Profile;
 @Profile("local")
 @Configuration
 //@EnableOAuth2Client(cacheEnabled = true) //enable ouath2client also makes sure that the tokens are vaildated through the webclient as well as
-@EnableMockOAuth2Server
+//@EnableMockOAuth2Server
 public class LocalSecurityConfig {
 }
