@@ -17,7 +17,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -38,8 +37,7 @@ public class SafControllerUnitTest {
     SafController safController;
 
 
-    @Mock
-    WebClient wc;
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @Test
 //we aregoing to have 2 different version of the same test: one WITH the the test_enviorment, and one without
     public void hentJournalpostTest() {
@@ -60,7 +58,6 @@ public class SafControllerUnitTest {
         tt.add(Tema.AAP);
         BrukerIdInput bIdInput= new BrukerIdInput("001",BrukerIdType.FNR);
         GetJournalpostList_DTO brukerId = new GetJournalpostList_DTO(new BrukerIdInput(bIdInput.getId(), bIdInput.getType()), "2024-12-12", "2025-12-12", jpts, jptts, tt);
-        Dokumentoversikt  dO = new Dokumentoversikt();
         ReturnFromGraphQl_DTO fgqlTest =  new ReturnFromGraphQl_DTO();
         Mono <ReturnFromGraphQl_DTO> MfgglTest = Mono.just(fgqlTest);
         Mockito.when(safServiceMock.hentJournalpostListe_Test_ENVIRONMENT(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
@@ -68,16 +65,15 @@ public class SafControllerUnitTest {
         //Not sure how this works, but rolls with it for now
         StepVerifier.create(resultMono).assertNext(fraGrapQlDtoResponseEntity -> {
             assertEquals(HttpStatus.OK, fraGrapQlDtoResponseEntity.getStatusCode());
-            assertEquals("application/json", fraGrapQlDtoResponseEntity.getHeaders().getContentType().toString());
+            assertEquals("application/json", Objects.requireNonNull(fraGrapQlDtoResponseEntity.getHeaders().getContentType()).toString());
             assertEquals("inline", fraGrapQlDtoResponseEntity.getHeaders().getFirst("Content-Disposition"));
             assertEquals(fgqlTest, fraGrapQlDtoResponseEntity.getBody());
         });
     }
 
+    @SuppressWarnings({"ReactiveStreamsUnusedPublisher", "MismatchedQueryAndUpdateOfCollection", "AssertBetweenInconvertibleTypes"})
     @Test(expected=Exception.class)
     public void hentJornalpostThrowE(){
-        Dokumentoversikt  dO = new Dokumentoversikt();
-        ReturnFromGraphQl_DTO fgqlTest = new ReturnFromGraphQl_DTO(dO, "hello world");
         Journalpost jp1 = new Journalpost();
         List<Journalpost> JPtester = new ArrayList<>();
         JPtester.add(jp1);
@@ -98,6 +94,7 @@ public class SafControllerUnitTest {
 
         assertEquals(any(Exception.class), res);
     }
+    @SuppressWarnings({"ReactiveStreamsUnusedPublisher", "MismatchedQueryAndUpdateOfCollection"})
     @Test
     public void hentJournalpostTestFail() {
 
@@ -124,7 +121,6 @@ public class SafControllerUnitTest {
 
         headers.add("Authorization", "Bearer ");
         String res = String.valueOf(safController.hentJournalpostListe(brukerId, headers));
-        String cmp = String.valueOf(Mono.just(ResponseEntity.status(HttpStatus.OK).header("Content-Type", "application/json").header("Content-Disposition", "inline").body(fgqlTest)));
         assertEquals("MonoOnErrorResume",res );
     }
 
