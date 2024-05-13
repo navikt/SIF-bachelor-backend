@@ -55,7 +55,7 @@ public class FeilRegistrer_DELETE {
                             String origin = "HentDokumenter_READ - hentDokument_DokArkiv" ;
                             String errorMessage = String.format("Feil ved kall til ekstern tjeneste (DokArkiv): %d - %s", statusValue, errorBody);
                             logger.error("ERROR: " + origin + errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorMessage, origin));
+                            return Mono.just(new CustomClientException(statusValue, errorBody, origin));
                         }))
                 .bodyToMono(Boolean.class)
                 .map(ResponseEntity::ok)

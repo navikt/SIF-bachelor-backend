@@ -53,7 +53,8 @@ public class ErrorHandling {
             logger.info("Oppretter JSON feilressurs med melding: {}", errorMessage);
 
             // Sanitize the errorMessage to escape any double quotes
-            String jsonErrorMessage = "{\"errorMessage\": \"" + errorMessage.replace("\"", "\\\"") + "\"}";
+            String jsonErrorMessage = "\"" + errorMessage.replace("\"", "\\\"") + "\"";
+
             return (T) new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
         } else {
             // Hvis innholdstypen ikke er JSON, oppretter vi en generisk ByteArrayResource.
