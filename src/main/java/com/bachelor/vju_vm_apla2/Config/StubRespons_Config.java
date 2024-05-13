@@ -18,7 +18,7 @@ Hovedformålet med å implementere en ResponseDefinitionTransformer er å
  */
 
 //TODO: Skrive om denne klassen
-public class StubResponsConfig extends ResponseDefinitionTransformer {
+public class StubRespons_Config extends ResponseDefinitionTransformer {
 
     @Override
     public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition, com.github.tomakehurst.wiremock.common.FileSource files, com.github.tomakehurst.wiremock.extension.Parameters parameters) {
