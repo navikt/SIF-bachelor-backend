@@ -153,11 +153,8 @@ DokArkivController dokArkivController;
     Mockito.when(opprettNyeJournalposter_create.createJournalpost_Service(journalpost, headers )).thenThrow(new CustomClientException(404, "hjelp", "hei"));
 
     Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>>res = dokArkivController.createJournalpost_Controller(journalpost, headers);
-   assertEquals("hjelp", res.toString());
     StepVerifier.create(res).expectErrorMatches(throwable -> throwable instanceof CustomClientException &&
             throwable.getMessage().contains("hjelp")).verify();
-
-    //assertEquals(ret.doOnSuccess( response1 -> logger.info("DokArkivController - createJournalpost() - Success - Response sent to client: {}", response1.getStatusCode())).toString(), res.toString());
 };
 
   /*  @Test(expected = CustomClientException.class)
