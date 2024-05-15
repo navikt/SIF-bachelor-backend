@@ -43,7 +43,7 @@ import java.util.logging.LogRecord;
 //@EnableOAuth2Client(cacheEnabled = true) //enable ouath2client also makes sure that the tokens are vaildated through the webclient as well as
 @Configuration
 @EnableJwtTokenValidation
-public class SecurityConfig {
+public class Security_Config {
  //due to the use of webclient, the client spring did not work properly, so it is commented out for now
 /*@Bean
 public RequestContextListener requestContextListener() {return new RequestContextListener();}*/

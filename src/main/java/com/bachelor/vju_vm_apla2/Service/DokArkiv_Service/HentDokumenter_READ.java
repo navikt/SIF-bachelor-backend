@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
@@ -25,9 +26,13 @@ public class HentDokumenter_READ {
 
     private final WebClient webClient;
 
-    @Autowired
     public HentDokumenter_READ() {
         this.webClient = WebClient.builder()
+                .exchangeStrategies(ExchangeStrategies.builder()
+                        .codecs(clientDefaultCodecsConfigurer -> {
+                            clientDefaultCodecsConfigurer.defaultCodecs().maxInMemorySize(500 * 1024 * 1024);
+                        })
+                        .build())
                 .baseUrl(url)
                 .build();
     }
@@ -73,7 +78,7 @@ public class HentDokumenter_READ {
                             String origin = "HentDokumenter_READ - hentDokument_DokArkiv" ;
                             String errorMessage = String.format("Feil ved kall til ekstern tjeneste (DokArkiv): %d - %s", statusValue, errorBody);
                             logger.error("ERROR: " + origin + errorMessage);
-                            return Mono.error(new CustomClientException(statusValue, errorMessage, origin));
+                            return Mono.just(new CustomClientException(statusValue, errorBody, origin));
                         }))
                 .bodyToMono(byte[].class)
                 .map(bytes -> Base64.getEncoder().encodeToString(bytes))
@@ -81,7 +86,7 @@ public class HentDokumenter_READ {
                     if (e instanceof CustomClientException) {
                         return Mono.error(e);
                     } else {
-                        logger.error("ERROR: HentDokumenter_READ - hentDokument_DokArkiv - En uventet feil oppstod: ", e);
+                        logger.error("FAIL: HentDokumenter_READ - hentDokument_DokArkiv - En uventet feil oppstod: ", e);
                         return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "HentDokumenter_READ - hentDokument_DokArkiv - En uventet feil oppstod, vennligst prøv igjen senere.", e));
                     }
                 });

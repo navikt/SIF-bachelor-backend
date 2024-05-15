@@ -2,7 +2,7 @@ package com.bachelor.vju_vm_apla2;
 
 import com.bachelor.vju_vm_apla2.Controller.SafController;
 import com.bachelor.vju_vm_apla2.Models.DTO.Saf.ReturnFromGraphQl_DTO;
-import com.bachelor.vju_vm_apla2.Models.DTO.Saf.GetJournalpostList_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Request.PostJournalpostList_DTO;
 import com.bachelor.vju_vm_apla2.Models.POJO.Saf.*;
 import com.bachelor.vju_vm_apla2.Service.Saf_Service.SafService;
 import lombok.SneakyThrows;
@@ -39,7 +39,6 @@ public class SafControllerUnitTest {
 
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @Test
-//we aregoing to have 2 different version of the same test: one WITH the the test_enviorment, and one without
     public void hentJournalpostTest() {
 
         HttpHeaders headers = new HttpHeaders();
@@ -57,10 +56,10 @@ public class SafControllerUnitTest {
 
         tt.add(Tema.AAP);
         BrukerIdInput bIdInput= new BrukerIdInput("001",BrukerIdType.FNR);
-        GetJournalpostList_DTO brukerId = new GetJournalpostList_DTO(new BrukerIdInput(bIdInput.getId(), bIdInput.getType()), "2024-12-12", "2025-12-12", jpts, jptts, tt);
+        PostJournalpostList_DTO brukerId = new PostJournalpostList_DTO(new BrukerIdInput(bIdInput.getId(), bIdInput.getType()), "2024-12-12", "2025-12-12", jpts, jptts, tt);
         ReturnFromGraphQl_DTO fgqlTest =  new ReturnFromGraphQl_DTO();
         Mono <ReturnFromGraphQl_DTO> MfgglTest = Mono.just(fgqlTest);
-        Mockito.when(safServiceMock.hentJournalpostListe_Test_ENVIRONMENT(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
+       Mockito.when(safServiceMock.hentJournalpostListe(any(PostJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
         Mono<ResponseEntity<ReturnFromGraphQl_DTO>> resultMono = safController.hentJournalpostListe(brukerId, headers);
         //Not sure how this works, but rolls with it for now
         StepVerifier.create(resultMono).assertNext(fraGrapQlDtoResponseEntity -> {
@@ -86,10 +85,10 @@ public class SafControllerUnitTest {
         List<Tema>tt = new ArrayList<>();
         HttpHeaders headers = new HttpHeaders();
         BrukerIdInput bk0 = new BrukerIdInput("hei", BrukerIdType.FNR);
-        GetJournalpostList_DTO DTO = new GetJournalpostList_DTO(bk0, "2023-10-20", "2023-11-20",jpts, jptts, tt);
+        PostJournalpostList_DTO DTO = new PostJournalpostList_DTO(bk0, "2023-10-20", "2023-11-20",jpts, jptts, tt);
         headers.add("Authorization", "bearer");
         //trying without mocking anything as we will throw an exception
-        Mockito.when(safServiceMock.hentJournalpostListe(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
+        Mockito.when(safServiceMock.hentJournalpostListe(any(PostJournalpostList_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
         String res = String.valueOf(safController.hentJournalpostListe(DTO, headers));
 
         assertEquals(any(Exception.class), res);
@@ -112,11 +111,11 @@ public class SafControllerUnitTest {
 
         tt.add(Tema.AAP);
         BrukerIdInput bIdInput= new BrukerIdInput("001",BrukerIdType.FNR);
-        GetJournalpostList_DTO brukerId = new GetJournalpostList_DTO(bIdInput, "2024-12-12", "2025-12-12", jpts, jptts, tt);
+        PostJournalpostList_DTO brukerId = new PostJournalpostList_DTO(bIdInput, "2024-12-12", "2025-12-12", jpts, jptts, tt);
         Dokumentoversikt  dO = new Dokumentoversikt();
         ReturnFromGraphQl_DTO fgqlTest = new ReturnFromGraphQl_DTO(dO, "hello world");
         Mono <ReturnFromGraphQl_DTO> MfgglTest = Mono.just(Objects.requireNonNull(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).contentType(MediaType.APPLICATION_JSON).body(fgqlTest).getBody()));
-        Mockito.when(safServiceMock.hentJournalpostListe_Test_ENVIRONMENT(any(GetJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
+        Mockito.when(safServiceMock.hentJournalpostListe_Test_ENVIRONMENT(any(PostJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
 
 
         headers.add("Authorization", "Bearer ");
@@ -141,7 +140,6 @@ public class SafControllerUnitTest {
 
         assertEquals(cmp, res);
     }
-    //todo: write unit tests for sec controller:
 
 
 }
