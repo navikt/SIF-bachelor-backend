@@ -31,23 +31,23 @@ logging.level:
 FRONTEND:
   COMBINED: http://${FRONTEND.URL}:${FRONTEND.PORT}
   URL: localhost
-  PORTS: 3000
+  PORT: 3000
 mock-oauth2-server:
   url: mock-oauth2-server
   port: 8282
   combined: https://bachelor.kinde.com
   token-url: ${mock-oauth2-server.combined}/default/token
-  clientId: 84cea90adf4948289954d52a02eae104
+
 
 wiremock-saf:
   url: localhost
   port: 8081
   combined: http://${wiremock-saf.url}:${wiremock-saf.port}
-  Service: ${wiremock-saf.combined}/mock # <- this can be changed to the  right endpoint in the url
+  Service: ${wiremock-saf.combined} # <- this can be changed to the  right endpoint in the url
   files: .
 
 wiremock-dok:
     url: localhost
     port: 8081
     combined: http://${wiremock-dok.url}:${wiremock-dok.port}
-    service: ${wiremock-dok.combined}/mock
+    service: ${wiremock-dok.combined}

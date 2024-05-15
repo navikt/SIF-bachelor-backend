@@ -7,9 +7,9 @@ also: **Remember to remove the /mock before the real endpoint first**
 ### How to prepare the project for the dockerfile:
 **The compose is depended on a frontend image, please remeber to create a frontend image!**
 
-The dockerfile looks after jar file in the target folder.
+The dockerfile looks after jar file in the target folder. **This is created in the dockerfile by multistaging**. 
 
-You can create a jar file by running
+if you need to create a manual jar file you can use teese two commands. 
 
 ```bash
 ./mvnw compile
@@ -18,6 +18,6 @@ and then:
 ```bash 
 ./mvnw package -Dmaven.test.skip
 ```
-due to one of the test failing we need to flag the maven compiler to skips tests for now, this will be a priority to fix!
+
 
 After this, the dockerfile is ready to use
