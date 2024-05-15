@@ -37,7 +37,7 @@ public class SafControllerUnitTest {
     SafController safController;
 
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+
     @Test
     public void hentJournalpostTest() {
 
@@ -70,7 +70,7 @@ public class SafControllerUnitTest {
         });
     }
 
-    @SuppressWarnings({"ReactiveStreamsUnusedPublisher", "MismatchedQueryAndUpdateOfCollection", "AssertBetweenInconvertibleTypes"})
+
     @Test(expected=Exception.class)
     public void hentJornalpostThrowE(){
         Journalpost jp1 = new Journalpost();
@@ -93,7 +93,7 @@ public class SafControllerUnitTest {
 
         assertEquals(any(Exception.class), res);
     }
-    @SuppressWarnings({"ReactiveStreamsUnusedPublisher", "MismatchedQueryAndUpdateOfCollection"})
+
     @Test
     public void hentJournalpostTestFail() {
 
