@@ -11,7 +11,6 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 
 @Configuration
 public class WireMockConfig {
-
     //setter opp wiremock server og enabler logging
     /* @Beans means that the Spring IOC, which manages specific instances or objects, should handle the method
        wireMockServer() and create a bean out of it. initMethod attribute states what method should be called
@@ -33,7 +32,7 @@ public class WireMockConfig {
         return new WireMockServer(options()
                 .bindAddress(saf_url)
                 .port(saf_port)
-                .extensions(new StubResponsConfig())
+                .extensions(new StubRespons_Config())
                 /* Below is the classpath which is "." meaning current classpath root, where WireMock will look
                    for files such as stubs. */
                 .usingFilesUnderClasspath(files) //change this one for not in use with docker //IMPORTANT: CHANGE THIS WHEN NOT CREATING DOCKER IMAGES TO .

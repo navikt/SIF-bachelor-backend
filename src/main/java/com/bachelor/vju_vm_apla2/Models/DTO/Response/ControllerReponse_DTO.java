@@ -1,4 +1,4 @@
-package com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv;
+package com.bachelor.vju_vm_apla2.Models.DTO.Response;
 
 
 import com.bachelor.vju_vm_apla2.Models.POJO.Saf.Journalpost;

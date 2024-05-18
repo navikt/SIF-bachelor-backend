@@ -2,7 +2,7 @@ package com.bachelor.vju_vm_apla2.Controller;
 
 import com.bachelor.vju_vm_apla2.ErrorHandling.ErrorHandling;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.CreateJournalpost_DTO;
-import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.OppdaterJournalpost_DTO;
+import com.bachelor.vju_vm_apla2.Models.DTO.Request.PostOppdaterJournalpost_DTO;
 import com.bachelor.vju_vm_apla2.Models.DTO.DokArkiv.ResponeReturnFromDokArkiv_DTO;
 import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.FeilRegistrer_DELETE;
 import com.bachelor.vju_vm_apla2.Service.DokArkiv_Service.OpprettNyeJournalposter_CREATE;
@@ -69,7 +69,7 @@ public class DokArkivController {
 
     @CrossOrigin
     @PostMapping("/oppdaterJournalpost")
-    public Mono<ResponseEntity<Boolean>> oppdaterJournalpost(@RequestBody OppdaterJournalpost_DTO meta, @RequestHeader HttpHeaders headers){
+    public Mono<ResponseEntity<Boolean>> oppdaterJournalpost(@RequestBody PostOppdaterJournalpost_DTO meta, @RequestHeader HttpHeaders headers){
         return oppdaterJournalposter_UPDATE.oppdaterMottattDato(meta, headers)
                 .onErrorResume(e -> {
 
