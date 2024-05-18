@@ -560,6 +560,38 @@ public class SafStubs {
                                 "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
+
+                                "      {\n" +
+                                "        \"journalpostId\": \"123456123\",\n" +
+                                "        \"tittel\": \"Ekstremt hemmelig dokument\",\n" +
+                                "        \"journalposttype\": \"I\",\n" +
+                                "        \"journalstatus\": \"MOTTATT\",\n" +
+                                "        \"tema\": \"SYK\",\n" +
+                                "        \"datoOpprettet\": \"2024-03-02T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [\n" +
+                                "          {\n" +
+                                "            \"dato\": \"2023-05-09T12:00:00Z\",\n" +
+                                "            \"datotype\": \"DATO_REGISTRERT\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00007777\",\n" +
+                                "            \"tittel\": \"VeldigHemmelig.pdf\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"16728392011\",\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Eldar Vågan\",\n" +
+                                "          \"land\": \"Norge\"\n" +
+                                "        }\n" +
+                                "      },\n" +
+
                                 "      {\n" +
                                 "        \"journalpostId\": \"429101111\",\n" +
                                 "        \"tittel\": \"Heisann sveisann\",\n" +
