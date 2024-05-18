@@ -252,7 +252,15 @@ public class SafStubs {
 
         //Mock for søkeresultat "004". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
-                .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"004\"}}", true, true))
+                .withRequestBody(equalToJson("{\n" +
+                        "  \"brukerId\": {\n" +
+                        "    \"id\": \"004\",\n" +
+                        "    \"type\": \"FNR\"\n" +
+                        "  },\n" +
+                        "  \"journalposttyper\": [],\n" +
+                        "  \"journalstatuser\": [],\n" +
+                        "  \"tema\": []\n" +
+                        "}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
@@ -268,21 +276,20 @@ public class SafStubs {
                                 "        \"journalstatus\": \"FERDIGSTILT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2024-03-01T12:00:00Z\",\n" +
-
                                 "        \"relevanteDatoer\": [],\n" +
-
                                 "        \"dokumenter\": [\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
                                 "            \"tittel\": \"Topphemmelig.pdf\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"67298374528\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Raus Trane\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Raus Trane\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
@@ -305,13 +312,14 @@ public class SafStubs {
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
                                 "            \"tittel\": \"VeldigHemmelig.pdf\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"16728392011\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Eldar Vågan\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Eldar Vågan\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
@@ -329,25 +337,26 @@ public class SafStubs {
                                 "            \"dokumentInfoId\": \"00001111\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00002222\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00003333\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"77351293720\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Maren Lundby\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Maren Lundby\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
@@ -365,19 +374,20 @@ public class SafStubs {
                                 "            \"dokumentInfoId\": \"00004444\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00005555\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"11235468820\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Henrik Ibsen\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Henrik Ibsen\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
@@ -395,13 +405,14 @@ public class SafStubs {
                                 "            \"dokumentInfoId\": \"00006666\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"45987612091\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Sigrid Undset\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Sigrid Undset\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
@@ -419,38 +430,107 @@ public class SafStubs {
                                 "            \"dokumentInfoId\": \"00007777\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00008888\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00009999\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          },\n" +
                                 "          {\n" +
                                 "            \"dokumentInfoId\": \"00010000\",\n" +
                                 "            \"tittel\": \"MASKERT_FELT\",\n" +
                                 "            \"logiskeVedlegg\": [],\n" +
-                                "            \"brevkode\": \"NAV 15.04-20\"\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
                                 "        \"avsenderMottaker\": {\n" +
                                 "          \"id\": \"89567423011\",\n" +
-                                "          \"idType\": \"FNR\",\n" +
-                                "          \"navn\": \"Liv Ullmann\"\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Liv Ullmann\",\n" +
+                                "          \"land\": \"Norge\"\n" +
                                 "        }\n" +
                                 "      }\n" +
                                 "    ]\n" +
                                 "  }\n" +
                                 "}")));
 
-
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
+                .withRequestBody(equalToJson("{\n" +
+                        "  \"brukerId\": {\"id\": \"004\", \"type\": \"FNR\"},\n" +
+                        "  \"journalposttyper\": [],\n" +
+                        "  \"journalstatuser\": [\"FERDIGSTILT\"],\n" +
+                        "  \"tema\": []\n" +
+                        "}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Allow all origins
+                        .withHeader("Content-Type", "application/json") // Set correct Content-Type
+                        .withStatus(200) // Return HTTP 200 OK
+                        .withBody("{\n" +
+                                "  \"dokumentoversikt\": {\n" +
+                                "    \"journalposter\": [\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"666111111\",\n" +
+                                "        \"tittel\": \"Hemmelig dokument\",\n" +
+                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalstatus\": \"FERDIGSTILT\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2024-03-01T12:00:00Z\",\n" +
+                                "        \"relevanteDatoer\": [],\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00006666\",\n" +
+                                "            \"tittel\": \"Topphemmelig.pdf\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"67298374528\",\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Raus Trane\",\n" +
+                                "          \"land\": \"Norge\"\n" +
+                                "        }\n" +
+                                "      },\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"666222222\",\n" +
+                                "        \"tittel\": \"Enda et hemmelig dokument\",\n" +
+                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalstatus\": \"FERDIGSTILT\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2024-03-02T12:00:00Z\",\n" +
+                                "        \"relevanteDatoer\": [\n" +
+                                "          {\n" +
+                                "            \"dato\": \"2024-03-01T12:00:00Z\",\n" +
+                                "            \"datotype\": \"DATO_REGISTRERT\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00007777\",\n" +
+                                "            \"tittel\": \"VeldigHemmelig.pdf\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"16728392011\",\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Eldar Vågan\",\n" +
+                                "          \"land\": \"Norge\"\n" +
+                                "        }\n" +
+                                "      }\n" +
+                                "    ]\n" +
+                                "  }\n" +
+                                "}")));
 
         /////////////////////////////////////////////////////////////////////////FILTER STUBS/////////////////////////////////////////////////////////////////////////////////////////////////////
 
