@@ -5,10 +5,10 @@ no.nav.security.jwt:
   issuer:
     issuer1:
       discovery-url: https://bachelor.kinde.com/.well-known/openid-configuration
-      accepted_audience: default
+      accepted_audience: https://bachelor.kinde.com/api
     issuer2:
       discovery-url: https://bachelor.kinde.com/.well-known/openid-configuration
-      accepted_audience: default
+      accepted_audience: https://bachelor.kinde.com/api
   client:
     registration:
       webClient:
