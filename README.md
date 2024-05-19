@@ -1,13 +1,13 @@
 # NAV-IT-SIF-bachelor backend
-| java version:   | _21_    |  
-|-----------------|---------|
-| **build system:**   | _maven_ |
-| **spring version:** | _3.2.2_ |
+| java version:   | _21_         |  
+|--------------|--------------|
+| **build system:**   | _maven_      |
+| **spring version:** | _3.2.2_      |
 
 
 
 
-#### NOTE: REMEMBER TO ADD A OWN OAUTH SERVER
+#### NOTE: REMEMBER TO ADD A OWN OAUTH SERVER (we use kinde, but if you want to use an alternative, or our own ouath2 server, this needs to be added,)
 
 
 **We have some test methods, this need to be changed to the enviorment methods in a dev/real database method**
