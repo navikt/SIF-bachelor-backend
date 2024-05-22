@@ -20,7 +20,7 @@ public class HentDokumenter_READ {
 
     private static final Logger logger = LogManager.getLogger(HentDokumenter_READ.class);
 
-    @Value("${wiremock-dok.combined}")
+    @Value("${wiremock-saf.combined}")
     private String url;
 
 
