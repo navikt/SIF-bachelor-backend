@@ -187,7 +187,7 @@ public class ExtractDokumentIDinDTO {
         // Iterate over all documents and their variants to replace document IDs
         for (Dokumenter dokument : metadata.getDokumenter()) {
             for (Dokumentvariant variant : dokument.getDokumentvarianter()) {
-                Mono<String> documentIdMono = hentDokumenter_READ.hentDokument_DokArkiv(variant.getFysiskDokument(), journalpostId)
+                Mono<String> documentIdMono = hentDokumenter_READ.hentDokument_SAF(variant.getFysiskDokument(), journalpostId)
                         .doOnNext(newId -> logger.info("OppdateringAvJournalposter_UPDATE - processDocuments - Mottatt BASE64STRING fra DokAkriv" ) )
                         .cache()
                         .onErrorResume(e -> {

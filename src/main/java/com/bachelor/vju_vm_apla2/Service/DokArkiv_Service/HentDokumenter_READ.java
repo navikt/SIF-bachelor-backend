@@ -3,7 +3,6 @@ package com.bachelor.vju_vm_apla2.Service.DokArkiv_Service;
 import com.bachelor.vju_vm_apla2.ErrorHandling.CustomClientException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ public class HentDokumenter_READ {
 
     private static final Logger logger = LogManager.getLogger(HentDokumenter_READ.class);
 
-    @Value("${wiremock-dok.combined}")
+    @Value("${wiremock-saf.combined}")
     private String url;
 
 
@@ -62,7 +61,7 @@ public class HentDokumenter_READ {
      * @return Mono<String> A reactive Mono that emits the Base64-encoded string of the document if retrieval is successful,
      *         or errors out with appropriate exceptions if issues occur during the process.
      */
-    public Mono<String> hentDokument_DokArkiv(String dokumentInfoId, String journalpostId) {
+    public Mono<String> hentDokument_SAF(String dokumentInfoId, String journalpostId) {
 
         logger.info("INFO: HentDokument_READ - hentDokument_DokArkiv - med denne meta" + dokumentInfoId + "og " + journalpostId);
         String endpoint = String.format("/rest/hentdokument/%s/%s", journalpostId, dokumentInfoId);
