@@ -39,7 +39,6 @@ public class OppdateringAvJournalposter_UPDATE {
 
 
 
-    // Method to format date
     public String formatIsoDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -63,7 +62,6 @@ public class OppdateringAvJournalposter_UPDATE {
         return this.webClient.put()
                 .uri(url + endpoint)
                 .header(HttpHeaders.AUTHORIZATION, originalHeader.getFirst(HttpHeaders.AUTHORIZATION))
-                //.headers(headers -> headers.addAll(headersForRequest))
                 .bodyValue(jsonPayload)
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
@@ -76,7 +74,7 @@ public class OppdateringAvJournalposter_UPDATE {
                         }))
                 .bodyToMono(Boolean.class)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(true, HttpStatus.OK)) // Handle 204 No Content
+                .defaultIfEmpty(new ResponseEntity<>(true, HttpStatus.OK))
                 .onErrorResume(e -> {
                     if (e instanceof CustomClientException){
                         return Mono.error(e);
