@@ -30,9 +30,7 @@ public class FeilRegistrer_DELETE {
     public Mono<ResponseEntity<Boolean>> feilRegistrer_Service(String journalpostId, String type, HttpHeaders originalHeader) {
         logger.info("17. Vi er nå på å feilregistere fra opprett journalpost");
         String endpoint = "";
-
         String endpoint_test = "/mock/rest/test";
-
         if (type.equals("I")) {
             endpoint = "/rest/journalpostapi/v1/journalpost/" + journalpostId + "/feilregistrer/settStatusUtgaar";
         } else if (type.equals("U")) {
@@ -40,10 +38,8 @@ public class FeilRegistrer_DELETE {
         } else {
             return Mono.just(ResponseEntity.badRequest().body(false));
         }
-
         System.out.println("Service - feilregistrer: vi skal nå inn i wiremock med forespørsel: ");
         System.out.println("Original headers:");
-
         return this.webClient.patch()
                 .uri(url + endpoint)
                 .header(HttpHeaders.AUTHORIZATION, originalHeader.getFirst(HttpHeaders.AUTHORIZATION))

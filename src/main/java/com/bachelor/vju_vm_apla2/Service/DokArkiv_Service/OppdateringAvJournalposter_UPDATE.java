@@ -47,15 +47,10 @@ public class OppdateringAvJournalposter_UPDATE {
 
     public Mono<ResponseEntity<Boolean>> oppdaterMottattDato(PostOppdaterJournalpost_DTO jpMetadata, HttpHeaders originalHeader) {
         logger.info("Vi er nå inn i oppdaterJournalpost for å oppdatere Journalpost med mottattDato");
-
         String journalpostID = jpMetadata.getJournalpostID();
-
         String endpoint = "/rest/journalpostapi/v1/journalpost/" + journalpostID;
-
         Date currentDate = jpMetadata.getMottattDato();
-
         String jsonPayload = formatIsoDate(currentDate);
-
         System.out.println("Service - oppdaterMottattDato: vi skal nå inn i wiremock med forespørsel: ");
         System.out.println("Original headers:");
 

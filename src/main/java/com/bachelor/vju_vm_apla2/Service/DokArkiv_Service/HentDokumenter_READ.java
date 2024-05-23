@@ -49,7 +49,6 @@ public class HentDokumenter_READ {
         return webClient.get()
                 .uri(url + endpoint)
                 .retrieve()
-                //TODO:Legge til header for token?
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
                             int statusValue = clientResponse.statusCode().value();

@@ -23,7 +23,6 @@ public class ErrorHandling {
      */
     public static <T> Mono<ResponseEntity<T>> handleError(Throwable e) {
         // Logger-instansen for å logge informasjon og feil.
-
         if (e instanceof CustomClientException) {
             CustomClientException cce = (CustomClientException) e;
             logger.error("En feil oppstod: {}", cce.getMessage());
@@ -51,10 +50,7 @@ public class ErrorHandling {
         if (contentType.equals(MediaType.APPLICATION_JSON)) {
             // Logger-instansen for å logge informasjon og feil.
             logger.info("Oppretter JSON feilressurs med melding: {}", errorMessage);
-
-            // Sanitize the errorMessage to escape any double quotes
             String jsonErrorMessage = "\"" + errorMessage.replace("\"", "\\\"") + "\"";
-
             return (T) new ByteArrayResource(jsonErrorMessage.getBytes(StandardCharsets.UTF_8));
         } else {
             // Hvis innholdstypen ikke er JSON, oppretter vi en generisk ByteArrayResource.
