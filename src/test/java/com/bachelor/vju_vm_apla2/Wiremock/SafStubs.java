@@ -392,11 +392,11 @@ public class SafStubs {
                                 "}")));
 
 
-        //Mock for søkeresultat "004". Gir response basert på brukerID input fra clienten.
+        //Mock for søkeresultat "11111111111". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\n" +
                         "  \"brukerId\": {\n" +
-                        "    \"id\": \"004\",\n" +
+                        "    \"id\": \"11111111111\",\n" +
                         "    \"type\": \"FNR\"\n" +
                         "  },\n" +
                         "  \"journalposttyper\": [],\n" +
@@ -447,7 +447,7 @@ public class SafStubs {
 
                                 "        \"relevanteDatoer\": [\n" +
                                 "          {\n" +
-                                "            \"dato\": \"2024-03-01T12:00:00Z\",\n" +
+                                "            \"dato\": \"2024-05-01T12:00:00Z\",\n" +
                                 "            \"datotype\": \"DATO_REGISTRERT\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
@@ -473,7 +473,7 @@ public class SafStubs {
                                 "        \"journalposttype\": \"U\",\n" +
                                 "        \"journalstatus\": \"FERDIGSTILT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
-                                "        \"datoOpprettet\": \"2024-07-01T12:00:00Z\",\n" +
+                                "        \"datoOpprettet\": \"2024-05-01T12:00:00Z\",\n" +
 
                                 "        \"relevanteDatoer\": [],\n" +
 
@@ -639,9 +639,11 @@ public class SafStubs {
                                 "  }\n" +
                                 "}")));
 
+        /////////////////////////////////////////////////////////////////////////FILTER STUBS/////////////////////////////////////////////////////////////////////////////////////////////////////
+
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\n" +
-                        "  \"brukerId\": {\"id\": \"004\", \"type\": \"FNR\"},\n" +
+                        "  \"brukerId\": {\"id\": \"11111111111\", \"type\": \"FNR\"},\n" +
                         "  \"journalposttyper\": [],\n" +
                         "  \"journalstatuser\": [\"FERDIGSTILT\"],\n" +
                         "  \"tema\": []\n" +
@@ -678,15 +680,164 @@ public class SafStubs {
                                 "        }\n" +
                                 "      },\n" +
                                 "      {\n" +
-                                "        \"journalpostId\": \"666222222\",\n" +
-                                "        \"tittel\": \"Enda et hemmelig dokument\",\n" +
+                                "        \"journalpostId\": \"429111291\",\n" +
+                                "        \"tittel\": \"Svak Postkasse\",\n" +
                                 "        \"journalposttype\": \"U\",\n" +
                                 "        \"journalstatus\": \"FERDIGSTILT\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2024-07-01T12:00:00Z\",\n" +
+                                "        \"relevanteDatoer\": [],\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00001111\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00002222\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00003333\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"77351293720\",\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Maren Lundby\",\n" +
+                                "          \"land\": \"Norge\"\n" +
+                                "        }\n" +
+                                "      }\n" +
+                                "    ]\n" +
+                                "  }\n" +
+                                "}")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
+                .withRequestBody(equalToJson("{\n" +
+                        "  \"brukerId\": {\n" +
+                        "    \"id\": \"11111111111\",\n" +
+                        "    \"type\": \"FNR\"\n" +
+                        "  },\n" +
+                        "  \"fraDato\": \"2023-11-30T23:00:00.000Z\",\n" +
+                        "  \"tilDato\": \"2024-04-30T22:00:00.000Z\",\n" +
+                        "  \"journalposttyper\": [],\n" +
+                        "  \"journalstatuser\": [],\n" +
+                        "  \"tema\": []\n" +
+                        "}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody("{\n" +
+                                "  \"dokumentoversikt\": {\n" +
+                                "    \"journalposter\": [\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"666111111\",\n" +
+                                "        \"tittel\": \"Hemmelig dokument\",\n" +
+                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalstatus\": \"FERDIGSTILT\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2024-03-01T12:00:00Z\",\n" +
+                                "        \"relevanteDatoer\": [],\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00006666\",\n" +
+                                "            \"tittel\": \"Topphemmelig.pdf\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"67298374528\",\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Raus Trane\",\n" +
+                                "          \"land\": \"Norge\"\n" +
+                                "        }\n" +
+                                "      },\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"666222222\",\n" +
+                                "        \"tittel\": \"Enda et hemmelig dokument\",\n" +
+                                "        \"journalposttype\": \"I\",\n" +
+                                "        \"journalstatus\": \"JOURNALFOERT\",\n" +
                                 "        \"tema\": \"OPP\",\n" +
                                 "        \"datoOpprettet\": \"2024-03-02T12:00:00Z\",\n" +
                                 "        \"relevanteDatoer\": [\n" +
                                 "          {\n" +
-                                "            \"dato\": \"2024-03-01T12:00:00Z\",\n" +
+                                "            \"dato\": \"2024-05-01T12:00:00Z\",\n" +
+                                "            \"datotype\": \"DATO_REGISTRERT\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00007777\",\n" +
+                                "            \"tittel\": \"VeldigHemmelig.pdf\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"16728392011\",\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Eldar Vågan\",\n" +
+                                "          \"land\": \"Norge\"\n" +
+                                "        }\n" +
+                                "      },\n" +
+
+                                "      {\n" +
+                                "        \"journalpostId\": \"429111291\",\n" +
+                                "        \"tittel\": \"Svak Postkasse\",\n" +
+                                "        \"journalposttype\": \"U\",\n" +
+                                "        \"journalstatus\": \"FERDIGSTILT\",\n" +
+                                "        \"tema\": \"OPP\",\n" +
+                                "        \"datoOpprettet\": \"2024-05-01T12:00:00Z\",\n" +
+
+                                "        \"relevanteDatoer\": [],\n" +
+
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00001111\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00002222\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          },\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00003333\",\n" +
+                                "            \"tittel\": \"MASKERT_FELT\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"77351293720\",\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Maren Lundby\",\n" +
+                                "          \"land\": \"Norge\"\n" +
+                                "        }\n" +
+                                "      },\n" +
+
+                                "      {\n" +
+                                "        \"journalpostId\": \"123456123\",\n" +
+                                "        \"tittel\": \"Ekstremt hemmelig dokument\",\n" +
+                                "        \"journalposttype\": \"I\",\n" +
+                                "        \"journalstatus\": \"MOTTATT\",\n" +
+                                "        \"tema\": \"SYK\",\n" +
+                                "        \"datoOpprettet\": \"2024-03-02T12:00:00Z\",\n" +
+                                "        \"relevanteDatoer\": [\n" +
+                                "          {\n" +
+                                "            \"dato\": \"2024-05-09T12:00:00Z\",\n" +
                                 "            \"datotype\": \"DATO_REGISTRERT\"\n" +
                                 "          }\n" +
                                 "        ],\n" +
@@ -709,7 +860,52 @@ public class SafStubs {
                                 "  }\n" +
                                 "}")));
 
-        /////////////////////////////////////////////////////////////////////////FILTER STUBS/////////////////////////////////////////////////////////////////////////////////////////////////////
+        wireMockServer.stubFor(post(urlEqualTo("/graphql"))
+                .withRequestBody(equalToJson("{\n" +
+                        "  \"brukerId\": {\"id\": \"11111111111\", \"type\": \"FNR\"},\n" +
+                        "  \"journalposttyper\": [\"I\"],\n" +
+                        "  \"journalstatuser\": [],\n" +
+                        "  \"tema\": [\"SYK\"]\n" +
+                        "}", true, true))
+                .withHeader("Authorization", containing("Bearer"))
+                .willReturn(aResponse()
+                        .withHeader("Access-Control-Allow-Origin", "*") // Allow all origins
+                        .withHeader("Content-Type", "application/json") // Set correct Content-Type
+                        .withStatus(200) // Return HTTP 200 OK
+                        .withBody("{\n" +
+                                "  \"dokumentoversikt\": {\n" +
+                                "    \"journalposter\": [\n" +
+                                "      {\n" +
+                                "        \"journalpostId\": \"123456123\",\n" +
+                                "        \"tittel\": \"Ekstremt hemmelig dokument\",\n" +
+                                "        \"journalposttype\": \"I\",\n" +
+                                "        \"journalstatus\": \"MOTTATT\",\n" +
+                                "        \"tema\": \"SYK\",\n" +
+                                "        \"datoOpprettet\": \"2024-03-02T12:00:00Z\",\n" +
+                                "        \"relevanteDatoer\": [\n" +
+                                "          {\n" +
+                                "            \"dato\": \"2024-05-09T12:00:00Z\",\n" +
+                                "            \"datotype\": \"DATO_REGISTRERT\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"dokumenter\": [\n" +
+                                "          {\n" +
+                                "            \"dokumentInfoId\": \"00007777\",\n" +
+                                "            \"tittel\": \"VeldigHemmelig.pdf\",\n" +
+                                "            \"logiskeVedlegg\": [],\n" +
+                                "            \"brevkode\": \"NAV 15-04.20\"\n" +
+                                "          }\n" +
+                                "        ],\n" +
+                                "        \"avsenderMottaker\": {\n" +
+                                "          \"id\": \"16728392011\",\n" +
+                                "          \"type\": \"FNR\",\n" +
+                                "          \"navn\": \"Eldar Vågan\",\n" +
+                                "          \"land\": \"Norge\"\n" +
+                                "        }\n" +
+                                "      }\n" +
+                                "    ]\n" +
+                                "  }\n" +
+                                "}")));
 
 
         //INGEN FILTER
