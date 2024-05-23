@@ -5,7 +5,8 @@
 | **spring version:** | _3.2.2_      |
 
 
-
+# TO RUN IT LOCALLY:
+run from the localapplication file in src/test/java/com/bachelor/vju_vm_apla2/Vjulocalapplication.java
 
 #### NOTE: REMEMBER TO ADD A OWN OAUTH SERVER (we use kinde, but if you want to use an alternative, or our own ouath2 server, this needs to be added,)
 
