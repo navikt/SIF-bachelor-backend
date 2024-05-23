@@ -23,8 +23,6 @@ public class SafStubs {
     @PostConstruct
     public void configureStubs() {
         wireMockServer.start();
-        // todo :  adding edge cases for calls that needs to be authenticated
-        // todo : Add errorcode handling
         wireMockServer.stubFor(get(urlEqualTo("/hello"))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -36,7 +34,7 @@ public class SafStubs {
         //Mock for å returnere pdf filer baset på søk etter journalpostID/dokumentinfoID.
         //Nå tar den bare i mot dokumentinfoid som input og returnerer pdf md samme verdi.
         // Eksempel på en spesifikk stub for dokumentID "00001111"
-        wireMockServer.stubFor(get(urlPathMatching("/rest/hentdokument/1/(.*)")) //funker for MVP, men vi bør virkelig vurdere å endre på dette ved en senere anledning
+        wireMockServer.stubFor(get(urlPathMatching("/rest/hentdokument/1/(.*)"))
                 .willReturn(aResponse()
                         .withHeader("Access-Control-Allow-Origin", "*")
                         .withHeader("Content-Type", "application/pdf")
@@ -227,17 +225,15 @@ public class SafStubs {
 
 
         //////////////////////////////////////////////////////////////STUBS FOR SØKEFELT UTEN FILTER/////////////////////////////////////////////////////////////
-//todo: 401 and 500 here
-//        wireMockServer.stubFor(post(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(401).withBody(UNAUTHORIZED.getReasonPhrase())));
-//        wireMockServer.stubFor(get(urlEqualTo("/mock-journalpost")).willReturn(aResponse().withStatus(500).withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
+
         //Mock for søkeresultat "001". Gir response basert på brukerID input fra clienten.
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"001\"}", true, true))
                 .withHeader("Authorizaton", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody("{\n" +
                                 "      \"dokumentoversikt\":{\n" +
                                 "         \"journalposter\":[\n" +
@@ -340,9 +336,9 @@ public class SafStubs {
                 withBody(NOT_FOUND.toString())));
         wireMockServer.stubFor(get("/graphql").
                 willReturn(aResponse().
-                        withStatus(500). //500 when you tries to use wrong method -> maybe a more detailed response where you can see WHAT you are doing wrong?
-                        withBody(INTERNAL_SERVER_ERROR.getReasonPhrase()))); //standard internal server errors for now, maybe consider INTERNAL_SERVER_ERROR?
-        //todo: maybe more stubs here?
+                        withStatus(500).
+                        withBody(INTERNAL_SERVER_ERROR.getReasonPhrase())));
+
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson("{\"dokumentoversiktBruker\":\"002\"}", true, true)).withHeader("Authorization", containing("Bearer")));
 
@@ -352,9 +348,9 @@ public class SafStubs {
                 .withRequestBody(equalToJson("{\"brukerId\": {\"id\": \"003\"}}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody("{\n" +
                                 "   \"dokumentoversikt\":{\n" +
                                 "      \"journalposter\":[\n" +
@@ -364,7 +360,7 @@ public class SafStubs {
                                 "            \"journalposttype\":\"U\",\n" +
                                 "            \"journalstatus\":\"FERDIGSTILT\",\n" +
                                 "            \"tema\":\"OPP\",\n" +
-                                "            \"datoOpprettet\":\"2024-03-01T12:00:00Z\",\n" + // Eksempel på inkludering av datoOpprettet for første journalpost
+                                "            \"datoOpprettet\":\"2024-03-01T12:00:00Z\",\n" +
                                 "            \"dokumenter\":[\n" +
                                 "               {\n" +
                                 "                  \"dokumentInfoId\":\"00006666\",\n" +
@@ -378,7 +374,7 @@ public class SafStubs {
                                 "            \"journalposttype\":\"I\",\n" +
                                 "            \"journalstatus\":\"JOURNALFOERT\",\n" +
                                 "            \"tema\":\"OPP\",\n" +
-                                "            \"datoOpprettet\":\"2024-03-02T12:00:00Z\",\n" + // Eksempel på inkludering av datoOpprettet for andre journalpost
+                                "            \"datoOpprettet\":\"2024-03-02T12:00:00Z\",\n" +
                                 "            \"dokumenter\":[\n" +
                                 "               {\n" +
                                 "                  \"dokumentInfoId\":\"00007777\",\n" +
@@ -405,9 +401,9 @@ public class SafStubs {
                         "}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody("{\n" +
                                 "  \"dokumentoversikt\": {\n" +
                                 "    \"journalposter\": [\n" +
@@ -650,9 +646,9 @@ public class SafStubs {
                         "}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Allow all origins
-                        .withHeader("Content-Type", "application/json") // Set correct Content-Type
-                        .withStatus(200) // Return HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody("{\n" +
                                 "  \"dokumentoversikt\": {\n" +
                                 "    \"journalposter\": [\n" +
@@ -869,8 +865,8 @@ public class SafStubs {
                         "}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Allow all origins
-                        .withHeader("Content-Type", "application/json") // Set correct Content-Type
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
                         .withStatus(200) // Return HTTP 200 OK
                         .withBody("{\n" +
                                 "  \"dokumentoversikt\": {\n" +
@@ -916,8 +912,8 @@ public class SafStubs {
                         , true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
                         .withStatus(200) // Returner HTTP 200 OK
                         .withBody(
                                 brukerID_002
@@ -928,14 +924,14 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"tema\": [\"TIL\"]\n" +
                                 "}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_TIL
                         )));
@@ -945,14 +941,14 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"tema\": [\"TIL\", \"SYM\"]\n" +
                                 "}", true, true))
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_TIL_SYM
                         )));
@@ -962,15 +958,15 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"journalstatuser\": [\"FERDIGSTILT\"]\n" +
                                 "}", true, true))
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_FERDIGSTILT
                         )));
@@ -980,16 +976,16 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"journalstatuser\": [\"FERDIGSTILT\"],\n" +
                                 "  \"journalposttyper\": [\"N\"]\n" +
                                 "}", true, true))
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_FERDIGSTILT_N
                         )));
@@ -999,15 +995,15 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"journalstatuser\": [\"JOURNALFOERT\"]\n" +
                                 "}", true, true))
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_JOURNALFOERT
                         )));
@@ -1017,16 +1013,16 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"journalstatuser\": [\"JOURNALFOERT\"],\n" +
                                 "  \"journalposttyper\": [\"N\"]\n" +
                                 "}", true, true))
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_JOURNALFOERT_N
                         )));
@@ -1037,15 +1033,15 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"journalstatuser\": [\"EKSPEDERT\"]\n" +
                                 "}", true, true))
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_EKSPEDERT
                         )));
@@ -1055,15 +1051,15 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"journalstatuser\": [\"FERDIGSTILT\", \"JOURNALFOERT\"]\n" +
                                 "}", true, true))
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_FERDIGSTILT_JOURNALFOERT
                         )));
@@ -1073,7 +1069,7 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"journalstatuser\": [\"FERDIGSTILT\", \"JOURNALFOERT\"],\n" +
                                 "  \"journalposttyper\": [\"I\"]\n" +
 
@@ -1081,9 +1077,9 @@ public class SafStubs {
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_FERDIGSTILT_JOURNALFOERT_I
                         )));
@@ -1093,7 +1089,7 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"journalstatuser\": [\"FERDIGSTILT\", \"JOURNALFOERT\"],\n" +
                                 "  \"journalposttyper\": [\"I\",\"N\"]\n" +
 
@@ -1101,9 +1097,9 @@ public class SafStubs {
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_FERDIGSTILT_JOURNALFOERT_I_N
                         )));
@@ -1113,15 +1109,15 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"journalstatuser\": [\"FERDIGSTILT\", \"EKSPEDERT\"]\n" +
                                 "}", true, true))
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_FERDIGSTILT_EKSPEDERT
                         )));
@@ -1137,9 +1133,9 @@ public class SafStubs {
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200) // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
                         .withBody(
                                 brukerID_002_JOURNALFOERT_EKSPEDERT
                         )));
@@ -1149,15 +1145,15 @@ public class SafStubs {
         wireMockServer.stubFor(post(urlEqualTo("/graphql"))
                 .withRequestBody(equalToJson(
                         "{\n" +
-                                "  \"brukerId\": {\"id\": \"002\"},\n" + // Legg merke til kommaet her
+                                "  \"brukerId\": {\"id\": \"002\"},\n" +
                                 "  \"fraDato\": \"2021-12-31T23:00:00.000Z\",\n" +
                                 "  \"tilDato\": \"2022-12-30T23:00:00.000Z\"\n" +
                                 "}", true, true))
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
                         .withStatus(200) // Returner HTTP 200 OK
                         .withBody(
                                 brukerID_002_2022
@@ -1176,8 +1172,8 @@ public class SafStubs {
 
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
                         .withStatus(200) // Returner HTTP 200 OK
                         .withBody(
                                 brukerID_002_2023
@@ -1218,9 +1214,9 @@ public class SafStubs {
                 .withRequestBody(matchingJsonPath("$.date", matching("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z")))  // Regex for ISO 8601 format
                 .withHeader("Authorization", containing("Bearer"))
                 .willReturn(aResponse()
-                        .withHeader("Access-Control-Allow-Origin", "*") // Tillat forespørsler fra alle opprinnelser
-                        .withHeader("Content-Type", "application/json") // Sett riktig Content-Type for respons
-                        .withStatus(200))); // Returner HTTP 200 OK
+                        .withHeader("Access-Control-Allow-Origin", "*")
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)));
 
 
 
@@ -1237,7 +1233,7 @@ public class SafStubs {
                         .withBody(
                                 "Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL. " +
                                         "Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost)."
-                        )// Returner HTTP 400 OK
+                        )
                 ));
 
         //Mock for søkeresultat "401".

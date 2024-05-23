@@ -59,9 +59,9 @@ public class SafControllerUnitTest {
         PostJournalpostList_DTO brukerId = new PostJournalpostList_DTO(new BrukerIdInput(bIdInput.getId(), bIdInput.getType()), "2024-12-12", "2025-12-12", jpts, jptts, tt);
         ReturnFromGraphQl_DTO fgqlTest =  new ReturnFromGraphQl_DTO();
         Mono <ReturnFromGraphQl_DTO> MfgglTest = Mono.just(fgqlTest);
-       Mockito.when(safServiceMock.hentJournalpostListe(any(PostJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest); //headers and stuff dont get sendt, thats why error is getting there
+       Mockito.when(safServiceMock.hentJournalpostListe(any(PostJournalpostList_DTO.class), any(HttpHeaders.class))).thenReturn(MfgglTest);
         Mono<ResponseEntity<ReturnFromGraphQl_DTO>> resultMono = safController.hentJournalpostListe(brukerId, headers);
-        //Not sure how this works, but rolls with it for now
+
         StepVerifier.create(resultMono).assertNext(fraGrapQlDtoResponseEntity -> {
             assertEquals(HttpStatus.OK, fraGrapQlDtoResponseEntity.getStatusCode());
             assertEquals("application/json", Objects.requireNonNull(fraGrapQlDtoResponseEntity.getHeaders().getContentType()).toString());
@@ -87,7 +87,7 @@ public class SafControllerUnitTest {
         BrukerIdInput bk0 = new BrukerIdInput("hei", BrukerIdType.FNR);
         PostJournalpostList_DTO DTO = new PostJournalpostList_DTO(bk0, "2023-10-20", "2023-11-20",jpts, jptts, tt);
         headers.add("Authorization", "bearer");
-        //trying without mocking anything as we will throw an exception
+
         Mockito.when(safServiceMock.hentJournalpostListe(any(PostJournalpostList_DTO.class), any(HttpHeaders.class))).thenThrow(new Exception("generic cool exception"));
         String res = String.valueOf(safController.hentJournalpostListe(DTO, headers));
 
@@ -127,7 +127,6 @@ public class SafControllerUnitTest {
     @Test
     public void hentDokumenterTest() {
 
-//        String pathToRes = resources.toFile().getPath();
         String dokumentId = "000001";
         String journalpostId = "0000002";
         HttpHeaders headers = new HttpHeaders();

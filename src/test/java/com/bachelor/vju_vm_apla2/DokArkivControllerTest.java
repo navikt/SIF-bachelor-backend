@@ -37,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class DokArkivControllerTest {
     private static final Logger logger = LogManager.getLogger(DokArkivControllerTest.class);
-    //mocks for CRUD operations
+
 @Mock
     FeilRegistrer_DELETE feilRegistrer_delete;
 @Mock
@@ -46,7 +46,7 @@ public class DokArkivControllerTest {
     OppdateringAvJournalposter_UPDATE oppdateringAvJournalposterUpdate;
 @InjectMocks
 DokArkivController dokArkivController;
-//crud operations tests
+
 @Test
     public void createDokArkiv() {
 
