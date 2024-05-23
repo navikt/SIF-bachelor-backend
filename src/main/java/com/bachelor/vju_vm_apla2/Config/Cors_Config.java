@@ -23,7 +23,6 @@ public class Cors_Config {
    private String wiremockdok;
     @Bean
     public WebMvcConfigurer corsconf() {
-    //all the different urls that are allowed to talk to the backend
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry reg) {

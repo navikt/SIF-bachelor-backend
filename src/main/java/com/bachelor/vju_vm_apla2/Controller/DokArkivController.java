@@ -36,7 +36,6 @@ public class DokArkivController {
     }
 
 
-
     @CrossOrigin
     @PostMapping("/createJournalpost")
     public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost_Controller(@RequestBody CreateJournalpost_DTO meta, @RequestHeader HttpHeaders headers) {
@@ -53,7 +52,6 @@ public class DokArkivController {
                 .doOnSuccess(response -> logger.info("DokArkivController - createJournalpost() - Success - Response sent to client: {}", response.getStatusCode()));
 
     }
-
 
     @CrossOrigin
     @GetMapping("/feilregistrer")

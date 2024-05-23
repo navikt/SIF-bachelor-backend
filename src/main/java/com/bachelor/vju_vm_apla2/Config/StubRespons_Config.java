@@ -21,11 +21,8 @@ public class StubRespons_Config extends ResponseDefinitionTransformer {
 
     @Override
     public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition, com.github.tomakehurst.wiremock.common.FileSource files, com.github.tomakehurst.wiremock.extension.Parameters parameters) {
-
         String path = request.getUrl();
         String dokumentId = path.substring(path.lastIndexOf('/') + 1);
-
-
         return ResponseDefinitionBuilder.like(responseDefinition)
                 .but()
                 .withHeader("Content-Type", "application/pdf")
