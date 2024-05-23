@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-//TODO: FERDIG MED FEILHÅNDTERING FOR DENNE KLASSEN
 @Service
 public class SafService {
 

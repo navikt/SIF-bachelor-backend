@@ -39,7 +39,7 @@ public class OpprettNyeJournalposter_CREATE {
                 .baseUrl(url)
                 .build();
     }
-    private ObjectMapper objectMapper = new ObjectMapper();  // Jackson ObjectMapper for manual JSON serialization
+    private ObjectMapper objectMapper = new ObjectMapper();
 
 
     //------------------------------------------------------------------------------------
@@ -51,24 +51,6 @@ public class OpprettNyeJournalposter_CREATE {
                 .bodyToMono(String.class);
     }
 
-    /////METODE FOR CREATE JOURNALPOST BETA//////////////////////
-
-    /**
-     * Orchestrates the updating of document IDs for both 'oldMetadata' and 'newMetadata' within a CreateJournalpost_DTO object,
-     * sends serialized versions of these objects as separate POST requests, and handles responses.
-     *
-     * This method performs the following operations in sequence:
-     * 1. Asynchronously updates document IDs in both the old and new metadata components of the DTO.
-     * 2. After ensuring both updates are complete, it proceeds to serialize each component into JSON format.
-     * 3. It then sends each serialized metadata object as a separate POST request to a designated URI.
-     * 4. Responses from these POST requests are combined and logged, and any occurring errors are handled and logged.
-     * 5. Finally, it aggregates the responses into a single ResponseEntity object that encapsulates the combined responses
-     *    from both POST operations, which is then returned to the caller.
-     *
-     * @param meta The CreateJournalpost_DTO object that contains the oldMetadata and newMetadata needing processing.
-     * @return Mono<ResponseEntity<String>> This returns a Mono that emits a ResponseEntity containing the combined responses
-     *         from both metadata POST requests if successful, or logs and returns errors if any arise during the operations.
-     */
     public Mono<ResponseEntity<List<ResponeReturnFromDokArkiv_DTO>>> createJournalpost_Service(CreateJournalpost_DTO meta, HttpHeaders originalHeader) {
         logger.info("DokArkiv_Service - createJournalpost() -  Inne i createJournalpost - Received JSON data: {}", meta);
 
@@ -111,28 +93,6 @@ public class OpprettNyeJournalposter_CREATE {
 
 
 
-    /**
-     * Serializes a CreateJournalpost object to a JSON string and sends it as a POST request to a defined URI.
-     * This method is responsible for handling the entire process of converting the journal post data into JSON format,
-     * sending it over the network, and managing the responses and errors that may occur during the process.
-     *
-     * Detailed Steps:
-     * 1. Serialization: Converts the CreateJournalpost object into a JSON string using Jackson's ObjectMapper.
-     *    - Logs the JSON string for verification and debugging purposes.
-     * 2. Network Communication:
-     *    - Sends the serialized JSON as a POST request to a predefined URI ("http://external-service.com/api/journalposts").
-     *    - Sets the 'Content-Type' header to 'application/json' to indicate the media type of the request body.
-     * 3. Response Handling:
-     *    - On successful POST, logs the server's response indicating successful data submission.
-     *    - On error (HTTP status codes like 4xx or 5xx), it extracts the error message from the response, logs it,
-     *      and propagates an error signal using a CustomClientException.
-     * 4. Error Handling:
-     *    - If serialization fails (due to issues in data format, etc.), logs the error and returns an error signal.
-     *
-     * @param journalPost The CreateJournalpost object to be serialized and sent.
-     * @return Mono<String> A Mono that emits the body of the response if the POST is successful,
-     *         or errors out with a CustomClientException or a serialization-related exception if not.
-     */
     private Mono<ResponeReturnFromDokArkiv_DTO> postNewJournalpost(CreateJournalpost journalPost, HttpHeaders originalHeader) {
         logger.info("DoArkiv_Service - serializeAndSendJournalpost() - Inne i metoden med " + journalPost + " og prøver å gjøre kall til wiremock nå");
 
@@ -167,9 +127,6 @@ public class OpprettNyeJournalposter_CREATE {
                     });
     }
 
-
-
-    ////////////////////////////Handle Beta Metode avansert//////////////////////////////////////////////////////
 
 
 

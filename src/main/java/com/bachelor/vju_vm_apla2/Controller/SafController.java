@@ -25,7 +25,6 @@ public class SafController {
         this.safService = safService;
     }
 
-    // Logger-instansen for å logge informasjon og feil.
     private static final Logger logger = LogManager.getLogger(SafController.class);
 
     /**

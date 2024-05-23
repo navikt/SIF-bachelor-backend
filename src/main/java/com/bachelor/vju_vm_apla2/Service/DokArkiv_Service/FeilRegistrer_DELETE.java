@@ -38,7 +38,7 @@ public class FeilRegistrer_DELETE {
         } else if (type.equals("U")) {
             endpoint = "/rest/journalpostapi/v1/journalpost/" + journalpostId + "/feilregistrer/settStatusAvbryt";
         } else {
-            return Mono.just(ResponseEntity.badRequest().body(false)); // Returning a bad request if type is not handled
+            return Mono.just(ResponseEntity.badRequest().body(false));
         }
 
         System.out.println("Service - feilregistrer: vi skal nå inn i wiremock med forespørsel: ");
@@ -47,7 +47,6 @@ public class FeilRegistrer_DELETE {
         return this.webClient.patch()
                 .uri(url + endpoint)
                 .header(HttpHeaders.AUTHORIZATION, originalHeader.getFirst(HttpHeaders.AUTHORIZATION))
-                //.headers(headers -> headers.addAll(headersForRequest))
                 .retrieve()
                 .onStatus(status -> status.isError(), clientResponse ->
                         clientResponse.bodyToMono(String.class).flatMap(errorBody -> {
@@ -59,7 +58,7 @@ public class FeilRegistrer_DELETE {
                         }))
                 .bodyToMono(Boolean.class)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(true, HttpStatus.OK)) // Handle 204 No Content
+                .defaultIfEmpty(new ResponseEntity<>(true, HttpStatus.OK))
                 .doOnSuccess(response -> logger.info("INFO: FeilRegister_Delete - feilRegistrer_Service - Operation completed with status: {}", response.getStatusCode()))
                 .onErrorResume(e -> {
                     if (e instanceof CustomClientException) {

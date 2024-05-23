@@ -60,7 +60,6 @@ public class DokArkivController {
     public Mono<ResponseEntity<Boolean>> feilregistrer_Controller(@RequestParam("journalpostId") String journalpostId, @RequestParam("type") String type, @RequestHeader HttpHeaders headers){
         return feilRegistrerService.feilRegistrer_Service(journalpostId, type, headers)
                 .onErrorResume(e -> {
-                    // Handle any errors that occur during the service call
                     logger.error("ERROR: DokArkivController - feilregister() - Fail -  Feil ved feilregistrering: {}", e.getMessage());
                     return ErrorHandling.handleError(e);
                 })
@@ -72,9 +71,8 @@ public class DokArkivController {
     public Mono<ResponseEntity<Boolean>> oppdaterJournalpost(@RequestBody PostOppdaterJournalpost_DTO meta, @RequestHeader HttpHeaders headers){
         return oppdaterJournalposter_UPDATE.oppdaterMottattDato(meta, headers)
                 .onErrorResume(e -> {
-
                     logger.error("Feil ved oppdatering av Journalpost: {}", e.getMessage());
-                    return ErrorHandling.handleError(e);  // Provide an empty list on error
+                    return ErrorHandling.handleError(e);
                 })
                 .doOnSuccess(response -> logger.info("Response sent to client: {}", response.getStatusCode()));
     }
