@@ -1,4 +1,8 @@
-# NAV-IT-SIF-bachelor backend
+# Bachelor project for Team sykdom-i-familien. 
+## Fork before continuing development.
+
+---
+
 | java version:   | _21_         |  
 |--------------|--------------|
 | **build system:**   | _maven_      |
